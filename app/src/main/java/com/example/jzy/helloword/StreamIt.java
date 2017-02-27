@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 
+import android.util.Base64;
+
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -24,6 +26,8 @@ import android.hardware.Camera.Size;
 import android.util.Log;
 
 import org.json.JSONObject;
+
+import static android.util.Base64.DEFAULT;
 
 
 public class StreamIt implements Camera.PreviewCallback{
@@ -91,7 +95,8 @@ class MyThread extends Thread {
         {
             //sleep(500);
             jsonObject = new JSONObject();
-            jsonObject.put("title",myoutputstream.toString());
+            jsonObject.put("title",Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
+            //jsonObject.put("title",myoutputstream.toString());
 
 
             // Send POST data request

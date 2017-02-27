@@ -1,2 +1,10 @@
-# cameraNetwork
+# RobotControl
+
+
+
+##  Introduce
+
+一款基于派宝机器人的平板应用，使用图像获取技术以及视频流技术完成人脸识别和远程视频通话功能。
+
+
 
