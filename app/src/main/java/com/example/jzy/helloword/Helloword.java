@@ -39,6 +39,7 @@ public class Helloword extends AppCompatActivity {
     Preview mPreview;
     CameraView mCameraView;
     Context ctx;
+    int flag = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +48,17 @@ public class Helloword extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_helloword);
-        mPreview = new Preview(this, (SurfaceView)findViewById(R.id.surfaceView));
-        mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
-
-        /*RelativeLayout topLayout = new RelativeLayout(this);
-        setContentView(topLayout);
-        mCamera = Camera.open(1);
-        mCameraView = new CameraView(this,mCamera);
-        topLayout.addView(mCameraView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
- */
-
-
+        if(flag == 1) {
+            mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
+            mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        }else {
+            RelativeLayout topLayout = new RelativeLayout(this);
+            setContentView(topLayout);
+            mCamera = Camera.open(1);
+            mCameraView = new CameraView(this, mCamera);
+            topLayout.addView(mCameraView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            mCameraView.startRecording();
+        }
         //((FrameLayout) findViewById(R.id.layout)).addView(mPreview);
 //        mPreview.setKeepScreenOn(true);
 
@@ -84,8 +84,12 @@ public class Helloword extends AppCompatActivity {
             try{
                 mCamera = Camera.open(1);
                 mCamera.startPreview();
-                mPreview.setCamera(mCamera);
-                //mCameraView.setCamera(mCamera);
+                if(flag == 1) {
+                    mPreview.setCamera(mCamera);
+                }else {
+                    mCameraView.setCamera(mCamera);
+                    mCameraView.startRecording();
+                }
             } catch (RuntimeException ex){
                 Toast.makeText(ctx, getString(R.string.camera_not_found), Toast.LENGTH_LONG).show();
             }
@@ -95,9 +99,15 @@ public class Helloword extends AppCompatActivity {
     @Override
     protected void onPause() {
         if(mCamera != null) {
+            if(flag != 1) {
+                mCameraView.stopRecording();
+            }
             mCamera.stopPreview();
-            mPreview.setCamera(null);
-            //mCameraView.setCamera(null);
+            if(flag == 1) {
+                mPreview.setCamera(null);
+            }else {
+                mCameraView.setCamera(null);
+            }
             mCamera.release();
             mCamera = null;
         }

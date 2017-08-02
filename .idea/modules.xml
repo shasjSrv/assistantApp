@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HelloWord.iml" filepath="$PROJECT_DIR$/HelloWord.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file:///mnt/sda4/AndroidStudioProjects/HelloWord/HelloWord.iml" filepath="/mnt/sda4/AndroidStudioProjects/HelloWord/HelloWord.iml" />
+      <module fileurl="file:///mnt/sda4/AndroidStudioProjects/HelloWord/app/app.iml" filepath="/mnt/sda4/AndroidStudioProjects/HelloWord/app/app.iml" />
+      <module fileurl="file:///mnt/sda4/AndroidStudioProjects/HelloWord/libs/libs.iml" filepath="/mnt/sda4/AndroidStudioProjects/HelloWord/libs/libs.iml" />
     </modules>
   </component>
 </project>

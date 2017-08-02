@@ -26,6 +26,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
-    compile files('libs/ffmpeg-linux-x86_64.jar')
-    compile files('libs/javacv.jar')
+    compile 'io.pristine:libjingle:9127@aar'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
 }
