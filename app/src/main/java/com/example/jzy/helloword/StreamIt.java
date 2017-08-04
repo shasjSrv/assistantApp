@@ -115,7 +115,7 @@ class MyThread extends Thread {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write( jsonObject.toString() );
+            wr.write( jsonObject.toString());
             wr.flush();
             Log.i("Sys", "jsonObject:" + jsonObject.toString());
             wr.close();
