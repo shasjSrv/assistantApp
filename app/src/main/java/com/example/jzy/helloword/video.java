@@ -21,6 +21,7 @@ public class video extends Activity {
     Preview mPreview;
     CameraView mCameraView;
     Context ctx;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ctx = this;
@@ -41,13 +42,13 @@ public class video extends Activity {
     protected void onResume() {
         super.onResume();
         int numCams = Camera.getNumberOfCameras();
-        if(numCams > 0){
-            try{
+        if (numCams > 0) {
+            try {
                 mCamera = Camera.open(1);
                 mCamera.startPreview();
                 mPreview.setCamera(mCamera);
 
-            } catch (RuntimeException ex){
+            } catch (RuntimeException ex) {
                 Toast.makeText(ctx, getString(R.string.camera_not_found), Toast.LENGTH_LONG).show();
             }
         }
@@ -55,8 +56,10 @@ public class video extends Activity {
 
     @Override
     protected void onPause() {
-        if(mCamera != null) {
+        if (null != mCameraView) {
             mCameraView.stopRecording();
+        }
+        if (mCamera != null) {
             mCamera.stopPreview();
             mPreview.setCamera(null);
             mCamera.release();

@@ -116,7 +116,7 @@ public class Helloword extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
+//        String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
 //        Log.i(TAG, result);
     }
    /* @Override
