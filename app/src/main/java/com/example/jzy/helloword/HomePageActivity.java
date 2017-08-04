@@ -1,40 +1,25 @@
 package com.example.jzy.helloword;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
-import android.widget.RelativeLayout;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Camera;
-import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.ShutterCallback;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
+
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 
-public class Helloword extends AppCompatActivity {
+public class HomePageActivity extends AppCompatActivity {
 
 
     /*Camera mCamera;
@@ -42,14 +27,15 @@ public class Helloword extends AppCompatActivity {
     CameraView mCameraView;*/
 //    Context ctx;
 //    int flag = 1;
+    private static final int PERMISSIONS_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        ctx = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_helloword);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.act_homepage);
        /* if(flag == 1) {
             mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
             mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -72,7 +58,7 @@ public class Helloword extends AppCompatActivity {
                 } else {
                     circularButton1.setProgress(0);
                 }
-                startActivityForResult(new Intent(Helloword.this, video.class), 1);
+                checkPermission();
             }
         });
 
@@ -98,6 +84,33 @@ public class Helloword extends AppCompatActivity {
             }
         });*/
 
+    }
+
+
+    /**
+     * 检查运行时权限（相机权限、文件写权限）
+     */
+    private void checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            startActivityForResult(new Intent(HomePageActivity.this, video.class), 1);
+            return;
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(new Intent(HomePageActivity.this, video.class), 1);
+                return;
+            }
+            checkPermission();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void simulateSuccessProgress(final CircularProgressButton button) {
