@@ -29,26 +29,28 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-
+import com.dd.CircularProgressButton;
+import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 
 public class Helloword extends AppCompatActivity {
 
-    private static final String TAG = "CamTestActivity";
-    Camera mCamera;
+
+    /*Camera mCamera;
     Preview mPreview;
-    CameraView mCameraView;
-    Context ctx;
-    int flag = 1;
+    CameraView mCameraView;*/
+//    Context ctx;
+//    int flag = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ctx = this;
+//        ctx = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_helloword);
-        if(flag == 1) {
+       /* if(flag == 1) {
             mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
             mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }else {
@@ -58,7 +60,33 @@ public class Helloword extends AppCompatActivity {
             mCameraView = new CameraView(this, mCamera);
             topLayout.addView(mCameraView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             mCameraView.startRecording();
-        }
+        }*/
+
+
+        final CircularProgressButton circularButton1 = (CircularProgressButton) findViewById(R.id.circularButton1);
+        circularButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (circularButton1.getProgress() == 0) {
+                    simulateSuccessProgress(circularButton1);
+                } else {
+                    circularButton1.setProgress(0);
+                }
+                startActivityForResult(new Intent(Helloword.this, video.class), 1);
+            }
+        });
+
+        final CircularProgressButton circularButton2 = (CircularProgressButton) findViewById(R.id.circularButton2);
+        circularButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (circularButton2.getProgress() == 0) {
+                    simulateSuccessProgress(circularButton2);
+                } else {
+                    circularButton2.setProgress(0);
+                }
+            }
+        });
         //((FrameLayout) findViewById(R.id.layout)).addView(mPreview);
 //        mPreview.setKeepScreenOn(true);
 
@@ -72,7 +100,26 @@ public class Helloword extends AppCompatActivity {
 
     }
 
+    private void simulateSuccessProgress(final CircularProgressButton button) {
+        ValueAnimator widthAnimation = ValueAnimator.ofInt(1, 100);
+        widthAnimation.setDuration(1500);
+        widthAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Integer value = (Integer) animation.getAnimatedValue();
+                button.setProgress(value);
+            }
+        });
+        widthAnimation.start();
+    }
+
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
+//        Log.i(TAG, result);
+    }
+   /* @Override
     protected void onDestroy() {
         super.onDestroy();
     }
@@ -112,7 +159,7 @@ public class Helloword extends AppCompatActivity {
             mCamera = null;
         }
         super.onPause();
-    }
+    }*/
 
 
 }

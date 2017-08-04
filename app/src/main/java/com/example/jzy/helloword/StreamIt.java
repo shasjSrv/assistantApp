@@ -29,6 +29,9 @@ import org.json.JSONObject;
 
 import static android.util.Base64.DEFAULT;
 
+import java.util.Calendar;
+
+
 
 public class StreamIt implements Camera.PreviewCallback{
     private String Url;
@@ -54,12 +57,12 @@ public class StreamIt implements Camera.PreviewCallback{
                 // 启用线程将图像数据发送出去
                 Thread th = new MyThread(outstream, Url);
                 th.start();
-                try
+              /*  try
                 {
                     Thread.sleep(1000);
                 }
                 catch (InterruptedException e)
-                {}
+                {}*/
             }
         } catch (Exception ex) {
             Log.e("Sys", "Error:" + ex.getMessage());
@@ -73,6 +76,7 @@ class MyThread extends Thread {
     private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String Error = null;
+    private int lastestTime = 0;
     URL url;
     BufferedReader reader=null;
     JSONObject jsonObject;
@@ -93,6 +97,12 @@ class MyThread extends Thread {
         // Send data
         try
         {
+            Calendar c = Calendar.getInstance();
+            int seconds = c.get(Calendar.SECOND);
+            if(seconds - lastestTime < 1000) {
+                return;
+            }
+            lastestTime = seconds;
             //sleep(500);
             jsonObject = new JSONObject();
             jsonObject.put("title",Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
