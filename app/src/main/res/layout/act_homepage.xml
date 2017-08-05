@@ -20,7 +20,8 @@
         app:mrl_rippleColor="#585858"
         app:mrl_rippleAlpha="0.2"
         app:mrl_rippleDelayClick="true"
-        app:mrl_rippleHover="true">
+        app:mrl_rippleHover="true"
+        android:id="@+id/materialRippleLayout1">
 
         <Button
             android:id="@+id/ripple_layout_1"
@@ -30,55 +31,75 @@
             android:background="#FF03A9F4"
             android:textColor="@color/cpb_white"
             android:textSize="14sp"
-            android:text="Overlay with hover"/>
+            android:text="@string/Video"/>
+
+
 
     </com.balysv.materialripple.MaterialRippleLayout>
 
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF03A9F4"
+        android:layout_marginTop="66dp"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleColor="#585858"
+        app:mrl_rippleAlpha="0.2"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleHover="true"
+        android:id="@+id/materialRippleLayout2"
+        android:layout_below="@+id/materialRippleLayout1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+        android:id="@+id/ripple_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#FF03A9F4"
+        android:textColor="@color/cpb_white"
+        android:textSize="14sp"
+        android:text="@string/Chat"/>
+
+
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF03A9F4"
+        android:layout_marginTop="66dp"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleColor="#585858"
+        app:mrl_rippleAlpha="0.2"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleHover="true"
+        android:id="@+id/materialRippleLayout3"
+        android:layout_below="@+id/materialRippleLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:id="@+id/ripple_layout_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#FF03A9F4"
+            android:textColor="@color/cpb_white"
+            android:textSize="14sp"
+            android:text="@string/Chat"/>
+
+
+    </com.balysv.materialripple.MaterialRippleLayout>
     <!--<SurfaceView
         android:id="@+id/surfaceView"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />-->
 
-    <com.dd.CircularProgressButton
-        android:id="@+id/circularButton1"
-        android:layout_width="196dp"
-        android:layout_height="64dp"
-        android:textColor="@color/cpb_white"
-        android:textSize="18sp"
-        app:cpb_textComplete="@string/Complete"
-        app:cpb_textError="@string/Error"
-        app:cpb_textIdle="@string/Video"
-        android:layout_above="@+id/circularButton2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="13dp" />
 
-    <com.dd.CircularProgressButton
-        android:id="@+id/circularButton2"
-        android:layout_width="196dp"
-        android:layout_height="64dp"
-        android:textColor="@color/cpb_white"
-        android:textSize="18sp"
-        app:cpb_textComplete="@string/Complete"
-        app:cpb_textError="@string/Error"
-        app:cpb_textIdle="@string/Upload"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/circularButton1"
-        android:layout_alignStart="@+id/circularButton1" />
-
-
-    <com.dd.CircularProgressButton
-        android:id="@+id/circularButton3"
-        android:layout_width="196dp"
-        android:layout_height="64dp"
-        android:textColor="@color/cpb_white"
-        android:textSize="18sp"
-        app:cpb_textComplete="@string/Complete"
-        app:cpb_textError="@string/Error"
-        app:cpb_textIdle="@string/Upload"
-        android:layout_below="@+id/circularButton2"
-        android:layout_alignLeft="@+id/circularButton2"
-        android:layout_alignStart="@+id/circularButton2"
-        android:layout_marginTop="17dp" />
 
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->

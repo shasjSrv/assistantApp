@@ -1,9 +1,11 @@
 package com.example.jzy.helloword;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,7 +19,7 @@ import android.content.Intent;
  * Created by jzy on 8/2/17.
  */
 
-public class VideoActivity extends Activity {
+public class VideoActivity extends AppCompatActivity {
     private static final String TAG = VideoActivity.class.getSimpleName();
     Camera mCamera;
     Preview mPreview;
@@ -31,6 +33,9 @@ public class VideoActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.act_video);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
 
         mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

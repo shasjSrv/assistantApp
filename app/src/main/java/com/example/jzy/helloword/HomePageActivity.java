@@ -17,6 +17,7 @@ import com.dd.CircularProgressButton;
 
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 
 
 public class HomePageActivity extends AppCompatActivity {
@@ -37,29 +38,25 @@ public class HomePageActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.act_homepage);
 
-        final CircularProgressButton circularButton1 = (CircularProgressButton) findViewById(R.id.circularButton1);
-        circularButton1.setOnClickListener(new View.OnClickListener() {
+        final Button  button1 = (Button) findViewById(R.id.ripple_layout_1);
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (circularButton1.getProgress() == 0) {
-                    simulateSuccessProgress(circularButton1);
-                } else {
-                    circularButton1.setProgress(0);
-                }
                 checkPermission();
             }
         });
-
-        final CircularProgressButton circularButton2 = (CircularProgressButton) findViewById(R.id.circularButton2);
-        circularButton2.setOnClickListener(new View.OnClickListener() {
+        final Button  button2 = (Button) findViewById(R.id.ripple_layout_2);
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (circularButton2.getProgress() == 0) {
-                    simulateSuccessProgress(circularButton2);
-                } else {
-                    circularButton2.setProgress(0);
-                }
                 startActivityForResult(new Intent(HomePageActivity.this, ChatActivity.class), 1);
+            }
+        });
+        final Button  button3 = (Button) findViewById(R.id.ripple_layout_3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                startActivityForResult(new Intent(HomePageActivity.this, ChatActivity.class), 1);
             }
         });
 
