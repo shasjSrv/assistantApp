@@ -72,6 +72,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         startActivityForResult(intent, Keys.CHAT_REQUEST);
     }
 
+    /**
+     * 跳转至DiagnoseActivity
+     */
+    private void jumpToDiagnoseActivity() {
+        Intent intent = new Intent(HomePageActivity.this, DiagnoseActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST) {
@@ -115,7 +123,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.btn_diagnose:
-
+                jumpToDiagnoseActivity();
                 break;
 
             default:

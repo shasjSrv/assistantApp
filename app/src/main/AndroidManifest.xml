@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jzy.helloword"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -11,7 +11,10 @@
 
     <!--<uses-sdk android:minSdkVersion="9" />-->
 
-    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,7 +25,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomePageActivity"
+        <activity
+            android:name=".HomePageActivity"
             android:label="@string/app_name"
 
             >
@@ -35,14 +39,20 @@
 
         <activity
             android:name=".VideoActivity"
-            android:label="@string/Video"
-            >
+            android:label="@string/Video">
+
         </activity>
 
         <activity
             android:name=".ChatActivity"
-            android:label="@string/Chat"
-            >
+            android:label="@string/Chat">
+
+        </activity>
+
+        <activity
+            android:name=".DiagnoseActivity"
+            android:label="@string/diagnose">
+
         </activity>
     </application>
 
