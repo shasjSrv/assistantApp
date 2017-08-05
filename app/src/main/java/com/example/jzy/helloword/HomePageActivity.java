@@ -25,7 +25,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     private static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
-    private Button btnVideo, btnChat;
+    private Button btnVideo, btnChat, btnDiagnose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void init() {
         btnVideo = (Button) findViewById(R.id.btn_video);
         btnChat = (Button) findViewById(R.id.btn_chat);
+        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
         btnVideo.setOnClickListener(this);
         btnChat.setOnClickListener(this);
+        btnDiagnose.setOnClickListener(this);
     }
 
     /**
@@ -110,6 +112,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_chat:
                 jumpToChatActivity();
+                break;
+
+            case R.id.btn_diagnose:
+
                 break;
 
             default:
