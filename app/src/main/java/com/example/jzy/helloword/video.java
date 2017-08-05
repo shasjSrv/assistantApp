@@ -24,6 +24,7 @@ public class video extends Activity {
     Preview mPreview;
     CameraView mCameraView;
     Context ctx;
+    Intent intent;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +35,13 @@ public class video extends Activity {
 
         mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
+        intent = new Intent();
 
         Button btnClose=(Button)findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 //数据是使用Intent返回
-                Intent intent = new Intent();
+
                 //把返回数据存入Intent
                 intent.putExtra("result", "My name is linjiqin");
                 //设置返回数据

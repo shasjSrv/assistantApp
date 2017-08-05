@@ -36,17 +36,6 @@ public class HomePageActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.act_homepage);
-       /* if(flag == 1) {
-            mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
-            mPreview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        }else {
-            RelativeLayout topLayout = new RelativeLayout(this);
-            setContentView(topLayout);
-            mCamera = Camera.open(1);
-            mCameraView = new CameraView(this, mCamera);
-            topLayout.addView(mCameraView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-            mCameraView.startRecording();
-        }*/
 
 
         final CircularProgressButton circularButton1 = (CircularProgressButton) findViewById(R.id.circularButton1);
@@ -71,18 +60,9 @@ public class HomePageActivity extends AppCompatActivity {
                 } else {
                     circularButton2.setProgress(0);
                 }
+                startActivityForResult(new Intent(HomePageActivity.this, ChatActivity.class), 1);
             }
         });
-        //((FrameLayout) findViewById(R.id.layout)).addView(mPreview);
-//        mPreview.setKeepScreenOn(true);
-
-       /* mPreview.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
-            }
-        });*/
 
     }
 
@@ -129,50 +109,12 @@ public class HomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
+        if(data != null) {
+            String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
+        }
 //        Log.i(TAG, result);
     }
-   /* @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
-    protected void onResume() {
-        super.onResume();
-        int numCams = Camera.getNumberOfCameras();
-        if(numCams > 0){
-            try{
-                mCamera = Camera.open(1);
-                mCamera.startPreview();
-                if(flag == 1) {
-                    mPreview.setCamera(mCamera);
-                }else {
-                    mCameraView.setCamera(mCamera);
-                    mCameraView.startRecording();
-                }
-            } catch (RuntimeException ex){
-                Toast.makeText(ctx, getString(R.string.camera_not_found), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if(mCamera != null) {
-            if(flag != 1) {
-                mCameraView.stopRecording();
-            }
-            mCamera.stopPreview();
-            if(flag == 1) {
-                mPreview.setCamera(null);
-            }else {
-                mCameraView.setCamera(null);
-            }
-            mCamera.release();
-            mCamera = null;
-        }
-        super.onPause();
-    }*/
 
 
 }
