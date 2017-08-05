@@ -1,6 +1,7 @@
 package com.example.jzy.helloword;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -19,13 +20,13 @@ import android.content.Intent;
  * Created by jzy on 8/2/17.
  */
 
-public class VideoActivity extends AppCompatActivity {
+public class VideoActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = VideoActivity.class.getSimpleName();
-    Camera mCamera;
-    Preview mPreview;
-    CameraView mCameraView;
-    Context ctx;
-    Intent intent;
+    private Camera mCamera;
+    private Preview mPreview;
+    private CameraView mCameraView;
+    private Button btnClose;
+    private Context ctx;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,21 +40,8 @@ public class VideoActivity extends AppCompatActivity {
 
         mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        intent = new Intent();
-
-        Button btnClose = (Button) findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //数据是使用Intent返回
-
-                //把返回数据存入Intent
-                intent.putExtra("result", "My name is linjiqin");
-                //设置返回数据
-                VideoActivity.this.setResult(RESULT_OK, intent);
-                //关闭Activity
-                VideoActivity.this.finish();
-            }
-        });
+        btnClose = (Button) findViewById(R.id.btn_close);
+        btnClose.setOnClickListener(this);
     }
 
     @Override
@@ -88,5 +76,31 @@ public class VideoActivity extends AppCompatActivity {
             mCamera = null;
         }
         super.onPause();
+    }
+
+    /**
+     * 返回主页
+     */
+    private void backToHomePage() {
+        //数据是使用Intent返回
+        Intent intent = new Intent();
+        //把返回数据存入Intent
+        intent.putExtra(Keys.videoResult, "My name is linjiqin");
+        //设置返回数据
+        setResult(Keys.VIDEO_RESULT, intent);
+        //关闭Activity
+        finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_close:
+                backToHomePage();
+                break;
+
+            default:
+                break;
+        }
     }
 }
