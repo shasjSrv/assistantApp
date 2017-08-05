@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,48 +21,25 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 
 
-public class HomePageActivity extends AppCompatActivity {
+public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
 
-
-    /*Camera mCamera;
-    Preview mPreview;
-    CameraView mCameraView;*/
-//    Context ctx;
-//    int flag = 1;
+    private static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
+    private Button btnVideo, btnChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        ctx = this;
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.act_homepage);
-
-        final Button  button1 = (Button) findViewById(R.id.ripple_layout_1);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkPermission();
-            }
-        });
-        final Button  button2 = (Button) findViewById(R.id.ripple_layout_2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(HomePageActivity.this, ChatActivity.class), 1);
-            }
-        });
-        final Button  button3 = (Button) findViewById(R.id.ripple_layout_3);
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                startActivityForResult(new Intent(HomePageActivity.this, ChatActivity.class), 1);
-            }
-        });
-
+        init();
     }
 
+    private void init() {
+        btnVideo = (Button) findViewById(R.id.btn_video);
+        btnChat = (Button) findViewById(R.id.btn_chat);
+        btnVideo.setOnClickListener(this);
+        btnChat.setOnClickListener(this);
+    }
 
     /**
      * 检查运行时权限（相机权限、文件写权限）
@@ -69,11 +47,27 @@ public class HomePageActivity extends AppCompatActivity {
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            startActivityForResult(new Intent(HomePageActivity.this, VideoActivity.class), 1);
+            jumpToVideoActivity();
             return;
         }
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+    }
+
+    /**
+     * 跳转至VideoActivity
+     */
+    private void jumpToVideoActivity() {
+        Intent intent = new Intent(HomePageActivity.this, VideoActivity.class);
+        startActivityForResult(intent, Keys.VIDEO_REQUEST);
+    }
+
+    /**
+     * 跳转至ChatActivity
+     */
+    private void jumpToChatActivity() {
+        Intent intent = new Intent(HomePageActivity.this, ChatActivity.class);
+        startActivityForResult(intent, Keys.CHAT_REQUEST);
     }
 
     @Override
@@ -89,29 +83,38 @@ public class HomePageActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void simulateSuccessProgress(final CircularProgressButton button) {
-        ValueAnimator widthAnimation = ValueAnimator.ofInt(1, 100);
-        widthAnimation.setDuration(1500);
-        widthAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-        widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                Integer value = (Integer) animation.getAnimatedValue();
-                button.setProgress(value);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //VideoActivity return
+        if (requestCode == Keys.VIDEO_REQUEST && resultCode == Keys.VIDEO_RESULT) {
+            if (data != null) {
+                Log.i(TAG, "VIDEO return data: " + data);
+                String result = data.getExtras().getString(Keys.videoResult);
+                return;
             }
-        });
-        widthAnimation.start();
+        }
+        //ChatActivity return
+        if (requestCode == Keys.CHAT_REQUEST && resultCode == Keys.CHAT_RESULT) {
+            if (data != null) {
+
+            }
+        }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null) {
-            String result = data.getExtras().getString("result");//得到新Activity 关闭后返回的数据
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_video:
+                checkPermission();
+                break;
+
+            case R.id.btn_chat:
+                jumpToChatActivity();
+                break;
+
+            default:
+                break;
         }
-//        Log.i(TAG, result);
     }
-
-
-
 }
 
