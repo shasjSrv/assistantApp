@@ -8,7 +8,6 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.Button;
 import android.view.View;
@@ -18,8 +17,8 @@ import android.content.Intent;
  * Created by jzy on 8/2/17.
  */
 
-public class video extends Activity {
-    private static final String TAG = "CamTestActivity";
+public class VideoActivity extends Activity {
+    private static final String TAG = VideoActivity.class.getSimpleName();
     Camera mCamera;
     Preview mPreview;
     CameraView mCameraView;
@@ -31,23 +30,23 @@ public class video extends Activity {
         ctx = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.video);
+        setContentView(R.layout.act_video);
 
         mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         intent = new Intent();
 
-        Button btnClose=(Button)findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(new View.OnClickListener(){
+        Button btnClose = (Button) findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //数据是使用Intent返回
 
                 //把返回数据存入Intent
                 intent.putExtra("result", "My name is linjiqin");
                 //设置返回数据
-                video.this.setResult(RESULT_OK, intent);
+                VideoActivity.this.setResult(RESULT_OK, intent);
                 //关闭Activity
-                video.this.finish();
+                VideoActivity.this.finish();
             }
         });
     }

@@ -34,7 +34,7 @@
         </activity>
 
         <activity
-            android:name="video"
+            android:name=".VideoActivity"
             android:label="@string/Video"
             >
         </activity>

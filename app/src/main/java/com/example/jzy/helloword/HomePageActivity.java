@@ -37,7 +37,6 @@ public class HomePageActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.act_homepage);
 
-
         final CircularProgressButton circularButton1 = (CircularProgressButton) findViewById(R.id.circularButton1);
         circularButton1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +72,7 @@ public class HomePageActivity extends AppCompatActivity {
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            startActivityForResult(new Intent(HomePageActivity.this, video.class), 1);
+            startActivityForResult(new Intent(HomePageActivity.this, VideoActivity.class), 1);
             return;
         }
 
@@ -85,7 +84,7 @@ public class HomePageActivity extends AppCompatActivity {
         if (requestCode == PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(new Intent(HomePageActivity.this, video.class), 1);
+                startActivityForResult(new Intent(HomePageActivity.this, VideoActivity.class), 1);
                 return;
             }
             checkPermission();

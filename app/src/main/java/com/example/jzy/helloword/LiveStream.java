@@ -404,7 +404,7 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback, PreviewC
             yuvImage = images[i];
             timestamps[i] = 1000 * (System.currentTimeMillis() - startTime);
         }
-        /* get video data */
+        /* get VideoActivity data */
         if (yuvImage != null && recording) {
             ((ByteBuffer) yuvImage.image[0].position(0)).put(data);
 
