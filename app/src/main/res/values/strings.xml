@@ -4,6 +4,7 @@
     <string name="camera_not_found">No camera harware found</string>
     <string name="take_photo_help">Touch anywhere on screen to take picture</string>
     <string name="Video">Video</string>
+    <string name="Chat">Chat</string>
     <string name="Upload">Upload</string>
     <string name="Error">Error</string>
     <string name="Complete">Complete</string>

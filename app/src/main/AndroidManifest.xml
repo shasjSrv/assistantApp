@@ -38,6 +38,12 @@
             android:label="@string/Video"
             >
         </activity>
+
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/Chat"
+            >
+        </activity>
     </application>
 
 </manifest>
