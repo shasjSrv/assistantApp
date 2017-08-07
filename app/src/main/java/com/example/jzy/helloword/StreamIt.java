@@ -35,6 +35,7 @@ import java.util.Calendar;
 
 public class StreamIt implements Camera.PreviewCallback{
     private String Url;
+    private int lastestTime;
 
     public StreamIt(String serverURL) {
         this.Url = serverURL;
@@ -55,6 +56,16 @@ public class StreamIt implements Camera.PreviewCallback{
                         80, outstream);
                 outstream.flush();
                 // 启用线程将图像数据发送出去
+                Calendar c = Calendar.getInstance();
+                int seconds = c.get(Calendar.SECOND);
+                if(seconds - lastestTime < 1) {
+                    Log.i("Sys", "seconds:" + seconds);
+                    Log.i("Sys", "lastestTime:" + lastestTime);
+                    return;
+                }
+                lastestTime = seconds;
+                if(lastestTime > 58)
+                    lastestTime = 0;
                 Thread th = new MyThread(outstream, Url);
                 th.start();
               /*  try
@@ -76,7 +87,6 @@ class MyThread extends Thread {
     private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String Error = null;
-    private int lastestTime = 0;
     URL url;
     BufferedReader reader=null;
     JSONObject jsonObject;
@@ -97,15 +107,10 @@ class MyThread extends Thread {
         // Send data
         try
         {
-            Calendar c = Calendar.getInstance();
-            int seconds = c.get(Calendar.SECOND);
-            if(seconds - lastestTime < 1000) {
-                return;
-            }
-            lastestTime = seconds;
+
             //sleep(500);
             jsonObject = new JSONObject();
-            jsonObject.put("title",Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
+            jsonObject.put("photo",Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
             //jsonObject.put("title",myoutputstream.toString());
 
 
