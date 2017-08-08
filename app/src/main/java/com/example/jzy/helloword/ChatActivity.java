@@ -1,12 +1,19 @@
 package com.example.jzy.helloword;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.jzy.helloword.service.DemoServices;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 
@@ -15,6 +22,12 @@ import com.rengwuxian.materialedittext.validation.RegexpValidator;
  */
 
 public class ChatActivity extends AppCompatActivity {
+    public static final String TAG = "demoService";
+    public static Context context;
+    private static Toast mToast;
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 /*<<<<<<< HEAD
@@ -27,8 +40,21 @@ public class ChatActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
 =======*/
+        context = getApplicationContext();
+        StringBuffer param = new StringBuffer();
+        param.append("appid="+getString(R.string.app_id));
+        param.append(",");
+        // 设置使用v5+
+        param.append(SpeechConstant.ENGINE_MODE+"="+SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(ChatActivity.this, param.toString());
         setContentView(R.layout.act_chat);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+
+        Intent i = new Intent(this, DemoServices.class);
+        Log.d(TAG, "before new startService");
+
+        startService(i);
 
     }
 
@@ -49,9 +75,19 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Android.R.id.home对应应用程序图标的id
         if (item.getItemId() == android.R.id.home) {
+            Intent stopIntent = new Intent(this, DemoServices.class);
+            stopService(stopIntent);
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+    public static Context getContext(){
+        return context;
+    }
+
+    public static void showTip(final String str) {
+        mToast.setText(str);
+        mToast.show();
     }
 
 }

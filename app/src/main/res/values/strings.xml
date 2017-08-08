@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Assistant</string>
     <!-- Toast Messages -->
+    <string name="app_id">5987d85e</string>
     <string name="camera_not_found">No camera harware found</string>
     <string name="take_photo_help">Touch anywhere on screen to take picture</string>
     <string name="Video">Video</string>
