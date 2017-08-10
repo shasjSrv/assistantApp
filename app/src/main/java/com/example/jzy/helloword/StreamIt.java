@@ -43,6 +43,19 @@ public class StreamIt implements Camera.PreviewCallback{
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+
+        Calendar c = Calendar.getInstance();
+        int seconds = c.get(Calendar.SECOND);
+        if(seconds - lastestTime < 1) {
+            Log.i("Sys", "seconds:" + seconds);
+            Log.i("Sys", "lastestTime:" + lastestTime);
+            return;
+        }
+        lastestTime = seconds;
+        if(lastestTime > 58)
+            lastestTime = 0;
+
+
         Size size = camera.getParameters().getPreviewSize();
         Camera.Parameters parameters = camera.getParameters();
 
@@ -56,16 +69,7 @@ public class StreamIt implements Camera.PreviewCallback{
                         80, outstream);
                 outstream.flush();
                 // 启用线程将图像数据发送出去
-                Calendar c = Calendar.getInstance();
-                int seconds = c.get(Calendar.SECOND);
-                if(seconds - lastestTime < 1) {
-                    Log.i("Sys", "seconds:" + seconds);
-                    Log.i("Sys", "lastestTime:" + lastestTime);
-                    return;
-                }
-                lastestTime = seconds;
-                if(lastestTime > 58)
-                    lastestTime = 0;
+
                 Thread th = new MyThread(outstream, Url);
                 th.start();
               /*  try
