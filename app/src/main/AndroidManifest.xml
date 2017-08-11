@@ -72,6 +72,12 @@
             android:label="@string/diagnose">
 
         </activity>
+
+        <activity
+            android:name="SettingsActivity"
+            android:label="@string/settings_name"
+            >
+        </activity>
     </application>
 
 </manifest>

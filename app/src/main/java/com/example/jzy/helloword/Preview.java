@@ -20,16 +20,16 @@ import android.graphics.ImageFormat;
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "Preview";
 
-    String serverURL = "http://222.201.145.152:5000/todo/api/v1.0/tasks";
+    String serverURL;
     SurfaceView mSurfaceView;
     SurfaceHolder mHolder;
     Size mPreviewSize;
     List<Size> mSupportedPreviewSizes;
     Camera mCamera;
 
-    Preview(Context context,SurfaceView sv) {
+    Preview(Context context,SurfaceView sv,String URL) {
         super(context);
-
+        serverURL = URL;
         mSurfaceView = sv;
 //        addView(mSurfaceView);
 

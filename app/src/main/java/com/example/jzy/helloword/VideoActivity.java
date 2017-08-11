@@ -3,8 +3,11 @@ package com.example.jzy.helloword;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.StringDef;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -27,6 +30,8 @@ public class VideoActivity extends AppCompatActivity {
     private Preview mPreview;
     private CameraView mCameraView;
     private Context ctx;
+    private String keyprefRoomServerUrl;
+    private SharedPreferences sharedPref;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +39,16 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.act_video);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView));
+        /**
+         * get the parameter of URL
+         */
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
+        String roomURL = sharedPref.getString(
+                keyprefRoomServerUrl, getString(R.string.pref_room_server_url_default));
+
+        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView),roomURL);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 

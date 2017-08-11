@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="@string/pref_miscsettings_key"
+        android:title="@string/pref_miscsettings_title">
+
+        <EditTextPreference
+            android:key="@string/pref_room_server_url_key"
+            android:title="@string/pref_room_server_url_title"
+            android:inputType="text"
+            android:defaultValue="@string/pref_room_server_url_default"
+            android:dialogTitle="@string/pref_room_server_url_dlg" />
+
+        <!--<CheckBoxPreference-->
+            <!--android:key="@string/pref_displayhud_key"-->
+            <!--android:title="@string/pref_displayhud_title"-->
+            <!--android:dialogTitle="@string/pref_displayhud_dlg"-->
+            <!--android:defaultValue="@string/pref_displayhud_default" />-->
+
+        <!--<CheckBoxPreference-->
+            <!--android:key="@string/pref_tracing_key"-->
+            <!--android:title="@string/pref_tracing_title"-->
+            <!--android:dialogTitle="@string/pref_tracing_dlg"-->
+            <!--android:defaultValue="@string/pref_tracing_default" />-->
+    </PreferenceCategory>
+</PreferenceScreen>
