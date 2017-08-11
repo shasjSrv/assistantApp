@@ -8,9 +8,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,12 +27,13 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static android.util.Base64.DEFAULT;
 
 import java.util.Calendar;
-
+import java.util.Scanner;
 
 
 public class StreamIt implements Camera.PreviewCallback{
@@ -105,6 +108,7 @@ class MyThread extends Thread {
         }
     }
 
+
     public void run() {
 
 
@@ -119,8 +123,9 @@ class MyThread extends Thread {
 
 
             // Send POST data request
-            url = new URL(Url);
-            URLConnection conn = url.openConnection();
+            /*url = new URL(Url);
+            URLConnection conn = url.openConnection();*/
+            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -130,9 +135,27 @@ class MyThread extends Thread {
             wr.close();
 
             // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+           /* reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line = null;*/
+
+            InputStream responseStream = conn.getInputStream();
+            String response = drainStream(responseStream);
+            conn.disconnect();
+//            Log.i("Sys", "TURN response: " + response);
+            JSONObject responseJSON = new JSONObject(response);
+//            int userID = responseJSON.getInt("userID");
+//            int status = responseJSON.getInt("status");
+            JSONObject task = responseJSON.getJSONObject("task");
+            int id = task.getInt("id");
+            Log.i("Sys", "taskID:" + id);
+
+//            JSONArray tasks = responseJSON.getJSONArray("task");
+//            for (int i = 0; i < tasks.length(); ++i) {
+//                JSONObject task = tasks.getJSONObject(i);
+//                int id = task.getInt("id");
+//                Log.i("Sys", "taskID:" + id);
+//            }
 
         }
         catch(Exception ex)
@@ -151,5 +174,10 @@ class MyThread extends Thread {
         }
 
         /*****************************************************/
+    }
+
+    private static String drainStream(InputStream in) {
+        Scanner s = new Scanner(in).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }
