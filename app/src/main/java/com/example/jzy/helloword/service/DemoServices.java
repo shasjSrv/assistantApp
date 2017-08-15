@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,7 +32,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
+
+import static android.util.Base64.DEFAULT;
 
 /**
  * Created by jzy on 8/7/17.
@@ -40,6 +50,7 @@ import java.io.IOException;
 public class DemoServices extends Service {
 
     private int count;
+    String serverURL = "http://192.168.3.3:5000/sendIDStatus";
     private final static String TAG = "All Demo with face";
     static final String WELCOME = "你好，我是护士姐姐，请问有什么可以帮到你的";
     // Waker
@@ -138,6 +149,9 @@ public class DemoServices extends Service {
                     if(answerText != null)
                         mTts.startSpeaking(answerText, mTtsListener);
                 }
+//                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+                Thread th = new SendChatThread(serverURL,text);
+                th.start();
                 //TODO 语音理解
             } else {
                 ChatActivity.showTip("识别结果不正确。");
@@ -317,3 +331,106 @@ public class DemoServices extends Service {
     }
 
 }
+
+class SendChatThread extends Thread {
+    /*    private byte byteBuffer[] = new byte[1024];
+        private OutputStream outsocket;*/
+//    private ByteArrayOutputStream myoutputstream;
+    private String Url;
+    private String context;
+    private String Error = null;
+    URL url;
+    BufferedReader reader=null;
+    JSONObject jsonObject;
+
+    public SendChatThread( String Url,String context) {
+        this.Url = Url;
+        this.context = context;
+        /*try {
+            myoutputstream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+
+    public void run() {
+
+
+        // Send data
+        try
+        {
+
+            //sleep(500);
+            jsonObject = new JSONObject();
+//            jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
+            jsonObject.put("userID",123456);
+            jsonObject.put("text",context);
+            jsonObject.put("type",1);
+            //jsonObject.put("title",myoutputstream.toString());
+
+
+            // Send POST data request
+            url = new URL(Url);
+            URLConnection conn = url.openConnection();
+//            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write( jsonObject.toString());
+            wr.flush();
+            Log.i("Sys", "jsonObject:" + jsonObject.toString());
+            wr.close();
+
+            // Get the server response
+           /* reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;*/
+
+            InputStream responseStream = conn.getInputStream();
+            String response = drainStream(responseStream);
+//            conn.disconnect();
+//            Log.i("Sys", "TURN response: " + response);
+            JSONObject responseJSON = new JSONObject(response);
+            int userID = responseJSON.getInt("userID");
+            int status = responseJSON.getInt("status");
+            int emojiID = responseJSON.getInt("emojiID");
+            Log.i("Sys", "userID:" + userID);
+            Log.i("Sys", "status:" + status);
+            Log.i("Sys", "emojiID:" + emojiID);
+           /* JSONObject task = responseJSON.getJSONObject("task");
+            int id = task.getInt("id");*/
+//            Log.i("Sys", "taskID:" + id);
+
+//            JSONArray tasks = responseJSON.getJSONArray("task");
+//            for (int i = 0; i < tasks.length(); ++i) {
+//                JSONObject task = tasks.getJSONObject(i);
+//                int id = task.getInt("id");
+//                Log.i("Sys", "taskID:" + id);
+//            }
+
+        }
+        catch(Exception ex)
+        {
+            Error = ex.getMessage();
+            Log.e("ERROR", "create url false:" + Error);
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+
+            catch(Exception ex) {}
+        }
+
+        /*****************************************************/
+    }
+
+    private static String drainStream(InputStream in) {
+        Scanner s = new Scanner(in).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+}
+

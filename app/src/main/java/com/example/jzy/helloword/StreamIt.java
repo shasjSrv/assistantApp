@@ -123,9 +123,9 @@ class MyThread extends Thread {
 
 
             // Send POST data request
-            /*url = new URL(Url);
-            URLConnection conn = url.openConnection();*/
-            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
+            url = new URL(Url);
+            URLConnection conn = url.openConnection();
+//            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -141,14 +141,18 @@ class MyThread extends Thread {
 
             InputStream responseStream = conn.getInputStream();
             String response = drainStream(responseStream);
-            conn.disconnect();
+//            conn.disconnect();
 //            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
-//            int userID = responseJSON.getInt("userID");
-//            int status = responseJSON.getInt("status");
-            JSONObject task = responseJSON.getJSONObject("task");
-            int id = task.getInt("id");
-            Log.i("Sys", "taskID:" + id);
+            int userID = responseJSON.getInt("userID");
+            int status = responseJSON.getInt("status");
+            int emojiID = responseJSON.getInt("emojiID");
+            Log.i("Sys", "userID:" + userID);
+            Log.i("Sys", "status:" + status);
+            Log.i("Sys", "emojiID:" + emojiID);
+           /* JSONObject task = responseJSON.getJSONObject("task");
+            int id = task.getInt("id");*/
+//            Log.i("Sys", "taskID:" + id);
 
 //            JSONArray tasks = responseJSON.getJSONArray("task");
 //            for (int i = 0; i < tasks.length(); ++i) {
