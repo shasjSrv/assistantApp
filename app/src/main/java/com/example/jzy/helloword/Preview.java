@@ -26,8 +26,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     Size mPreviewSize;
     List<Size> mSupportedPreviewSizes;
     Camera mCamera;
+    StreamIt mStreamIt;
 
-    Preview(Context context,SurfaceView sv,String URL) {
+    Preview(Context context, SurfaceView sv, String URL) {
         super(context);
         serverURL = URL;
         mSurfaceView = sv;
@@ -38,22 +39,22 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
-  private void stopPreviewAndFreeCamera() {
+    private void stopPreviewAndFreeCamera() {
 
-      if (mCamera != null) {
-          mCamera.setPreviewCallback(null);
+        if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
 
-          // Call stopPreview() to stop updating the preview surface.
-          mCamera.stopPreview();
+            // Call stopPreview() to stop updating the preview surface.
+            mCamera.stopPreview();
 
-          // Important: Call release() to release the camera for use by other
-          // applications. Applications should release the camera immediately
-          // during onPause() and re-open() it during onResume()).
-          mCamera.release();
+            // Important: Call release() to release the camera for use by other
+            // applications. Applications should release the camera immediately
+            // during onPause() and re-open() it during onResume()).
+            mCamera.release();
 
-          mCamera = null;
-      }
-  }
+            mCamera = null;
+        }
+    }
 
 
     public void setCamera(Camera camera) {
@@ -75,7 +76,8 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
                 parameters.setPictureFormat(ImageFormat.NV21);
                 mCamera.setPreviewDisplay(mHolder);
-                mCamera.setPreviewCallback(new StreamIt(serverURL));
+                mStreamIt = new StreamIt(serverURL);
+                mCamera.setPreviewCallback(mStreamIt);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -134,23 +136,27 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
+            if (null != mStreamIt) {
+                mStreamIt.destroyInstance();
+            }
         }
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
 
-        if(mCamera != null) {
+        if (mCamera != null) {
             Camera.Parameters parameters = mCamera.getParameters();
 
 //                parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 
-                requestLayout();
+            requestLayout();
 
-                mCamera.setParameters(parameters);
+            mCamera.setParameters(parameters);
             try {
                 mCamera.setPreviewDisplay(mHolder);
                 mCamera.startPreview();
-            }catch (IOException e) {
+            } catch (IOException e) {
                 Log.d("ERROR", "Camera error on surfaceChanged " + e.getMessage());
             }
         }

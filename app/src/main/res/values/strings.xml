@@ -17,6 +17,7 @@
     <string name="ProgressPaddingSample">Progress Padding Sample</string>
     <string name="CustomSelectorSample">Custom Selector Sample</string>
     <string name="action_settings">Settings</string>
+    <string name="confirm">确定</string>
     <string name="settings_name" translatable="false">Assistant Settings</string>
 
     <array name="sample_list">

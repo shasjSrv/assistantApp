@@ -27,6 +27,11 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
+import com.example.jzy.helloword.entity.MessageEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,12 +41,22 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 
-public class StreamIt implements Camera.PreviewCallback{
+public class StreamIt implements Camera.PreviewCallback {
     private String Url;
     private int lastestTime;
 
     public StreamIt(String serverURL) {
+        EventBus.getDefault().register(this);
         this.Url = serverURL;
+    }
+
+    public void destroyInstance() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        /* Do something */
     }
 
     @Override
@@ -49,13 +64,13 @@ public class StreamIt implements Camera.PreviewCallback{
 
         Calendar c = Calendar.getInstance();
         int seconds = c.get(Calendar.SECOND);
-        if(seconds - lastestTime < 1) {
+        if (seconds - lastestTime < 1) {
             Log.i("Sys", "seconds:" + seconds);
             Log.i("Sys", "lastestTime:" + lastestTime);
             return;
         }
         lastestTime = seconds;
-        if(lastestTime > 58)
+        if (lastestTime > 58)
             lastestTime = 0;
 
 
@@ -64,7 +79,7 @@ public class StreamIt implements Camera.PreviewCallback{
 
         try {
             // 调用image.compressToJpeg（）将YUV格式图像数据data转为jpg格式
-            YuvImage image = new YuvImage(data,  parameters.getPreviewFormat(), size.width,
+            YuvImage image = new YuvImage(data, parameters.getPreviewFormat(), size.width,
                     size.height, null);
             if (image != null) {
                 ByteArrayOutputStream outstream = new ByteArrayOutputStream();
@@ -89,13 +104,13 @@ public class StreamIt implements Camera.PreviewCallback{
 }
 
 class MyThread extends Thread {
-/*    private byte byteBuffer[] = new byte[1024];
-    private OutputStream outsocket;*/
+    /*    private byte byteBuffer[] = new byte[1024];
+        private OutputStream outsocket;*/
     private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String Error = null;
     URL url;
-    BufferedReader reader=null;
+    BufferedReader reader = null;
     JSONObject jsonObject;
 
     public MyThread(ByteArrayOutputStream myoutputstream, String Url) {
@@ -113,12 +128,11 @@ class MyThread extends Thread {
 
 
         // Send data
-        try
-        {
+        try {
 
             //sleep(500);
             jsonObject = new JSONObject();
-            jsonObject.put("photo",Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
+            jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
             //jsonObject.put("title",myoutputstream.toString());
 
 
@@ -129,7 +143,7 @@ class MyThread extends Thread {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write( jsonObject.toString());
+            wr.write(jsonObject.toString());
             wr.flush();
             Log.i("Sys", "jsonObject:" + jsonObject.toString());
             wr.close();
@@ -150,6 +164,9 @@ class MyThread extends Thread {
             Log.i("Sys", "userID:" + userID);
             Log.i("Sys", "status:" + status);
             Log.i("Sys", "emojiID:" + emojiID);
+
+            EventBus.getDefault().post(new MessageEvent(userID, status, emojiID));
+
            /* JSONObject task = responseJSON.getJSONObject("task");
             int id = task.getInt("id");*/
 //            Log.i("Sys", "taskID:" + id);
@@ -161,20 +178,14 @@ class MyThread extends Thread {
 //                Log.i("Sys", "taskID:" + id);
 //            }
 
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 reader.close();
+            } catch (Exception ex) {
             }
-
-            catch(Exception ex) {}
         }
 
         /*****************************************************/

@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- 透明色 -->
+    <color name="trans">#00000000</color>
+    <!-- 白色 -->
+    <color name="white">#ffffff</color>
+    <!-- 对话框view背景 -->
+    <color name="color_e0e0e0">#e0e0e0</color>
+    <!-- listview item 点击色 -->
+    <color name="color_efefef">#efefef</color>
 </resources>
