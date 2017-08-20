@@ -64,20 +64,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        stopTimer();
-    }
-
-    private void init() {
-        btnVideo = (Button) findViewById(R.id.btn_video);
-        btnChat = (Button) findViewById(R.id.btn_chat);
-        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
-        btnVideo.setOnClickListener(this);
-        btnChat.setOnClickListener(this);
-        btnDiagnose.setOnClickListener(this);
-
-        ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
+    protected void onResume() {
+        super.onResume();
         if (timerTask == null) {
             timer = new Timer();
             //延迟一秒，迭代一秒设置图片
@@ -93,7 +81,23 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         } else {
             handler.sendMessage(handler.obtainMessage(1, count));
         }
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopTimer();
+    }
+
+    private void init() {
+        btnVideo = (Button) findViewById(R.id.btn_video);
+//        btnChat = (Button) findViewById(R.id.btn_chat);
+//        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
+        btnVideo.setOnClickListener(this);
+//        btnChat.setOnClickListener(this);
+//        btnDiagnose.setOnClickListener(this);
+
+        ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
     }
 
     /**
@@ -211,13 +215,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 checkPermission();
                 break;
 
-            case R.id.btn_chat:
-                jumpToChatActivity();
-                break;
-
-            case R.id.btn_diagnose:
-                jumpToDiagnoseActivity();
-                break;
+//            case R.id.btn_chat:
+//                jumpToChatActivity();
+//                break;
+//
+//            case R.id.btn_diagnose:
+//                jumpToDiagnoseActivity();
+//                break;
 
             default:
                 break;
