@@ -2,6 +2,9 @@ package com.example.jzy.helloword;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +24,10 @@ import com.dd.CircularProgressButton;
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -28,12 +35,38 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
     private Button btnVideo, btnChat, btnDiagnose;
+    private ImageView ivWelcome;
+    private Timer timer;
+    private TimerTask timerTask;
+    private int count = 0;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int myCount = Integer.valueOf(msg.obj.toString());
+
+            switch (msg.what) {
+                case 1:
+                    setImageViewSrc(myCount);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_homepage);
         init();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopTimer();
     }
 
     private void init() {
@@ -43,6 +76,24 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btnVideo.setOnClickListener(this);
         btnChat.setOnClickListener(this);
         btnDiagnose.setOnClickListener(this);
+
+        ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
+        if (timerTask == null) {
+            timer = new Timer();
+            //延迟一秒，迭代一秒设置图片
+            timerTask = new TimerTask() {
+
+                @Override
+                public void run() {
+                    ++count;
+                    handler.sendMessage(handler.obtainMessage(1, count));
+                }
+            };
+            timer.schedule(timerTask, 1000, 1000);
+        } else {
+            handler.sendMessage(handler.obtainMessage(1, count));
+        }
+
     }
 
     /**
@@ -80,6 +131,46 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void jumpToDiagnoseActivity() {
         Intent intent = new Intent(HomePageActivity.this, DiagnoseActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * 根据count循环对ImageView设置图片
+     *
+     * @param count
+     */
+    private void setImageViewSrc(int count) {
+        int myCount = count % 4;
+        switch (myCount) {
+            case 0:
+                ivWelcome.setImageResource(R.drawable.close_eye);
+                break;
+            case 1:
+                ivWelcome.setImageResource(R.drawable.smile);
+                break;
+            case 2:
+                ivWelcome.setImageResource(R.drawable.smile2);
+                break;
+            case 3:
+                ivWelcome.setImageResource(R.drawable.laugh);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 销毁TimerTask和Timer
+     */
+    private void stopTimer() {
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     @Override
