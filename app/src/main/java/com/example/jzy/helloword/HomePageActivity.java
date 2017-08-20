@@ -1,6 +1,7 @@
 package com.example.jzy.helloword;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
@@ -20,11 +21,22 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.dd.CircularProgressButton;
+import com.example.jzy.helloword.entity.MessageEvent;
+import com.example.jzy.helloword.entity.Tip;
+import com.example.jzy.helloword.service.DemoServices;
+import com.example.jzy.helloword.widget.RemindDialog;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,13 +44,14 @@ import java.util.TimerTask;
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = HomePageActivity.class.getSimpleName();
+    public static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
     private Button btnVideo, btnChat, btnDiagnose;
     private ImageView ivWelcome;
     private Timer timer;
     private TimerTask timerTask;
     private int count = 0;
+    private static Context context;
 
     private Handler handler = new Handler() {
         @Override
@@ -59,6 +72,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.act_homepage);
         init();
     }
@@ -89,7 +103,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         stopTimer();
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+        Intent stopIntent = new Intent(this, DemoServices.class);
+        stopService(stopIntent);
+    }
+
     private void init() {
+        EventBus.getDefault().register(this);
+
         btnVideo = (Button) findViewById(R.id.btn_video);
 //        btnChat = (Button) findViewById(R.id.btn_chat);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
@@ -98,6 +122,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 //        btnDiagnose.setOnClickListener(this);
 
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
+
+        StringBuffer param = new StringBuffer();
+        param.append("appid=").append(getString(R.string.app_id)).append(",").append(SpeechConstant.ENGINE_MODE).append("=").append(SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(HomePageActivity.this, param.toString());
+        Intent i = new Intent(this, DemoServices.class);
+        Log.d(TAG, "before new startService");
+        startService(i);
+
     }
 
     /**
@@ -177,6 +209,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Tip tip) {
+        /* Do something */
+        Log.d(TAG, "tip:" + tip.toString());
+        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST) {
@@ -244,6 +283,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static void showTip(final String str) {
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public static Context getContext(){
+        return context;
     }
 
 }

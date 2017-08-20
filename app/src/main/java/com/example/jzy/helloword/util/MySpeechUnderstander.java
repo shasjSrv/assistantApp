@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.jzy.helloword.ChatActivity;
+import com.example.jzy.helloword.HomePageActivity;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -18,12 +19,12 @@ public class MySpeechUnderstander {
     private int ret = 0;// 函数调用返回值
 
     public MySpeechUnderstander(){
-        mSpeechUnderstander = com.iflytek.cloud.SpeechUnderstander.createUnderstander(ChatActivity.getContext(), new InitListener() {
+        mSpeechUnderstander = com.iflytek.cloud.SpeechUnderstander.createUnderstander(HomePageActivity.getContext(), new InitListener() {
             @Override
             public void onInit(int code) {
-                Log.d(ChatActivity.TAG, "speechUnderstanderListener init() code = " + code);
+                Log.d(HomePageActivity.TAG, "speechUnderstanderListener init() code = " + code);
                 if (code != ErrorCode.SUCCESS) {
-                    ChatActivity.showTip("初始化失败,错误码：" + code);
+                    HomePageActivity.showTip("初始化失败,错误码：" + code);
                 }
             }
         });
@@ -35,14 +36,14 @@ public class MySpeechUnderstander {
 
         if (mSpeechUnderstander.isUnderstanding()) {// 开始前检查状态
             mSpeechUnderstander.stopUnderstanding();
-            ChatActivity.showTip("停止录音");
+            HomePageActivity.showTip("停止录音");
         } else {
             ret = mSpeechUnderstander.startUnderstanding(speechUnderstandListener);
             if (ret != 0) {
-                ChatActivity.showTip("语义理解失败,错误码:" + ret);
+                HomePageActivity.showTip("语义理解失败,错误码:" + ret);
 
             } else {
-                ChatActivity.showTip("开始");
+                HomePageActivity.showTip("开始");
             }
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.jzy.helloword.ChatActivity;
+import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.R;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.VoiceWakeuper;
@@ -15,36 +16,37 @@ import com.iflytek.cloud.util.ResourceUtil;
  */
 
 public class Waker {
-    private  int curThresh = 10;
-    private  String keep_alive = "1";
-    private  String ivwNetMode = "0";
+    private int curThresh = 10;
+    private String keep_alive = "1";
+    private String ivwNetMode = "0";
     private VoiceWakeuper mIvw;
     private Context context;
 
 
-    public Waker(){
-        context = ChatActivity.getContext();
+    public Waker() {
+        context = HomePageActivity.getContext();
         mIvw = VoiceWakeuper.getWakeuper();
         mIvw = VoiceWakeuper.createWakeuper(context, null);
     }
 
-    public boolean isNull(){
+    public boolean isNull() {
         return mIvw == null;
     }
 
 
-    public void startListening(WakeuperListener mWakeuperListener){
+    public void startListening(WakeuperListener mWakeuperListener) {
         if (mIvw != null) {
-            ChatActivity.showTip("唤醒开始");
+            HomePageActivity.showTip("唤醒开始");
             setParamWake();
             // 启动唤醒
             mIvw.startListening(mWakeuperListener);
         } else {
-            ChatActivity.showTip("唤醒未初始化");
+            HomePageActivity.showTip("唤醒未初始化");
         }
     }
+
     public void setParamWake() {
-        Log.i(ChatActivity.TAG, "start paramwake");
+        Log.i(HomePageActivity.TAG, "start paramwake");
         // 清空参数.
         mIvw.setParameter(SpeechConstant.PARAMS, null);
         // 唤醒门限值，根据资源携带的唤醒词个数按照“id:门限;id:门限”的格式传入
@@ -59,16 +61,16 @@ public class Waker {
         mIvw.setParameter(SpeechConstant.IVW_RES_PATH, getResource());
     }
 
-    public void destory(){
+    public void destory() {
         mIvw = VoiceWakeuper.getWakeuper();
         if (mIvw != null) {
             mIvw.destroy();
         }
     }
 
-    public  String getResource() {
-        final String resPath = ResourceUtil.generateResourcePath(context,ResourceUtil.RESOURCE_TYPE.assets, "ivw/"+context.getString(R.string.app_id)+".jet");
-        Log.d(ChatActivity.TAG, "resPath: "+resPath );
+    public String getResource() {
+        final String resPath = ResourceUtil.generateResourcePath(context, ResourceUtil.RESOURCE_TYPE.assets, "ivw/" + context.getString(R.string.app_id) + ".jet");
+        Log.d(HomePageActivity.TAG, "resPath: " + resPath);
         return resPath;
     }
 }

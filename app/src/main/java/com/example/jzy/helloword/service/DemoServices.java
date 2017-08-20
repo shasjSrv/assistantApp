@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 
 import com.example.jzy.helloword.ChatActivity;
+import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.util.HandleResult;
 import com.example.jzy.helloword.util.MySpeechUnderstander;
 import com.example.jzy.helloword.util.TTS;
@@ -105,7 +106,7 @@ public class DemoServices extends Service {
                 // iv.setImageResource(R.drawable.face2);
                 mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
             } else {
-                ChatActivity.showTip(error.getPlainDescription(true));
+                HomePageActivity.showTip(error.getPlainDescription(true));
             }
         }
 
@@ -154,14 +155,14 @@ public class DemoServices extends Service {
                 th.start();
                 //TODO 语音理解
             } else {
-                ChatActivity.showTip("识别结果不正确。");
+                HomePageActivity.showTip("识别结果不正确。");
             }
 
         }
 
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
-            ChatActivity.showTip("当前正在说话，音量大小：" + volume);
+            HomePageActivity.showTip("当前正在说话，音量大小：" + volume);
             Log.d(TAG, data.length + "");
         }
 
@@ -173,21 +174,21 @@ public class DemoServices extends Service {
              * @TODO MAKE THE BUTTON INVISIBLE
              */
 
-            ChatActivity.showTip("结束说话");
+            HomePageActivity.showTip("结束说话");
         }
 
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
             isRecording = true;
-            ChatActivity.showTip("开始说话");
+            HomePageActivity.showTip("开始说话");
         }
 
         @Override
         public void onError(SpeechError error) {
             // 14002
             Log.e(TAG, "YU YIN ERROR");
-            ChatActivity.showTip(error.getPlainDescription(true));
+            HomePageActivity.showTip(error.getPlainDescription(true));
             answerText=WELCOME;
             waker.startListening(mWakeuperListener);
         }
@@ -218,7 +219,7 @@ public class DemoServices extends Service {
 
         @Override
         public void onError(SpeechError error) {
-            ChatActivity.showTip(error.getPlainDescription(true));
+            HomePageActivity.showTip(error.getPlainDescription(true));
         }
 
         @Override
@@ -232,11 +233,11 @@ public class DemoServices extends Service {
 
         @Override
         public void onVolumeChanged(int volume) {
-            ChatActivity.showTip("当前正在说话，音量大小：" + volume);
+            HomePageActivity.showTip("当前正在说话，音量大小：" + volume);
             Log.d(TAG, "返回音频数据：" + volume);
         }
     };// end of wakeruperListener
-    
+
 
     @Nullable
     @Override
@@ -271,8 +272,8 @@ public class DemoServices extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        Log.e(ChatActivity.TAG,"the service start");
-        Log.i(ChatActivity.TAG,"the service start");
-        ChatActivity.showTip("the service start");
+        Log.i(HomePageActivity.TAG,"the service start");
+        HomePageActivity.showTip("the service start");
         return super.onStartCommand(intent, flags, startId);
     }
 

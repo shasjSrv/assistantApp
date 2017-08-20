@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.jzy.helloword.ChatActivity;
+import com.example.jzy.helloword.HomePageActivity;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -18,12 +19,12 @@ public class TTS {
     private SpeechSynthesizer mTts;
     private boolean initSuccess = true;
     public TTS(){
-        mTts = SpeechSynthesizer.createSynthesizer(ChatActivity.getContext(), new InitListener() {
+        mTts = SpeechSynthesizer.createSynthesizer(HomePageActivity.getContext(), new InitListener() {
             @Override
             public void onInit(int code) {
-                Log.d(ChatActivity.TAG, "InitListener init() code = " + code);
+                Log.d(HomePageActivity.TAG, "InitListener init() code = " + code);
                 if (code != ErrorCode.SUCCESS) {
-                    ChatActivity.showTip("初始化失败,错误码：" + code);
+                    HomePageActivity.showTip("初始化失败,错误码：" + code);
                     initSuccess = false;
                 }
             }

@@ -3,6 +3,7 @@ package com.example.jzy.helloword.util;
 import android.util.Log;
 
 import com.example.jzy.helloword.ChatActivity;
+import com.example.jzy.helloword.HomePageActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,23 +63,23 @@ public class HandleResult {
             JSONObject weather = new JSONObject(pMsg);
             StringBuffer sb = new StringBuffer();
             if (weather == null) {
-                Log.e(ChatActivity.TAG, "WEATHER IS NULL");
+                Log.e(HomePageActivity.TAG, "WEATHER IS NULL");
                 return null;
             } else {
                 JSONObject semantic = weather.getJSONObject("semantic");
                 if (semantic == null) {
-                    Log.e(ChatActivity.TAG, "semantic is null");
+                    Log.e(HomePageActivity.TAG, "semantic is null");
                     return null;
                 } else {
                     String date;
                     JSONObject slots = semantic.getJSONObject("slots");
                     if (slots == null) {
-                        Log.e(ChatActivity.TAG, "slots is null");
+                        Log.e(HomePageActivity.TAG, "slots is null");
                         return null;
                     } else {
                         JSONObject datetime = slots.getJSONObject("datetime");// 获得询问的日期
                         if (datetime == null) {
-                            Log.e(ChatActivity.TAG, "datetime is null");
+                            Log.e(HomePageActivity.TAG, "datetime is null");
                             return null;
                         } else {
                             date = datetime.getString("date");
@@ -86,7 +87,7 @@ public class HandleResult {
                         }
                         JSONObject location = slots.getJSONObject("location");
                         if (location == null) {
-                            Log.e(ChatActivity.TAG, "slots is null");
+                            Log.e(HomePageActivity.TAG, "slots is null");
                             return null;
                         } else {
                             String addr = location.getString("city");
@@ -149,7 +150,7 @@ public class HandleResult {
             //JSONObject slots=semantic.getJSONObject("slots");
             JSONObject slots=semantic.optJSONObject("slots");
             if(slots==null){
-                Log.e(ChatActivity.TAG, "22");
+                Log.e(HomePageActivity.TAG, "22");
                 JSONObject data=musicJson.getJSONObject("data");
                 JSONArray result=data.getJSONArray("result");
                 JSONObject resultJson=result.getJSONObject(0);
@@ -161,7 +162,7 @@ public class HandleResult {
                 JSONObject data=musicJson.getJSONObject("data");
                 JSONArray result=data.getJSONArray("result");
                 JSONObject resultJson=result.getJSONObject(0);
-                Log.e(ChatActivity.TAG,resultJson.getString("downloadUrl"));
+                Log.e(HomePageActivity.TAG,resultJson.getString("downloadUrl"));
                 return resultJson.getString("downloadUrl");
             }
 
