@@ -392,12 +392,11 @@ class SendChatThread extends Thread {
 //            conn.disconnect();
 //            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
-            int userID = responseJSON.getInt("userID");
-            int status = responseJSON.getInt("status");
-            int emojiID = responseJSON.getInt("emojiID");
-            Log.i("Sys", "userID:" + userID);
-            Log.i("Sys", "status:" + status);
-            Log.i("Sys", "emojiID:" + emojiID);
+            String resultText = responseJSON.getString("text");
+            int resultType = responseJSON.getInt("type");
+            Log.i("Sys", "resultText:" + resultText);
+            Log.i("Sys", "resultType:" + resultType);
+
            /* JSONObject task = responseJSON.getJSONObject("task");
             int id = task.getInt("id");*/
 //            Log.i("Sys", "taskID:" + id);
