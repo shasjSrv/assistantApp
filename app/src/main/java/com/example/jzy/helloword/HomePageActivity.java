@@ -52,6 +52,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private TimerTask timerTask;
     private int count = 0;
     private static Context context;
+    private RemindDialog remindDialog;
 
     private Handler handler = new Handler() {
         @Override
@@ -213,8 +214,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onMessageEvent(Tip tip) {
         /* Do something */
         Log.d(TAG, "tip:" + tip.toString());
-        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
     }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(MessageEvent event) {
+//        /* Do something */
+//        Log.d(TAG, "event:" + event.toString());
+//        if (remindDialog == null) {
+//            remindDialog = new RemindDialog(this, event.toString());
+//        }
+//        remindDialog.setTitle(event.toString());
+//        remindDialog.show();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

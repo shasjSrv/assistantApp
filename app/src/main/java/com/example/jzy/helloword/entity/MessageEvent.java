@@ -12,11 +12,17 @@ public class MessageEvent implements Serializable {
     private int userID;
     private int status;
     private int emojiID;
+    private String result;
+
 
     public MessageEvent(int userID, int status, int emojiID) {
         this.userID = userID;
         this.status = status;
         this.emojiID = emojiID;
+    }
+
+    public MessageEvent(String result) {
+        this.result = result;
     }
 
     @Override

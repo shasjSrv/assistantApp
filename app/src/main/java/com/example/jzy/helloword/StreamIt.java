@@ -165,7 +165,6 @@ class MyThread extends Thread {
             Log.i("Sys", "status:" + status);
             Log.i("Sys", "emojiID:" + emojiID);
 
-            EventBus.getDefault().post(new MessageEvent(userID, status, emojiID));
 
            /* JSONObject task = responseJSON.getJSONObject("task");
             int id = task.getInt("id");*/
@@ -194,5 +193,16 @@ class MyThread extends Thread {
     private static String drainStream(InputStream in) {
         Scanner s = new Scanner(in).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
+    }
+
+    private void returnResult(int userID,int status,int emojiID){
+        if(userID == -2 && status == -1 && emojiID == -1){
+            EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
+        }else if(userID == -1 && status == 0){
+            EventBus.getDefault().post(new MessageEvent("我好像不认识你"));
+        }else{
+            EventBus.getDefault().post(new MessageEvent(userID,status,emojiID));
+        }
+
     }
 }

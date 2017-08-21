@@ -132,7 +132,7 @@ public class DemoServices extends Service {
                 String result1=null;
                 String text=null;
                 int service= HandleResult.whatService(jsonReturn);
-                if(service==HandleResult.WEATHER){
+               /* if(service==HandleResult.WEATHER){
                     answerText  = HandleResult.parseWeather(jsonReturn,result1,text);
                     if(answerText != null)
                         mTts.startSpeaking(answerText,mTtsListener);
@@ -144,12 +144,14 @@ public class DemoServices extends Service {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                }
-                if(service==HandleResult.ANSWER){
+                }*/
+//                if(service==HandleResult.ANSWER){
                     answerText = HandleResult.parseAnswer(jsonReturn,result1,text/*,cli*/);
                     if(answerText != null)
                         mTts.startSpeaking(answerText, mTtsListener);
-                }
+                else
+                        mTts.startSpeaking("识别结果不正确。", mTtsListener);;
+//                }
 //                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
                 Thread th = new SendChatThread(serverURL,text);
                 th.start();
