@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.jzy.helloword.ChatActivity;
 import com.example.jzy.helloword.HomePageActivity;
+import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.util.HandleResult;
 import com.example.jzy.helloword.util.MySpeechUnderstander;
 import com.example.jzy.helloword.util.TTS;
@@ -29,6 +30,9 @@ import com.iflytek.cloud.WakeuperListener;
 import com.iflytek.cloud.WakeuperResult;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +66,7 @@ public class DemoServices extends Service {
     // Understander
     private MySpeechUnderstander mSpeechUnderstander;
 
-    private MediaPlayer mp ;
+    private MediaPlayer mp;
 
     private boolean isPlaying, isRecording;
     private String answerText;
@@ -128,10 +132,10 @@ public class DemoServices extends Service {
             if (null != result) {
                 // 显示
                 String jsonReturn = result.getResultString();
-                Log.e(TAG, "result:"+jsonReturn);
-                String result1=null;
-                String text=null;
-                int service= HandleResult.whatService(jsonReturn);
+                Log.e(TAG, "result:" + jsonReturn);
+                String result1 = null;
+                String text = null;
+                int service = HandleResult.whatService(jsonReturn);
                /* if(service==HandleResult.WEATHER){
                     answerText  = HandleResult.parseWeather(jsonReturn,result1,text);
                     if(answerText != null)
@@ -146,14 +150,15 @@ public class DemoServices extends Service {
                     }
                 }*/
 //                if(service==HandleResult.ANSWER){
-                    answerText = HandleResult.parseAnswer(jsonReturn,result1,text/*,cli*/);
-                    if(answerText != null)
-                        mTts.startSpeaking(answerText, mTtsListener);
+                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+                if (answerText != null)
+                    mTts.startSpeaking(answerText, mTtsListener);
                 else
-                        mTts.startSpeaking("识别结果不正确。", mTtsListener);;
+                    mTts.startSpeaking("识别结果不正确。", mTtsListener);
+                ;
 //                }
 //                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-                Thread th = new SendChatThread(serverURL,text);
+                Thread th = new SendChatThread(serverURL, text);
                 th.start();
                 //TODO 语音理解
             } else {
@@ -191,7 +196,7 @@ public class DemoServices extends Service {
             // 14002
             Log.e(TAG, "YU YIN ERROR");
             HomePageActivity.showTip(error.getPlainDescription(true));
-            answerText=WELCOME;
+            answerText = WELCOME;
             waker.startListening(mWakeuperListener);
         }
 
@@ -214,7 +219,7 @@ public class DemoServices extends Service {
             if (mIvw != null) {
                 mIvw.destroy();
             }
-            mTts.startSpeaking(answerText,mTtsListener);
+            mTts.startSpeaking(answerText, mTtsListener);
             //VoiceWakeuper mIvw = VoiceWakeuper.getWakeuper();
             //mIvw.stopListening();
         }
@@ -259,14 +264,14 @@ public class DemoServices extends Service {
         waker = new Waker();
         waker.startListening(mWakeuperListener);
         // 初始化合成对象
-        mTts =  new TTS();
+        mTts = new TTS();
         // 初始化语音语义理解对象
         mSpeechUnderstander = new MySpeechUnderstander();
         isPlaying = false;
         isRecording = false;
         answerText = WELCOME;
-        count=2;
-
+        count = 2;
+        EventBus.getDefault().register(this);
 
     }
 
@@ -274,14 +279,14 @@ public class DemoServices extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        Log.e(ChatActivity.TAG,"the service start");
-        Log.i(HomePageActivity.TAG,"the service start");
+        Log.i(HomePageActivity.TAG, "the service start");
         HomePageActivity.showTip("the service start");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
         if (mp.isPlaying()) {
             mp.stop();
@@ -292,16 +297,21 @@ public class DemoServices extends Service {
         mSpeechUnderstander.destory();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Tip tip) {
+        /* Do something */
+    }
+
     private void playMusic(String result) throws JSONException {
         String url = null;
-        url=HandleResult.parseMusic(result);
+        url = HandleResult.parseMusic(result);
         Log.e(TAG, url);
-        if(url=="null"){
-            String answerText="你想听谁唱的呀？";
-            mTts.startSpeaking(answerText,mTtsListener);
+        if (url == "null") {
+            String answerText = "你想听谁唱的呀？";
+            mTts.startSpeaking(answerText, mTtsListener);
 
             mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-        }else{
+        } else {
             initMediaPlayer(url);
             mp.start();
         }
@@ -314,7 +324,7 @@ public class DemoServices extends Service {
         //File file = new File(Environment.getExternalStorageDirectory(), "music.mp3");
         try {
             //MediaPlayer mp = MediaPlayer.create(this, R.raw.music1);
-            mp.setDataSource( url);
+            mp.setDataSource(url);
             mp.prepare();
 
         } catch (IllegalArgumentException e) {
@@ -343,10 +353,10 @@ class SendChatThread extends Thread {
     private String context;
     private String Error = null;
     URL url;
-    BufferedReader reader=null;
+    BufferedReader reader = null;
     JSONObject jsonObject;
 
-    public SendChatThread( String Url,String context) {
+    public SendChatThread(String Url, String context) {
         this.Url = Url;
         this.context = context;
         /*try {
@@ -361,15 +371,14 @@ class SendChatThread extends Thread {
 
 
         // Send data
-        try
-        {
+        try {
 
             //sleep(500);
             jsonObject = new JSONObject();
 //            jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
-            jsonObject.put("userID",123456);
-            jsonObject.put("text",context);
-            jsonObject.put("type",1);
+            jsonObject.put("userID", 123456);
+            jsonObject.put("text", context);
+            jsonObject.put("type", 1);
             //jsonObject.put("title",myoutputstream.toString());
 
 
@@ -380,7 +389,7 @@ class SendChatThread extends Thread {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write( jsonObject.toString());
+            wr.write(jsonObject.toString());
             wr.flush();
             Log.i("Sys", "jsonObject:" + jsonObject.toString());
             wr.close();
@@ -411,20 +420,14 @@ class SendChatThread extends Thread {
 //                Log.i("Sys", "taskID:" + id);
 //            }
 
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 reader.close();
+            } catch (Exception ex) {
             }
-
-            catch(Exception ex) {}
         }
 
         /*****************************************************/
