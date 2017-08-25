@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.jzy.helloword.ChatActivity;
 import com.example.jzy.helloword.HomePageActivity;
+import com.example.jzy.helloword.entity.AddEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.util.HandleResult;
 import com.example.jzy.helloword.util.MySpeechUnderstander;
@@ -134,7 +135,7 @@ public class DemoServices extends Service {
                 String jsonReturn = result.getResultString();
                 Log.e(TAG, "result:" + jsonReturn);
                 String result1 = null;
-                String text = null;
+                String text = new String();
                 int service = HandleResult.whatService(jsonReturn);
                /* if(service==HandleResult.WEATHER){
                     answerText  = HandleResult.parseWeather(jsonReturn,result1,text);
@@ -151,9 +152,10 @@ public class DemoServices extends Service {
                 }*/
 //                if(service==HandleResult.ANSWER){
                 answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
-                if (answerText != null)
+                if (answerText != null) {
                     mTts.startSpeaking(answerText, mTtsListener);
-                else
+                    changeActicityCondition(text);
+                }else
                     mTts.startSpeaking("识别结果不正确。", mTtsListener);
                 ;
 //                }
@@ -165,6 +167,13 @@ public class DemoServices extends Service {
                 HomePageActivity.showTip("识别结果不正确。");
             }
 
+        }
+        private void changeActicityCondition(String text){
+            int index = text.indexOf("添加用户");
+            Log.i(TAG, "index:" + index);
+            if(index != -1){
+                EventBus.getDefault().post(new AddEvent(text));
+            }
         }
 
         @Override
@@ -220,8 +229,18 @@ public class DemoServices extends Service {
                 mIvw.destroy();
             }
             mTts.startSpeaking(answerText, mTtsListener);
+            changeActicityCondition(answerText);
+
             //VoiceWakeuper mIvw = VoiceWakeuper.getWakeuper();
             //mIvw.stopListening();
+        }
+
+        private void changeActicityCondition(String text){
+            int index = text.indexOf("你好");
+            Log.i(TAG, "index:" + index);
+            if(text.indexOf("你好") != -1) {
+                EventBus.getDefault().post(new Tip(text));
+            }
         }
 
         @Override

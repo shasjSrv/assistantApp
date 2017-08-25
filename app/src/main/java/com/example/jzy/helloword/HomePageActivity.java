@@ -21,6 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.dd.CircularProgressButton;
+import com.example.jzy.helloword.entity.AddEvent;
 import com.example.jzy.helloword.entity.MessageEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.service.DemoServices;
@@ -139,7 +140,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            jumpToVideoActivity();
+            jumpToVideoActivity(0);
             return;
         }
 
@@ -149,8 +150,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     /**
      * 跳转至VideoActivity
      */
-    private void jumpToVideoActivity() {
+    private void jumpToVideoActivity(int flag) {
         Intent intent = new Intent(HomePageActivity.this, VideoActivity.class);
+        Bundle bundle = new Bundle();
+        /*字符、字符串、布尔、字节数组、浮点数等等，都可以传*/
+
+        bundle.putInt("flag",flag);
+        /*把bundle对象assign给Intent*/
+        intent.putExtras(bundle);
         startActivityForResult(intent, Keys.VIDEO_REQUEST);
     }
 
@@ -214,7 +221,15 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onMessageEvent(Tip tip) {
         /* Do something */
         Log.d(TAG, "tip:" + tip.toString());
-        jumpToVideoActivity();
+        jumpToVideoActivity(0);
+//        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddEvent event) {
+        /* Do something */
+        Log.d(TAG, "flag:" + event.getFlag());
+        jumpToVideoActivity(event.getFlag());
 //        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
     }
 

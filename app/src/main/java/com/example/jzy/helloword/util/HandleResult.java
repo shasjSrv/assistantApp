@@ -176,7 +176,7 @@ public class HandleResult {
 
     }
 
-    public static String parseAnswer(String pMsg, String result, String text/*,Client cli*/) {
+    public static String parseAnswer(String pMsg, String result, String  text/*,Client cli*/) {
         if (pMsg == null) {
             return null;
         }

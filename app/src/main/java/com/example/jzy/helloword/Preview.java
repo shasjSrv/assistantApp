@@ -27,11 +27,13 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     List<Size> mSupportedPreviewSizes;
     Camera mCamera;
     StreamIt mStreamIt;
+    private int flag;
 
-    Preview(Context context, SurfaceView sv, String URL) {
+    Preview(Context context, SurfaceView sv, String URL,int flag) {
         super(context);
         serverURL = URL;
         mSurfaceView = sv;
+        this.flag = flag;
 //        addView(mSurfaceView);
 
         mHolder = mSurfaceView.getHolder();
@@ -76,7 +78,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
                 parameters.setPictureFormat(ImageFormat.NV21);
                 mCamera.setPreviewDisplay(mHolder);
-                mStreamIt = new StreamIt(serverURL);
+                mStreamIt = new StreamIt(serverURL,flag);
                 mCamera.setPreviewCallback(mStreamIt);
             } catch (IOException e) {
                 e.printStackTrace();

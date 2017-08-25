@@ -27,11 +27,12 @@ public class MessageEvent implements Serializable {
 
     @Override
     public String toString() {
-        return "MessageEvent{" +
+        /*return "MessageEvent{" +
                 "userID=" + userID +
                 ", status=" + status +
                 ", emojiID=" + emojiID +
-                '}';
+                '}';*/
+        return result;
     }
 
     public int getUserID() {

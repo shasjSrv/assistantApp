@@ -28,6 +28,8 @@ import android.hardware.Camera.Size;
 import android.util.Log;
 
 import com.example.jzy.helloword.entity.MessageEvent;
+import com.example.jzy.helloword.entity.Tip;
+import com.example.jzy.helloword.entity.backEnvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,10 +46,12 @@ import java.util.Scanner;
 public class StreamIt implements Camera.PreviewCallback {
     private String Url;
     private int lastestTime;
+    private int flag;
 
-    public StreamIt(String serverURL) {
+    public StreamIt(String serverURL,int flag) {
         EventBus.getDefault().register(this);
         this.Url = serverURL;
+        this.flag = flag;
     }
 
     public void destroyInstance() {
@@ -64,7 +68,7 @@ public class StreamIt implements Camera.PreviewCallback {
 
         Calendar c = Calendar.getInstance();
         int seconds = c.get(Calendar.SECOND);
-        if (seconds - lastestTime < 1) {
+        if (seconds - lastestTime < 10) {
             Log.i("Sys", "seconds:" + seconds);
             Log.i("Sys", "lastestTime:" + lastestTime);
             return;
@@ -88,7 +92,7 @@ public class StreamIt implements Camera.PreviewCallback {
                 outstream.flush();
                 // 启用线程将图像数据发送出去
 
-                Thread th = new MyThread(outstream, Url);
+                Thread th = new MyThread(outstream, Url,flag);
                 th.start();
               /*  try
                 {
@@ -109,13 +113,15 @@ class MyThread extends Thread {
     private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String Error = null;
+    private int flag;
     URL url;
     BufferedReader reader = null;
     JSONObject jsonObject;
 
-    public MyThread(ByteArrayOutputStream myoutputstream, String Url) {
+    public MyThread(ByteArrayOutputStream myoutputstream, String Url,int flag) {
         this.myoutputstream = myoutputstream;
         this.Url = Url;
+        this.flag = flag;
         try {
             myoutputstream.close();
         } catch (IOException e) {
@@ -133,11 +139,13 @@ class MyThread extends Thread {
             //sleep(500);
             jsonObject = new JSONObject();
             jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
+            jsonObject.put("userID",1);
             //jsonObject.put("title",myoutputstream.toString());
 
 
             // Send POST data request
             url = new URL(Url);
+            Log.i("Sys", "Url:" + Url);
             URLConnection conn = url.openConnection();
 //            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
@@ -158,12 +166,19 @@ class MyThread extends Thread {
 //            conn.disconnect();
 //            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
-            int userID = responseJSON.getInt("userID");
-            int status = responseJSON.getInt("status");
-            int emojiID = responseJSON.getInt("emojiID");
-            Log.i("Sys", "userID:" + userID);
-            Log.i("Sys", "status:" + status);
-            Log.i("Sys", "emojiID:" + emojiID);
+            if(flag == 0) {
+                int userID = responseJSON.getInt("userID");
+                int status = responseJSON.getInt("status");
+                int emojiID = responseJSON.getInt("emojiID");
+                Log.i("Sys", "userID:" + userID);
+                Log.i("Sys", "status:" + status);
+                Log.i("Sys", "emojiID:" + emojiID);
+                returnResult(userID,status,emojiID);
+            }else {
+                int ifSucc = responseJSON.getInt("ifSucc");
+                Log.i("Sys", "ifSucc:" + ifSucc);
+                returnSucc(ifSucc);
+            }
 
 
            /* JSONObject task = responseJSON.getJSONObject("task");
@@ -196,12 +211,26 @@ class MyThread extends Thread {
     }
 
     private void returnResult(int userID,int status,int emojiID){
+        Log.i("Sys", "userID:" + userID);
+        Log.i("Sys", "status:" + status);
+        Log.i("Sys", "emojiID:" + emojiID);
         if(userID == -2 && status == -1 && emojiID == -1){
-            EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
+            Log.i("Sys", "come false emojiID:" + emojiID);
+            EventBus.getDefault().post(new backEnvent(userID,status,emojiID));
+//            EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
+            Log.i("Sys", "come userId emojiID:" + emojiID);
             EventBus.getDefault().post(new MessageEvent("我好像不认识你"));
         }else{
+            Log.i("Sys", "come userID status emojiID:" + emojiID);
             EventBus.getDefault().post(new MessageEvent(userID,status,emojiID));
+        }
+
+    }
+
+    private void returnSucc(int ifSucc) {
+        if(ifSucc != 0){
+            EventBus.getDefault().post(new backEnvent("success!"));
         }
 
     }

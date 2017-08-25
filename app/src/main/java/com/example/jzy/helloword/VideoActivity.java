@@ -22,6 +22,8 @@ import android.view.View;
 import android.content.Intent;
 
 import com.example.jzy.helloword.entity.MessageEvent;
+import com.example.jzy.helloword.entity.Tip;
+import com.example.jzy.helloword.entity.backEnvent;
 import com.example.jzy.helloword.widget.RemindDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +43,7 @@ public class VideoActivity extends AppCompatActivity {
     private String keyprefRoomServerUrl;
     private SharedPreferences sharedPref;
     private RemindDialog remindDialog;
+    private int flag;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +61,9 @@ public class VideoActivity extends AppCompatActivity {
         keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         String roomURL = sharedPref.getString(
                 keyprefRoomServerUrl, getString(R.string.pref_room_server_url_default));
-
-        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL);
+        Bundle bundle = this.getIntent().getExtras();
+        flag = bundle.getInt("flag");
+        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL,flag);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
@@ -109,10 +113,16 @@ public class VideoActivity extends AppCompatActivity {
         remindDialog.show();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(backEnvent event) {
+        /* Do something */
+        Log.d(TAG, "event:" + event.toString());
+        backToHomePage(event.toString());
+    }
     /**
      * 返回主页
      */
-    private void backToHomePage() {
+    private void backToHomePage(String text) {
         //数据是使用Intent返回
         Intent intent = new Intent();
         //把返回数据存入Intent
@@ -127,7 +137,7 @@ public class VideoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Android.R.id.home对应应用程序图标的id
         if (item.getItemId() == android.R.id.home) {
-            backToHomePage();
+            backToHomePage("My name is linjiqin");
         }
         return super.onOptionsItemSelected(item);
     }
