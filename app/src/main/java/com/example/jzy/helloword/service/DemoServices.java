@@ -2,20 +2,21 @@ package com.example.jzy.helloword.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 
-import com.example.jzy.helloword.ChatActivity;
 import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.entity.AddEvent;
+import com.example.jzy.helloword.entity.AnswerEvent;
 import com.example.jzy.helloword.entity.Tip;
+import com.example.jzy.helloword.entity.backEnvent;
 import com.example.jzy.helloword.util.HandleResult;
+import com.example.jzy.helloword.util.MyResult;
 import com.example.jzy.helloword.util.MySpeechUnderstander;
 import com.example.jzy.helloword.util.TTS;
 import com.example.jzy.helloword.util.Waker;
@@ -38,14 +39,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Scanner;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import static android.util.Base64.DEFAULT;
 
@@ -56,9 +67,11 @@ import static android.util.Base64.DEFAULT;
 public class DemoServices extends Service {
 
     private int count;
-    String serverURL = "http://192.168.3.3:5000/sendIDStatus";
+    String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
-    static final String WELCOME = "你好，我是护士姐姐，请问有什么可以帮到你的";
+    private final static int ANSWERMODE = 1;
+    private final static int QUESTIONMODE = 0;
+    static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
     // Waker
     private Waker waker;
 
@@ -71,6 +84,7 @@ public class DemoServices extends Service {
 
     private boolean isPlaying, isRecording;
     private String answerText;
+    private int flag = QUESTIONMODE;
 
 
     private SynthesizerListener mTtsListener = new SynthesizerListener() {
@@ -135,7 +149,7 @@ public class DemoServices extends Service {
                 String jsonReturn = result.getResultString();
                 Log.e(TAG, "result:" + jsonReturn);
                 String result1 = null;
-                String text = new String();
+                String text = null;
                 int service = HandleResult.whatService(jsonReturn);
                /* if(service==HandleResult.WEATHER){
                     answerText  = HandleResult.parseWeather(jsonReturn,result1,text);
@@ -151,17 +165,35 @@ public class DemoServices extends Service {
                     }
                 }*/
 //                if(service==HandleResult.ANSWER){
-                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+                MyResult myResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+//                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+               /* answerText = myResult.getResult();
                 if (answerText != null) {
                     mTts.startSpeaking(answerText, mTtsListener);
                     changeActicityCondition(text);
                 }else
-                    mTts.startSpeaking("识别结果不正确。", mTtsListener);
+                    mTts.startSpeaking("识别结果不正确。", mTtsListener);*/
+
+
+
                 ;
 //                }
-//                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-                Thread th = new SendChatThread(serverURL, text);
-                th.start();
+
+                if(myResult == null){
+                    Log.i("Sys","myResult is null");
+                }
+                if(myResult == null) {
+                    if (flag == QUESTIONMODE) {
+                        mTts.startSpeaking("对不起，我没有听清楚。", mTtsListener);
+                    }
+                }else {
+//                    if(flag == QUESTIONMODE) {
+                        Thread th = new SendChatThread(serverURL, myResult.getText());
+                        th.start();
+                    /*}else{
+                        flag = QUESTIONMODE;
+                    }*/
+                }
                 //TODO 语音理解
             } else {
                 HomePageActivity.showTip("识别结果不正确。");
@@ -169,16 +201,59 @@ public class DemoServices extends Service {
 
         }
         private void changeActicityCondition(String text){
-            int index = text.indexOf("添加用户");
+            int index = text.indexOf("我要添加");
             Log.i(TAG, "index:" + index);
             if(index != -1){
                 EventBus.getDefault().post(new AddEvent(text));
             }
         }
 
+        private String drainStream(InputStream in) {
+            Scanner s = new Scanner(in).useDelimiter("\\A");
+            return s.hasNext() ? s.next() : "";
+        }
+        private void sendChatText(String serverURL,String text){
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("user_id", 1);
+                jsonObject.put("content", text);
+                Log.i("Sys", "text:" + text);
+                // Send POST data request
+
+                URL url = new URL(serverURL);
+                URLConnection conn = url.openConnection();
+//            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(jsonObject.toString());
+                wr.flush();
+                wr.close();
+
+                InputStream responseStream = conn.getInputStream();
+                String response = drainStream(responseStream);
+
+                JSONObject responseJSON = new JSONObject(response);
+                String resultText = responseJSON.getString("text");
+                Log.i("Sys", "resultText:" + resultText);
+                text = resultText;
+
+            } catch (Exception ex) {
+                String Error = ex.getMessage();
+                Log.e("ERROR", "create url false:" + Error);
+            } finally {
+                try {
+                    BufferedReader reader = null;
+                    reader.close();
+                } catch (Exception ex) {
+                }
+            }
+
+        }
+
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
-            HomePageActivity.showTip("当前正在说话，音量大小：" + volume);
+//            HomePageActivity.showTip("当前正在说话，音量大小：" + volume);
             Log.d(TAG, data.length + "");
         }
 
@@ -317,8 +392,20 @@ public class DemoServices extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Tip tip) {
-        /* Do something */
+    public void onMessageEvent(backEnvent event) {
+        //Do something
+        waker.stopListening();
+        mTts.startSpeaking("你好" + event.toString() + "今天吃药了吗", mTtsListener);
+        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+        flag = ANSWERMODE;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AnswerEvent event) {
+        //Do something
+//        waker.stopListening();
+        mTts.startSpeaking(event.getText(), mTtsListener);
+        flag = QUESTIONMODE;
     }
 
     private void playMusic(String result) throws JSONException {
@@ -374,6 +461,7 @@ class SendChatThread extends Thread {
     URL url;
     BufferedReader reader = null;
     JSONObject jsonObject;
+    private AssetManager assets;
 
     public SendChatThread(String Url, String context) {
         this.Url = Url;
@@ -392,19 +480,23 @@ class SendChatThread extends Thread {
         // Send data
         try {
 
-            //sleep(500);
+
+
             jsonObject = new JSONObject();
 //            jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
-            jsonObject.put("userID", 123456);
-            jsonObject.put("text", context);
-            jsonObject.put("type", 1);
+            jsonObject.put("user_id", 1);
+            jsonObject.put("content", context);
             //jsonObject.put("title",myoutputstream.toString());
 
 
             // Send POST data request
             url = new URL(Url);
-            URLConnection conn = url.openConnection();
-//            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
+//            URLConnection conn = url.openConnection();
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, new TrustManager[]{new MyTrustManager()}, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new MyHostnameVerifier());
+            HttpsURLConnection conn= (HttpsURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -423,21 +515,14 @@ class SendChatThread extends Thread {
 //            conn.disconnect();
 //            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
-            String resultText = responseJSON.getString("text");
-            int resultType = responseJSON.getInt("type");
-            Log.i("Sys", "resultText:" + resultText);
-            Log.i("Sys", "resultType:" + resultType);
+            JSONObject resultText = responseJSON.getJSONObject("result");
+            String text = resultText.getString("text");
+//            int resultType = responseJSON.getInt("type");
+            Log.i("Sys", "text:" + text);
+            EventBus.getDefault().post(new AnswerEvent(text));
+//            Log.i("Sys", "resultType:" + resultType);
 
-           /* JSONObject task = responseJSON.getJSONObject("task");
-            int id = task.getInt("id");*/
-//            Log.i("Sys", "taskID:" + id);
 
-//            JSONArray tasks = responseJSON.getJSONArray("task");
-//            for (int i = 0; i < tasks.length(); ++i) {
-//                JSONObject task = tasks.getJSONObject(i);
-//                int id = task.getInt("id");
-//                Log.i("Sys", "taskID:" + id);
-//            }
 
         } catch (Exception ex) {
             Error = ex.getMessage();
@@ -451,10 +536,52 @@ class SendChatThread extends Thread {
 
         /*****************************************************/
     }
+    private class MyHostnameVerifier implements HostnameVerifier {
+
+        @Override
+
+        public boolean verify(String hostname, SSLSession session) {
+// TODO Auto-generated method stub
+
+            return true;
+        }
+
+    }
+
+    private class MyTrustManager implements X509TrustManager {
+
+        @Override
+
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+
+                throws CertificateException {
+// TODO Auto-generated method stub
+
+
+        }
+        @Override
+
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+
+                throws CertificateException {
+// TODO Auto-generated method stub
+
+        }
+        @Override
+
+        public X509Certificate[] getAcceptedIssuers() {
+
+// TODO Auto-generated method stub
+
+            return null;
+        }
+    }
 
     private static String drainStream(InputStream in) {
         Scanner s = new Scanner(in).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
+
+
 }
 

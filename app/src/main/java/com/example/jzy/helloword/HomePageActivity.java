@@ -217,6 +217,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    /**
+     * 跳转VideoActivity人脸识别
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(Tip tip) {
         /* Do something */
@@ -252,7 +255,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         if (requestCode == Keys.VIDEO_REQUEST && resultCode == Keys.VIDEO_RESULT) {
             if (data != null) {
                 Log.i(TAG, "VIDEO return data: " + data);
-                String result = data.getExtras().getString(Keys.videoResult);
+                /*String result = data.getExtras().getString(Keys.videoResult);
+                if (remindDialog == null) {
+                    remindDialog = new RemindDialog(this, result);
+                }
+                remindDialog.setTitle(result);
+                remindDialog.show();*/
                 return;
             }
         }

@@ -45,6 +45,11 @@ public class Waker {
         }
     }
 
+    public void stopListening() {
+        mIvw.stopListening();
+    }
+
+
     public void setParamWake() {
         Log.i(HomePageActivity.TAG, "start paramwake");
         // 清空参数.

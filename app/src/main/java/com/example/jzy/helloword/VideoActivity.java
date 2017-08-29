@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.view.View;
 import android.content.Intent;
 
+import com.example.jzy.helloword.entity.ChangeEvent;
 import com.example.jzy.helloword.entity.MessageEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.entity.backEnvent;
@@ -35,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 
 public class VideoActivity extends AppCompatActivity {
+    private static Context context;
     private static final String TAG = VideoActivity.class.getSimpleName();
     private Camera mCamera;
     private Preview mPreview;
@@ -47,7 +49,7 @@ public class VideoActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ctx = this;
+        context = this;
         setContentView(R.layout.act_video);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -103,14 +105,21 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ChangeEvent event) {
+        /* Do something */
+        Log.d(TAG, "event:" + event.getText());
+        if (remindDialog == null) {
+            remindDialog = new RemindDialog(this, event.getText());
+        }
+        remindDialog.setTitle(event.getText());
+        remindDialog.show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.toString());
-        if (remindDialog == null) {
-            remindDialog = new RemindDialog(this, event.toString());
-        }
-        remindDialog.setTitle(event.toString());
-        remindDialog.show();
+        showTip(event.toString());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -126,7 +135,7 @@ public class VideoActivity extends AppCompatActivity {
         //数据是使用Intent返回
         Intent intent = new Intent();
         //把返回数据存入Intent
-        intent.putExtra(Keys.videoResult, "My name is linjiqin");
+        intent.putExtra(Keys.videoResult, text);
         //设置返回数据
         setResult(Keys.VIDEO_RESULT, intent);
         //关闭Activity
@@ -140,5 +149,9 @@ public class VideoActivity extends AppCompatActivity {
             backToHomePage("My name is linjiqin");
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void showTip(final String str) {
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
     }
 }

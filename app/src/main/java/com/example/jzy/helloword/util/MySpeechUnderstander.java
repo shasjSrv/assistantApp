@@ -47,6 +47,12 @@ public class MySpeechUnderstander {
             }
         }
     }
+    public void stopUnderStanding(SpeechUnderstanderListener speechUnderstandListener){
+        if (mSpeechUnderstander.isUnderstanding()) {// 开始前检查状态
+            mSpeechUnderstander.stopUnderstanding();
+            HomePageActivity.showTip("停止录音");
+        }
+    }
 
     public void setParamUnderstand() {
 

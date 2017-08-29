@@ -27,6 +27,7 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
+import com.example.jzy.helloword.entity.ChangeEvent;
 import com.example.jzy.helloword.entity.MessageEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.entity.backEnvent;
@@ -74,8 +75,14 @@ public class StreamIt implements Camera.PreviewCallback {
             return;
         }
         lastestTime = seconds;
-        if (lastestTime > 58)
+        /*if(lastestTime == 50){
+            lastestTime = 51;
+        }*/
+        if (lastestTime >= 50) {
             lastestTime = 0;
+            return;
+        }
+
 
 
         Size size = camera.getParameters().getPreviewSize();
@@ -110,6 +117,9 @@ public class StreamIt implements Camera.PreviewCallback {
 class MyThread extends Thread {
     /*    private byte byteBuffer[] = new byte[1024];
         private OutputStream outsocket;*/
+    private static final int UPDATE = 1;
+    private static final int SENDIDSTATUS = 0;
+
     private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String Error = null;
@@ -139,13 +149,22 @@ class MyThread extends Thread {
             //sleep(500);
             jsonObject = new JSONObject();
             jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
-            jsonObject.put("userID",1);
+            if(flag == 1) {
+                jsonObject.put("userID", 1);
+                jsonObject.put("userName", "MrCai");
+            }
             //jsonObject.put("title",myoutputstream.toString());
 
 
             // Send POST data request
-            url = new URL(Url);
-            Log.i("Sys", "Url:" + Url);
+            String URL = Url;
+            if(flag == UPDATE){
+                URL = Url + "/update";
+            }else if(flag == SENDIDSTATUS){
+                URL = Url + "/sendIDStatus";
+            }
+            url = new URL(URL);
+            Log.i("Sys", "URL:" + URL);
             URLConnection conn = url.openConnection();
 //            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
@@ -166,32 +185,21 @@ class MyThread extends Thread {
 //            conn.disconnect();
 //            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
-            if(flag == 0) {
+            if(flag == SENDIDSTATUS) {
                 int userID = responseJSON.getInt("userID");
+                String userName = responseJSON.getString("userName");
                 int status = responseJSON.getInt("status");
                 int emojiID = responseJSON.getInt("emojiID");
                 Log.i("Sys", "userID:" + userID);
+                Log.i("Sys", "userName:" + userName);
                 Log.i("Sys", "status:" + status);
                 Log.i("Sys", "emojiID:" + emojiID);
-                returnResult(userID,status,emojiID);
-            }else {
+                returnResult(userID,status,emojiID,userName);
+            }else if (flag == UPDATE) {
                 int ifSucc = responseJSON.getInt("ifSucc");
                 Log.i("Sys", "ifSucc:" + ifSucc);
                 returnSucc(ifSucc);
             }
-
-
-           /* JSONObject task = responseJSON.getJSONObject("task");
-            int id = task.getInt("id");*/
-//            Log.i("Sys", "taskID:" + id);
-
-//            JSONArray tasks = responseJSON.getJSONArray("task");
-//            for (int i = 0; i < tasks.length(); ++i) {
-//                JSONObject task = tasks.getJSONObject(i);
-//                int id = task.getInt("id");
-//                Log.i("Sys", "taskID:" + id);
-//            }
-
         } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);
@@ -210,20 +218,20 @@ class MyThread extends Thread {
         return s.hasNext() ? s.next() : "";
     }
 
-    private void returnResult(int userID,int status,int emojiID){
+    private void returnResult(int userID,int status,int emojiID,String userName){
         Log.i("Sys", "userID:" + userID);
         Log.i("Sys", "status:" + status);
         Log.i("Sys", "emojiID:" + emojiID);
         if(userID == -2 && status == -1 && emojiID == -1){
             Log.i("Sys", "come false emojiID:" + emojiID);
-            EventBus.getDefault().post(new backEnvent(userID,status,emojiID));
-//            EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
+//            EventBus.getDefault().post(new backEnvent(userID,status,emojiID,userName));
+            EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
             Log.i("Sys", "come userId emojiID:" + emojiID);
-            EventBus.getDefault().post(new MessageEvent("我好像不认识你"));
+            EventBus.getDefault().post(new ChangeEvent("我好像不认识你,需要添加新用户吗？"));
         }else{
             Log.i("Sys", "come userID status emojiID:" + emojiID);
-            EventBus.getDefault().post(new MessageEvent(userID,status,emojiID));
+            EventBus.getDefault().post(new backEnvent(userID,status,emojiID,userName));
         }
 
     }

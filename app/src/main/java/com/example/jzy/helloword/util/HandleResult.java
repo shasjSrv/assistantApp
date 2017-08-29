@@ -24,6 +24,7 @@ public class HandleResult {
     public static final int OTHER = 7;
     public static final int MUSIC = 8;
     public static final int ANSWER = 9;
+//    public static MyResult myResult;
 
 
     public static int whatService(String response) {
@@ -176,15 +177,24 @@ public class HandleResult {
 
     }
 
-    public static String parseAnswer(String pMsg, String result, String  text/*,Client cli*/) {
+    public static MyResult parseAnswer(String pMsg, String result, String  text/*,Client cli*/) {
         if (pMsg == null) {
             return null;
         }
         try {
             JSONObject answerJson = new JSONObject(pMsg);
-            JSONObject answerItem = answerJson.getJSONObject("answer");
+            /*JSONObject answerItem = answerJson.getJSONObject("answer");
             result = answerItem.getString("text");
-            text = answerJson.getString("text");
+            text = answerJson.getString("text");*/
+            /*if(result != null && text != null) {
+                MyResult myResult = new MyResult(result, text);
+                return myResult;
+            }else{*/
+//                JSONObject resulatItem = answerJson.getJSONObject("result");
+                text =  answerJson.getString("text");
+                MyResult myResult = new MyResult(result, text);
+                return myResult;
+//            }
             // 机器人的回答
             ////////////////////////////
 			/*if (text.equals("向前走。")) {
@@ -253,7 +263,7 @@ public class HandleResult {
             }*/
             //////////////////////
 
-            return result;
+
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -261,3 +271,4 @@ public class HandleResult {
         return null;
     }
 }
+
