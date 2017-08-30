@@ -11,6 +11,13 @@
             android:defaultValue="@string/pref_room_server_url_default"
             android:dialogTitle="@string/pref_room_server_url_dlg" />
 
+        <EditTextPreference
+            android:key="@string/pref_robot_id_key"
+            android:title="@string/pref_robot_id_title"
+            android:inputType="text"
+            android:defaultValue="@string/pref_robot_id_default"
+            android:dialogTitle="@string/pref_robot_id_dlg" />
+
         <!--<CheckBoxPreference-->
             <!--android:key="@string/pref_displayhud_key"-->
             <!--android:title="@string/pref_displayhud_title"-->

@@ -150,7 +150,7 @@ public class DemoServices extends Service {
                 Log.e(TAG, "result:" + jsonReturn);
                 String result1 = null;
                 String text = null;
-                int service = HandleResult.whatService(jsonReturn);
+//                int service = HandleResult.whatService(jsonReturn);
                /* if(service==HandleResult.WEATHER){
                     answerText  = HandleResult.parseWeather(jsonReturn,result1,text);
                     if(answerText != null)
@@ -187,12 +187,13 @@ public class DemoServices extends Service {
                         mTts.startSpeaking("对不起，我没有听清楚。", mTtsListener);
                     }
                 }else {
-//                    if(flag == QUESTIONMODE) {
+                    if(flag == QUESTIONMODE) {
                         Thread th = new SendChatThread(serverURL, myResult.getText());
                         th.start();
-                    /*}else{
+                    }else{
+                        mTts.startSpeaking("好",mTtsListener);
                         flag = QUESTIONMODE;
-                    }*/
+                    }
                 }
                 //TODO 语音理解
             } else {
@@ -201,7 +202,7 @@ public class DemoServices extends Service {
 
         }
         private void changeActicityCondition(String text){
-            int index = text.indexOf("我要添加");
+            int index = text.indexOf("增加用户");
             Log.i(TAG, "index:" + index);
             if(index != -1){
                 EventBus.getDefault().post(new AddEvent(text));

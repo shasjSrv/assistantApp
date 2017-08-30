@@ -40,10 +40,10 @@
     <!--<string name="pref_room_server_url_default" translatable="false">https://appr.tc</string>-->
     <string name="pref_room_server_url_default" translatable="false">http://222.201.145.152:5000</string>
 
-    <string name="pref_displayhud_key">displayhud_preference</string>
-    <string name="pref_displayhud_title">Display call statistics.</string>
-    <string name="pref_displayhud_dlg">Display call statistics.</string>
-    <string name="pref_displayhud_default" translatable="false">false</string>
+    <string name="pref_robot_id_key">robot_id_preference</string>
+    <string name="pref_robot_id_title">Robot ID.</string>
+    <string name="pref_robot_id_dlg">Enter a Robot ID number.</string>
+    <string name="pref_robot_id_default" translatable="false">0</string>
 
     <string name="pref_tracing_key">tracing_preference</string>
     <string name="pref_tracing_title">Debug performance tracing.</string>
