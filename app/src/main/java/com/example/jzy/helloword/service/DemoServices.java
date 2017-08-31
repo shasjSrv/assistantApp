@@ -49,6 +49,7 @@ import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Scanner;
 
 import javax.net.ssl.HostnameVerifier;
@@ -71,7 +72,13 @@ public class DemoServices extends Service {
     private final static String TAG = "All Demo with face";
     private final static int ANSWERMODE = 1;
     private final static int QUESTIONMODE = 0;
+    private final static int ANSWERTWOMODE = 2;
+    private final static int WAKERSTATU = 0;
+    private final static int UNDERDANDSTATU = 1;
     static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
+    private String name = "";
+    private int lastestTime;
+
     // Waker
     private Waker waker;
 
@@ -85,6 +92,7 @@ public class DemoServices extends Service {
     private boolean isPlaying, isRecording;
     private String answerText;
     private int flag = QUESTIONMODE;
+    private int IsWaker = UNDERDANDSTATU;
 
 
     private SynthesizerListener mTtsListener = new SynthesizerListener() {
@@ -123,7 +131,9 @@ public class DemoServices extends Service {
             if (error == null) {
                 isPlaying = false;
                 // iv.setImageResource(R.drawable.face2);
-                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                if(IsWaker == UNDERDANDSTATU) {
+                    mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                }
             } else {
                 HomePageActivity.showTip(error.getPlainDescription(true));
             }
@@ -145,6 +155,8 @@ public class DemoServices extends Service {
         @Override
         public void onResult(final UnderstanderResult result) {
             if (null != result) {
+
+                IsWaker = UNDERDANDSTATU;
                 // 显示
                 String jsonReturn = result.getResultString();
                 Log.e(TAG, "result:" + jsonReturn);
@@ -179,6 +191,7 @@ public class DemoServices extends Service {
                 ;
 //                }
 
+
                 if(myResult == null){
                     Log.i("Sys","myResult is null");
                 }
@@ -190,8 +203,28 @@ public class DemoServices extends Service {
                     if(flag == QUESTIONMODE) {
                         Thread th = new SendChatThread(serverURL, myResult.getText());
                         th.start();
-                    }else{
-                        mTts.startSpeaking("好",mTtsListener);
+                    }else if(flag == ANSWERMODE){
+//                        mTts.startSpeaking("嗯",mTtsListener);
+                        Calendar c = Calendar.getInstance();
+                        lastestTime = c.get(Calendar.SECOND);
+                        while(true) {
+                            c = Calendar.getInstance();
+                            int seconds = c.get(Calendar.SECOND);
+                            /*if(lastestTime > 54){
+                                lastestTime -= 60;
+                                seconds  -=60;
+                            }*/
+                            if (seconds - lastestTime < 1) {
+                                Log.i("Sys", "seconds:" + seconds);
+                                Log.i("Sys", "lastestTime:" + lastestTime);
+                                continue;
+                            }
+                            break;
+                        }
+                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                        flag = ANSWERTWOMODE;
+                    }else if(flag == ANSWERTWOMODE){
+                        mTts.startSpeaking("嗯",mTtsListener);
                         flag = QUESTIONMODE;
                     }
                 }
@@ -305,6 +338,8 @@ public class DemoServices extends Service {
                 mIvw.destroy();
             }
             mTts.startSpeaking(answerText, mTtsListener);
+            IsWaker = WAKERSTATU;
+
             changeActicityCondition(answerText);
 
             //VoiceWakeuper mIvw = VoiceWakeuper.getWakeuper();
@@ -396,7 +431,10 @@ public class DemoServices extends Service {
     public void onMessageEvent(backEnvent event) {
         //Do something
         waker.stopListening();
-        mTts.startSpeaking("你好" + event.toString() + "今天吃药了吗", mTtsListener);
+        name = event.toString();
+        mTts.startSpeaking("你好" + event.toString() + "今天拿药吃了吗", mTtsListener);
+
+
         mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
         flag = ANSWERMODE;
     }

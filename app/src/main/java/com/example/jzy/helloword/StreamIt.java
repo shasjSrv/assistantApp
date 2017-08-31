@@ -147,10 +147,11 @@ class MyThread extends Thread {
         try {
 
             //sleep(500);
+            int AddUserID = 1;
             jsonObject = new JSONObject();
             jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
             if(flag == 1) {
-                jsonObject.put("userID", 1);
+                jsonObject.put("userID", AddUserID);
                 jsonObject.put("userName", "MrCai");
             }
             //jsonObject.put("title",myoutputstream.toString());

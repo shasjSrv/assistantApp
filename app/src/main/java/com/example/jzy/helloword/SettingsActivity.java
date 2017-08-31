@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private String keyPrefRoomServerUrl;
     private String keyPrefRobotId;
+    private String keyPrefBoxIP;
     private SettingsFragment settingsFragment;
 
     @Override
@@ -20,6 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         super.onCreate(savedInstanceState);
         keyPrefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         keyPrefRobotId = getString(R.string.pref_robot_id_key);
+        keyPrefBoxIP = getString(R.string.pref_box_ip_key);
         // Display the fragment as the main content.
         settingsFragment = new SettingsFragment();
         getFragmentManager()
@@ -37,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         updateSummary(sharedPreferences, keyPrefRoomServerUrl);
         updateSummary(sharedPreferences, keyPrefRobotId);
+        updateSummary(sharedPreferences, keyPrefBoxIP);
     }
 
     @Override
@@ -53,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         // clang-format off
         if (key.equals(keyPrefRoomServerUrl)
                 || key.equals(keyPrefRobotId)
+                || key.equals(keyPrefBoxIP)
                 ) {
             updateSummary(sharedPreferences, key);
         }

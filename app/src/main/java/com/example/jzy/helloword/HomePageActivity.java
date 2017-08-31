@@ -2,10 +2,12 @@ package com.example.jzy.helloword;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +28,8 @@ import com.example.jzy.helloword.entity.MessageEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.service.DemoServices;
 import com.example.jzy.helloword.widget.RemindDialog;
+import com.example.jzy.helloword.xmlrpc.XMLRPCClient;
+import com.example.jzy.helloword.xmlrpc.XMLRPCException;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 
@@ -54,6 +58,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private int count = 0;
     private static Context context;
     private RemindDialog remindDialog;
+    private String keyPrefBoxIP;
+    private SharedPreferences sharedPref;
+    private String BoxIP;
 
     private Handler handler = new Handler() {
         @Override
@@ -82,6 +89,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
+        BoxIP = sharedPref.getString(
+                keyPrefBoxIP, getString(R.string.pref_box_ip_default));
         if (timerTask == null) {
             timer = new Timer();
             //延迟一秒，迭代一秒设置图片
@@ -115,6 +124,26 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     private void init() {
         EventBus.getDefault().register(this);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        keyPrefBoxIP = getString(R.string.pref_box_ip_key);
+        BoxIP = sharedPref.getString(
+                keyPrefBoxIP, getString(R.string.pref_box_ip_default));
+
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                XMLRPCClient client = new XMLRPCClient(BoxIP);
+                try {
+                    String hello = (String) client.call("Hello");
+                    Log.i("XMLRPC Test", "result String hello = " + hello);
+                }catch (XMLRPCException e){
+                    Log.i("XMLRPC Test", "Error", e);
+                }
+            }
+        }).start();
+
+
 
         btnVideo = (Button) findViewById(R.id.btn_video);
 //        btnChat = (Button) findViewById(R.id.btn_chat);
@@ -252,6 +281,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //VideoActivity return
+
         if (requestCode == Keys.VIDEO_REQUEST && resultCode == Keys.VIDEO_RESULT) {
             if (data != null) {
                 Log.i(TAG, "VIDEO return data: " + data);
