@@ -58,7 +58,7 @@ import javax.net.ssl.X509TrustManager;
  * Created by jzy on 8/7/17.
  */
 
-public class DemoServices extends Service {
+public class DecisionServices extends Service {
 
     private int count;
     String serverURL = "https://video.moevis.cc:8888/chat";

@@ -38,7 +38,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".service.DemoServices">
+        <service android:name=".service.DecisionServices">
             <intent-filter>
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
             </intent-filter>

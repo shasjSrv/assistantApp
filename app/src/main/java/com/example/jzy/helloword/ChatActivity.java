@@ -3,7 +3,6 @@ package com.example.jzy.helloword;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.jzy.helloword.service.DemoServices;
+import com.example.jzy.helloword.service.DecisionServices;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -51,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 
-        Intent i = new Intent(this, DemoServices.class);
+        Intent i = new Intent(this, DecisionServices.class);
         Log.d(TAG, "before new startService");
 
         startService(i);
@@ -75,7 +74,7 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Android.R.id.home对应应用程序图标的id
         if (item.getItemId() == android.R.id.home) {
-            Intent stopIntent = new Intent(this, DemoServices.class);
+            Intent stopIntent = new Intent(this, DecisionServices.class);
             stopService(stopIntent);
             finish();
         }

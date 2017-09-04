@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -19,22 +18,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
-import com.dd.CircularProgressButton;
 import com.example.jzy.helloword.entity.AddEvent;
-import com.example.jzy.helloword.entity.MessageEvent;
 import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.service.DemoServices;
+import com.example.jzy.helloword.service.DecisionServices;
 import com.example.jzy.helloword.widget.RemindDialog;
 import com.example.jzy.helloword.xmlrpc.XMLRPCClient;
 import com.example.jzy.helloword.xmlrpc.XMLRPCException;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 
-import android.animation.ValueAnimator;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -118,7 +111,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-        Intent stopIntent = new Intent(this, DemoServices.class);
+        Intent stopIntent = new Intent(this, DecisionServices.class);
         stopService(stopIntent);
     }
 
@@ -157,7 +150,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         StringBuffer param = new StringBuffer();
         param.append("appid=").append(getString(R.string.app_id)).append(",").append(SpeechConstant.ENGINE_MODE).append("=").append(SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(HomePageActivity.this, param.toString());
-        Intent i = new Intent(this, DemoServices.class);
+        Intent i = new Intent(this, DecisionServices.class);
         Log.d(TAG, "before new startService");
         startService(i);
 
