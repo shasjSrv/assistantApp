@@ -32,7 +32,6 @@ public class VideoActivity extends AppCompatActivity {
     private static final String TAG = VideoActivity.class.getSimpleName();
     private Camera mCamera;
     private Preview mPreview;
-    private CameraView mCameraView;
     private Context ctx;
     private String keyprefRoomServerUrl;
     private SharedPreferences sharedPref;
@@ -84,9 +83,7 @@ public class VideoActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        if (null != mCameraView) {
-            mCameraView.stopRecording();
-        }
+
         if (mCamera != null) {
             mCamera.stopPreview();
             mPreview.setCamera(null);

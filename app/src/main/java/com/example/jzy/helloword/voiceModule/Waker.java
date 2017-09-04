@@ -1,9 +1,8 @@
-package com.example.jzy.helloword.util;
+package com.example.jzy.helloword.voiceModule;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.jzy.helloword.ChatActivity;
 import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.R;
 import com.iflytek.cloud.SpeechConstant;

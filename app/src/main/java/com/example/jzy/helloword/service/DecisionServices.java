@@ -15,11 +15,11 @@ import com.example.jzy.helloword.entity.AddEvent;
 import com.example.jzy.helloword.entity.AnswerEvent;
 import com.example.jzy.helloword.entity.Tip;
 import com.example.jzy.helloword.entity.BackEnvent;
-import com.example.jzy.helloword.util.HandleResult;
-import com.example.jzy.helloword.util.MyResult;
-import com.example.jzy.helloword.util.MySpeechUnderstander;
-import com.example.jzy.helloword.util.TTS;
-import com.example.jzy.helloword.util.Waker;
+import com.example.jzy.helloword.voiceModule.HandleResult;
+import com.example.jzy.helloword.voiceModule.MyResult;
+import com.example.jzy.helloword.voiceModule.MySpeechUnderstander;
+import com.example.jzy.helloword.voiceModule.TTS;
+import com.example.jzy.helloword.voiceModule.Waker;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechUnderstanderListener;
 import com.iflytek.cloud.SynthesizerListener;
@@ -121,6 +121,7 @@ public class DecisionServices extends Service {
 
         @Override
         public void onCompleted(SpeechError error) {
+            Log.i(TAG,"TTS onCompleted thread ID: " + android.os.Process.myTid());
             if (error == null) {
                 isPlaying = false;
                 // iv.setImageResource(R.drawable.face2);
@@ -178,49 +179,9 @@ public class DecisionServices extends Service {
                     changeActicityCondition(text);
                 }else
                     mTts.startSpeaking("识别结果不正确。", mTtsListener);*/
-
-
-
-                ;
 //                }
                 dealResult(myResult);
 
-                /*if(myResult == null){
-                    Log.i("Sys","myResult is null");
-                }
-                if(myResult == null) {
-                    if (flag == QUESTIONMODE) {
-                        mTts.startSpeaking("对不起，我没有听清楚。", mTtsListener);
-                    }
-                }else {
-                    if(flag == QUESTIONMODE) {
-                        Thread th = new SendChatThread(serverURL, myResult.getText());
-                        th.start();
-                    }else if(flag == ANSWERMODE){
-//                        mTts.startSpeaking("嗯",mTtsListener);
-                        Calendar c = Calendar.getInstance();
-                        lastestTime = c.get(Calendar.MILLISECOND);
-                        while(true) {
-                            c = Calendar.getInstance();
-                            int seconds = c.get(Calendar.MILLISECOND);
-                            if(lastestTime > 955){
-                                lastestTime -= 1000;
-                                seconds  -= 1000;
-                            }
-                            if (seconds - lastestTime < 10) {
-                                Log.i("Sys", "seconds:" + seconds);
-                                Log.i("Sys", "lastestTime:" + lastestTime);
-                                continue;
-                            }
-                            break;
-                        }
-                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-                        flag = ANSWERTWOMODE;
-                    }else if(flag == ANSWERTWOMODE){
-                        mTts.startSpeaking("嗯",mTtsListener);
-                        flag = QUESTIONMODE;
-                    }
-                }*/
                 //TODO 语音理解
             } else {
                 HomePageActivity.showTip("识别结果不正确。");
@@ -332,6 +293,7 @@ public class DecisionServices extends Service {
             if (mIvw != null) {
                 mIvw.destroy();
             }
+            Log.i(TAG,"before TTS onCompleted thread ID: " + android.os.Process.myTid());
             mTts.startSpeaking(answerText, mTtsListener);
             IsWaker = WAKERSTATU;
 
@@ -380,6 +342,8 @@ public class DecisionServices extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i(TAG,"Start thread ID: " + android.os.Process.myTid());
+
         Log.d(TAG, "before new client");
 //        cli = new Client(ChatActivity.ServerIP,ChatActivity.ServerPort);
         Log.d(TAG, "before new MediaPlayer");
@@ -392,12 +356,18 @@ public class DecisionServices extends Service {
         mTts = new TTS();
         // 初始化语音语义理解对象
         mSpeechUnderstander = new MySpeechUnderstander();
+
         isPlaying = false;
         isRecording = false;
         answerText = WELCOME;
         count = 2;
         EventBus.getDefault().register(this);
-
+        /*new Thread(new Runnable(){
+            @Override
+            public void run() {
+                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+            }
+        }).start();*/
     }
 
 
