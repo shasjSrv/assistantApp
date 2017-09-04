@@ -1,30 +1,22 @@
 package com.example.jzy.helloword;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.StringDef;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
-import android.widget.Button;
-import android.view.View;
 import android.content.Intent;
 
+import com.example.jzy.helloword.entity.BackEnvent;
 import com.example.jzy.helloword.entity.ChangeEvent;
 import com.example.jzy.helloword.entity.MessageEvent;
-import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.entity.backEnvent;
 import com.example.jzy.helloword.widget.RemindDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -123,7 +115,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(backEnvent event) {
+    public void onMessageEvent(BackEnvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.toString());
         backToHomePage(event.toString());

@@ -14,16 +14,13 @@ import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.entity.AddEvent;
 import com.example.jzy.helloword.entity.AnswerEvent;
 import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.entity.backEnvent;
+import com.example.jzy.helloword.entity.BackEnvent;
 import com.example.jzy.helloword.util.HandleResult;
 import com.example.jzy.helloword.util.MyResult;
 import com.example.jzy.helloword.util.MySpeechUnderstander;
 import com.example.jzy.helloword.util.TTS;
 import com.example.jzy.helloword.util.Waker;
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechUnderstander;
 import com.iflytek.cloud.SpeechUnderstanderListener;
 import com.iflytek.cloud.SynthesizerListener;
 import com.iflytek.cloud.UnderstanderResult;
@@ -35,7 +32,6 @@ import com.iflytek.cloud.WakeuperResult;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +41,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -58,8 +53,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import static android.util.Base64.DEFAULT;
 
 /**
  * Created by jzy on 8/7/17.
@@ -190,9 +183,9 @@ public class DemoServices extends Service {
 
                 ;
 //                }
+                dealResult(myResult);
 
-
-                if(myResult == null){
+                /*if(myResult == null){
                     Log.i("Sys","myResult is null");
                 }
                 if(myResult == null) {
@@ -206,15 +199,15 @@ public class DemoServices extends Service {
                     }else if(flag == ANSWERMODE){
 //                        mTts.startSpeaking("嗯",mTtsListener);
                         Calendar c = Calendar.getInstance();
-                        lastestTime = c.get(Calendar.SECOND);
+                        lastestTime = c.get(Calendar.MILLISECOND);
                         while(true) {
                             c = Calendar.getInstance();
-                            int seconds = c.get(Calendar.SECOND);
-                            /*if(lastestTime > 54){
-                                lastestTime -= 60;
-                                seconds  -=60;
-                            }*/
-                            if (seconds - lastestTime < 1) {
+                            int seconds = c.get(Calendar.MILLISECOND);
+                            if(lastestTime > 955){
+                                lastestTime -= 1000;
+                                seconds  -= 1000;
+                            }
+                            if (seconds - lastestTime < 10) {
                                 Log.i("Sys", "seconds:" + seconds);
                                 Log.i("Sys", "lastestTime:" + lastestTime);
                                 continue;
@@ -227,7 +220,7 @@ public class DemoServices extends Service {
                         mTts.startSpeaking("嗯",mTtsListener);
                         flag = QUESTIONMODE;
                     }
-                }
+                }*/
                 //TODO 语音理解
             } else {
                 HomePageActivity.showTip("识别结果不正确。");
@@ -242,48 +235,50 @@ public class DemoServices extends Service {
             }
         }
 
+        private void dealResult(MyResult myResult){
+            if(myResult == null){
+                Log.i("Sys","myResult is null");
+            }
+            if(myResult == null) {
+                if (flag == QUESTIONMODE) {
+                    mTts.startSpeaking("对不起，我没有听清楚。", mTtsListener);
+                }
+            }else {
+                if(flag == QUESTIONMODE) {
+                    Thread th = new SendChatThread(serverURL, myResult.getText());
+                    th.start();
+                }else if(flag == ANSWERMODE){
+//                        mTts.startSpeaking("嗯",mTtsListener);
+                    Calendar c = Calendar.getInstance();
+                    lastestTime = c.get(Calendar.MILLISECOND);
+                    while(true) {
+                        c = Calendar.getInstance();
+                        int seconds = c.get(Calendar.MILLISECOND);
+                        if(lastestTime > 955){
+                            lastestTime -= 1000;
+                            seconds  -= 1000;
+                        }
+                        if (seconds - lastestTime < 10) {
+                            Log.i("Sys", "seconds:" + seconds);
+                            Log.i("Sys", "lastestTime:" + lastestTime);
+                            continue;
+                        }
+                        break;
+                    }
+                    mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                    flag = ANSWERTWOMODE;
+                }else if(flag == ANSWERTWOMODE){
+                    mTts.startSpeaking("嗯",mTtsListener);
+                    flag = QUESTIONMODE;
+                }
+            }
+        }
+
         private String drainStream(InputStream in) {
             Scanner s = new Scanner(in).useDelimiter("\\A");
             return s.hasNext() ? s.next() : "";
         }
-        private void sendChatText(String serverURL,String text){
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("user_id", 1);
-                jsonObject.put("content", text);
-                Log.i("Sys", "text:" + text);
-                // Send POST data request
 
-                URL url = new URL(serverURL);
-                URLConnection conn = url.openConnection();
-//            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/json");
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(jsonObject.toString());
-                wr.flush();
-                wr.close();
-
-                InputStream responseStream = conn.getInputStream();
-                String response = drainStream(responseStream);
-
-                JSONObject responseJSON = new JSONObject(response);
-                String resultText = responseJSON.getString("text");
-                Log.i("Sys", "resultText:" + resultText);
-                text = resultText;
-
-            } catch (Exception ex) {
-                String Error = ex.getMessage();
-                Log.e("ERROR", "create url false:" + Error);
-            } finally {
-                try {
-                    BufferedReader reader = null;
-                    reader.close();
-                } catch (Exception ex) {
-                }
-            }
-
-        }
 
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
@@ -428,7 +423,7 @@ public class DemoServices extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(backEnvent event) {
+    public void onMessageEvent(BackEnvent event) {
         //Do something
         waker.stopListening();
         name = event.toString();

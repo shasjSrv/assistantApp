@@ -4,7 +4,7 @@ package com.example.jzy.helloword.entity;
  * Created by jzy on 8/24/17.
  */
 
-public class backEnvent {
+public class BackEnvent {
     private int userID;
     private int status;
     private int emojiID;
@@ -12,8 +12,8 @@ public class backEnvent {
     private String text;
 
 
-    public backEnvent(String text){this.text = text;}
-    public backEnvent(int userID, int status, int emojiID,String userName) {
+    public BackEnvent(String text){this.text = text;}
+    public BackEnvent(int userID, int status, int emojiID, String userName) {
         this.userID = userID;
         this.status = status;
         this.emojiID = emojiID;

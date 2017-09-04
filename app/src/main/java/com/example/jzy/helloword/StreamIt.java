@@ -5,21 +5,15 @@ package com.example.jzy.helloword;
  */
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 
 import android.util.Base64;
 
-import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
@@ -29,13 +23,11 @@ import android.util.Log;
 
 import com.example.jzy.helloword.entity.ChangeEvent;
 import com.example.jzy.helloword.entity.MessageEvent;
-import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.entity.backEnvent;
+import com.example.jzy.helloword.entity.BackEnvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static android.util.Base64.DEFAULT;
@@ -225,21 +217,21 @@ class MyThread extends Thread {
         Log.i("Sys", "emojiID:" + emojiID);
         if(userID == -2 && status == -1 && emojiID == -1){
             Log.i("Sys", "come false emojiID:" + emojiID);
-//            EventBus.getDefault().post(new backEnvent(userID,status,emojiID,userName));
+//            EventBus.getDefault().post(new BackEnvent(userID,status,emojiID,userName));
             EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
             Log.i("Sys", "come userId emojiID:" + emojiID);
             EventBus.getDefault().post(new ChangeEvent("我好像不认识你,需要添加新用户吗？"));
         }else{
             Log.i("Sys", "come userID status emojiID:" + emojiID);
-            EventBus.getDefault().post(new backEnvent(userID,status,emojiID,userName));
+            EventBus.getDefault().post(new BackEnvent(userID,status,emojiID,userName));
         }
 
     }
 
     private void returnSucc(int ifSucc) {
         if(ifSucc != 0){
-            EventBus.getDefault().post(new backEnvent("success!"));
+            EventBus.getDefault().post(new BackEnvent("success!"));
         }
 
     }
