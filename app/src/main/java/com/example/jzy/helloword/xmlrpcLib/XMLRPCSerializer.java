@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.xmlrpc;
+package com.example.jzy.helloword.xmlrpcLib;
 
 import java.io.BufferedReader;
 import java.io.IOException;

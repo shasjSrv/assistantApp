@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.xmlrpc;
+package com.example.jzy.helloword.xmlrpcLib;
 
 public class Tag {
 	static final String LOG = "XMLRPC";

@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.entity;
+package com.example.jzy.helloword.event;
 
 import java.io.Serializable;
 

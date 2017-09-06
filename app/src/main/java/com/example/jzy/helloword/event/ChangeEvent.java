@@ -1,13 +1,13 @@
-package com.example.jzy.helloword.entity;
+package com.example.jzy.helloword.event;
 
 /**
- * Created by jzy on 8/28/17.
+ * Created by jzy on 8/26/17.
  */
 
-public class AnswerEvent {
+public class ChangeEvent {
     private String text;
     private int flag;
-    public AnswerEvent(String text){
+    public ChangeEvent(String text){
         this.text = text;
         this.flag = 1;
     }

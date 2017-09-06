@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.service;
+package com.example.jzy.helloword.decisionModule;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,10 +11,10 @@ import android.util.Log;
 
 
 import com.example.jzy.helloword.HomePageActivity;
-import com.example.jzy.helloword.entity.AddEvent;
-import com.example.jzy.helloword.entity.AnswerEvent;
-import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.entity.BackEnvent;
+import com.example.jzy.helloword.event.AddEvent;
+import com.example.jzy.helloword.event.AnswerEvent;
+import com.example.jzy.helloword.event.Tip;
+import com.example.jzy.helloword.event.BackEnvent;
 import com.example.jzy.helloword.voiceModule.HandleResult;
 import com.example.jzy.helloword.voiceModule.MyResult;
 import com.example.jzy.helloword.voiceModule.MySpeechUnderstander;

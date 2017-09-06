@@ -1,4 +1,4 @@
-package com.example.jzy.helloword;
+package com.example.jzy.helloword.videoModule;
 
 /**
  * Created by jzy on 1/18/17.
@@ -21,9 +21,9 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
-import com.example.jzy.helloword.entity.ChangeEvent;
-import com.example.jzy.helloword.entity.MessageEvent;
-import com.example.jzy.helloword.entity.BackEnvent;
+import com.example.jzy.helloword.event.ChangeEvent;
+import com.example.jzy.helloword.event.MessageEvent;
+import com.example.jzy.helloword.event.BackEnvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -91,7 +91,7 @@ public class StreamIt implements Camera.PreviewCallback {
                 outstream.flush();
                 // 启用线程将图像数据发送出去
 
-                Thread th = new MyThread(outstream, Url,flag);
+                Thread th = new SendVideoThread(outstream, Url,flag);
                 th.start();
               /*  try
                 {
@@ -106,7 +106,7 @@ public class StreamIt implements Camera.PreviewCallback {
     }
 }
 
-class MyThread extends Thread {
+class SendVideoThread extends Thread {
     /*    private byte byteBuffer[] = new byte[1024];
         private OutputStream outsocket;*/
     private static final int UPDATE = 1;
@@ -120,7 +120,7 @@ class MyThread extends Thread {
     BufferedReader reader = null;
     JSONObject jsonObject;
 
-    public MyThread(ByteArrayOutputStream myoutputstream, String Url,int flag) {
+    public SendVideoThread(ByteArrayOutputStream myoutputstream, String Url, int flag) {
         this.myoutputstream = myoutputstream;
         this.Url = Url;
         this.flag = flag;

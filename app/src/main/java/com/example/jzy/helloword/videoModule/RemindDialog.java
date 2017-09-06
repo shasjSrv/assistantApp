@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.widget;
+package com.example.jzy.helloword.videoModule;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.xmlrpc;
+package com.example.jzy.helloword.xmlrpcLib;
 
 /**
  * A Base64 Encoder/Decoder.

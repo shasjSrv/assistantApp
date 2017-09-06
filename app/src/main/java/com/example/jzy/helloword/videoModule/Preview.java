@@ -1,4 +1,4 @@
-package com.example.jzy.helloword;
+package com.example.jzy.helloword.videoModule;
 
 /**
  * Created by jzy on 1/16/17.

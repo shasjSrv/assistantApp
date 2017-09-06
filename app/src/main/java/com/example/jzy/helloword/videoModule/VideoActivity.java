@@ -1,4 +1,4 @@
-package com.example.jzy.helloword;
+package com.example.jzy.helloword.videoModule;
 
 
 import android.content.Context;
@@ -14,10 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.content.Intent;
 
-import com.example.jzy.helloword.entity.BackEnvent;
-import com.example.jzy.helloword.entity.ChangeEvent;
-import com.example.jzy.helloword.entity.MessageEvent;
-import com.example.jzy.helloword.widget.RemindDialog;
+import com.example.jzy.helloword.Keys;
+import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.event.BackEnvent;
+import com.example.jzy.helloword.event.ChangeEvent;
+import com.example.jzy.helloword.event.MessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

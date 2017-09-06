@@ -1,4 +1,4 @@
-package com.example.jzy.helloword.entity;
+package com.example.jzy.helloword.event;
 
 /**
  * Created by jzy on 8/24/17.

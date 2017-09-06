@@ -19,12 +19,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.jzy.helloword.entity.AddEvent;
-import com.example.jzy.helloword.entity.Tip;
-import com.example.jzy.helloword.service.DecisionServices;
-import com.example.jzy.helloword.widget.RemindDialog;
-import com.example.jzy.helloword.xmlrpc.XMLRPCClient;
-import com.example.jzy.helloword.xmlrpc.XMLRPCException;
+import com.example.jzy.helloword.event.AddEvent;
+import com.example.jzy.helloword.event.Tip;
+import com.example.jzy.helloword.decisionModule.DecisionServices;
+import com.example.jzy.helloword.videoModule.VideoActivity;
+import com.example.jzy.helloword.videoModule.RemindDialog;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 
