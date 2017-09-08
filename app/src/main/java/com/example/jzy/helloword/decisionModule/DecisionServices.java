@@ -6,15 +6,15 @@ import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 
 import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.event.AddEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
-import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.event.BackEnvent;
+import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.voiceModule.HandleResult;
 import com.example.jzy.helloword.voiceModule.MyResult;
 import com.example.jzy.helloword.voiceModule.MySpeechUnderstander;
@@ -28,13 +28,11 @@ import com.iflytek.cloud.VoiceWakeuper;
 import com.iflytek.cloud.WakeuperListener;
 import com.iflytek.cloud.WakeuperResult;
 
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,15 +58,17 @@ import javax.net.ssl.X509TrustManager;
 
 public class DecisionServices extends Service {
 
-    private int count;
-    String serverURL = "https://video.moevis.cc:8888/chat";
+
+    private final static String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
     private final static int ANSWERMODE = 1;
     private final static int QUESTIONMODE = 0;
     private final static int ANSWERTWOMODE = 2;
     private final static int WAKERSTATU = 0;
     private final static int UNDERDANDSTATU = 1;
-    static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
+    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
+
+    private int count;
     private String name = "";
     private int lastestTime;
 
@@ -80,15 +80,302 @@ public class DecisionServices extends Service {
     // Understander
     private MySpeechUnderstander mSpeechUnderstander;
 
+    //StateMachine
+    private ControlStateMachine mCsm;
+
     private MediaPlayer mp;
 
     private boolean isPlaying, isRecording;
     private String answerText;
+    private MyResult myAnswerResult;
     private int flag = QUESTIONMODE;
     private int IsWaker = UNDERDANDSTATU;
 
 
-    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+    private class ControlStateMachine  extends StateMachine {
+//        private final String TAG1 = MyStateMachine.class.getSimpleName();
+
+        private final static int MSG_WAKE_UP = 1;
+        private final static int MSG_DETECTION_SUCCESS = 2;
+        private final static int MSG_DETECTION_FALSE = 3;
+        private final static int MSG_ANSWER = 4;
+        private final static int MSG_TEMPLATE = 5;
+        private final static int MSG_QUESTION = 6;
+        private final static int MSG_TTS_COMPLETE = 7;
+        private int state = 0;
+        private int latestState = 0;
+
+//        private UpdateUIListener listener = null;
+
+
+        public ControlStateMachine() {
+            super(TAG);  // 调用StateMachine(String name)构造状态机
+            Log.d(TAG, "ctor E");
+            addState(mDefaulteState, null);  // 加入默认状态作为父状态，子状态处理不了的命令可以交给它来报错
+            addState(mSleepState, mDefaulteState);
+            addState(mDetectState, mDefaulteState);
+            addState(mAnswerState, mDefaulteState);
+            addState(mTempState, mDefaulteState);
+            addState(mQuestionState, mDefaulteState);
+            addState(mTtsCompleteState,mDefaulteState);
+            setInitialState(mSleepState); // sleep状态为初始状态
+            Log.d(TAG, "ctor X");
+            start(); // 状态机进入初始状态等候外界的命令
+        }
+
+       /* public void registerListener(UpdateUIListener l) {
+            this.listener = l;
+        }
+
+        private void notifyUI(String text) {
+            if (listener != null) {
+                listener.update(text);
+            }
+        }*/
+
+        public void wakeup() {
+            sendMessage(MSG_WAKE_UP);
+        }
+
+        public void detectSuccess() {
+            sendMessage(MSG_DETECTION_SUCCESS);
+        }
+
+        public void changeToAnswerMode() {
+            sendMessage(MSG_ANSWER);
+        }
+
+        public void changeToTempMode() {
+            sendMessage(MSG_TEMPLATE);
+        }
+
+        public void changeToQuestionMode() {
+            sendMessage(MSG_QUESTION);
+        }
+
+        public void ttsComplete(){
+            sendMessage(MSG_TTS_COMPLETE);
+        }
+
+        private boolean checkResult(MyResult myResult){
+            if(myResult == null){
+                Log.i("Sys","myResult is null");
+                return false;
+            }
+            return true;
+        }
+
+
+
+        private State mDefaulteState = new DefaultState();
+
+        class DefaultState extends State {
+
+            @Override
+            public boolean processMessage(Message msg) {
+//                notifyUI("DefaultState: wrong command");
+                return true;
+            }
+        }
+
+        private State mSleepState = new SleepState();
+
+        class SleepState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                state = WAKERSTATU;
+                latestState = MSG_WAKE_UP;
+                waker.startListening(mWakeuperListener);
+
+
+
+//                notifyUI(getName());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_WAKE_UP:
+                        transitionTo(mDetectState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mDetectState = new DetectState();
+
+        class DetectState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                EventBus.getDefault().post(new Tip(""));
+                changeToAnswerMode();
+//                notifyUI(getName());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_DETECTION_SUCCESS:
+                        transitionTo(mAnswerState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mAnswerState = new AnswerState();
+
+        class AnswerState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                latestState = MSG_ANSWER;
+                Log.i(TAG, "AnswerText: " + name);
+                mTts.startSpeaking(name, mTtsListener);
+                //mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                changeToTempMode();
+//                notifyUI(getName());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_TEMPLATE:
+                        transitionTo(mTempState);
+                        break;
+                    case MSG_TTS_COMPLETE:
+                        transitionTo(mTtsCompleteState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mTempState = new TempState();
+
+        class TempState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                latestState = MSG_TEMPLATE;
+                Calendar c = Calendar.getInstance();
+                lastestTime = c.get(Calendar.MILLISECOND);
+                while(true) {
+                    c = Calendar.getInstance();
+                    int seconds = c.get(Calendar.MILLISECOND);
+                    if(lastestTime > 955){
+                        lastestTime -= 1000;
+                        seconds  -= 1000;
+                    }
+                    if (seconds - lastestTime < 5) {
+                        Log.i("Sys", "seconds:" + seconds);
+                        Log.i("Sys", "lastestTime:" + lastestTime);
+                        continue;
+                    }
+                    break;
+                }
+                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+//                notifyUI(getName());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_QUESTION:
+                        transitionTo(mQuestionState);
+                        break;
+                    case MSG_TTS_COMPLETE:
+                        transitionTo(mTtsCompleteState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mQuestionState = new QuestionState();
+
+        class QuestionState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                latestState = MSG_QUESTION;
+//                notifyUI(getName());
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_ANSWER:
+                        transitionTo(mSleepState);
+                        break;
+                    case MSG_TTS_COMPLETE:
+                        transitionTo(mTtsCompleteState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mTtsCompleteState = new TtsCompleteState();
+
+        class TtsCompleteState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                switch (latestState) {
+                    case MSG_QUESTION:
+                        Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
+                        th.start();
+                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                        changeToQuestionMode();
+                        break;
+                    case MSG_TEMPLATE:
+                        mTts.startSpeaking("嗯",mTtsListener);
+                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                        changeToQuestionMode();
+                        break;
+                    case MSG_WAKE_UP:
+                        break;
+                    default:
+
+                }
+
+//                notifyUI(getName());
+            }
+
+            @Override
+
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_QUESTION:
+                        transitionTo(mQuestionState);
+                        break;
+                    case MSG_TEMPLATE:
+                        transitionTo(mTempState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+    };
+
+        private SynthesizerListener mTtsListener = new SynthesizerListener() {
 
         @Override
         public void onSpeakBegin() {
@@ -125,9 +412,10 @@ public class DecisionServices extends Service {
             if (error == null) {
                 isPlaying = false;
                 // iv.setImageResource(R.drawable.face2);
-                if(IsWaker == UNDERDANDSTATU) {
+                mCsm.ttsComplete();
+                /*if(IsWaker == UNDERDANDSTATU) {
                     mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-                }
+                }*/
             } else {
                 HomePageActivity.showTip(error.getPlainDescription(true));
             }
@@ -171,7 +459,8 @@ public class DecisionServices extends Service {
                     }
                 }*/
 //                if(service==HandleResult.ANSWER){
-                MyResult myResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+                myAnswerResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
+//                MyResult myResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
 //                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
                /* answerText = myResult.getResult();
                 if (answerText != null) {
@@ -180,7 +469,7 @@ public class DecisionServices extends Service {
                 }else
                     mTts.startSpeaking("识别结果不正确。", mTtsListener);*/
 //                }
-                dealResult(myResult);
+//                dealResult(myResult);
 
                 //TODO 语音理解
             } else {
@@ -296,8 +585,8 @@ public class DecisionServices extends Service {
             Log.i(TAG,"before TTS onCompleted thread ID: " + android.os.Process.myTid());
             mTts.startSpeaking(answerText, mTtsListener);
             IsWaker = WAKERSTATU;
-
-            changeActicityCondition(answerText);
+            mCsm.wakeup();
+//            changeActicityCondition(answerText);
 
             //VoiceWakeuper mIvw = VoiceWakeuper.getWakeuper();
             //mIvw.stopListening();
@@ -351,11 +640,14 @@ public class DecisionServices extends Service {
         Log.d(TAG, "Begin");
         //初始化唤醒对象
         waker = new Waker();
-        waker.startListening(mWakeuperListener);
+//        waker.startListening(mWakeuperListener);
         // 初始化合成对象
         mTts = new TTS();
         // 初始化语音语义理解对象
         mSpeechUnderstander = new MySpeechUnderstander();
+        myAnswerResult = new MyResult("","");
+
+        mCsm = new ControlStateMachine();
 
         isPlaying = false;
         isRecording = false;
@@ -395,13 +687,14 @@ public class DecisionServices extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BackEnvent event) {
         //Do something
+        name = "你好" + event.toString() + "今天拿药吃了吗";
+        mCsm.detectSuccess();
         waker.stopListening();
-        name = event.toString();
-        mTts.startSpeaking("你好" + event.toString() + "今天拿药吃了吗", mTtsListener);
+        /*mTts.startSpeaking("你好" + event.toString() + "今天拿药吃了吗", mTtsListener);
 
 
         mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-        flag = ANSWERMODE;
+        flag = ANSWERMODE;*/
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
