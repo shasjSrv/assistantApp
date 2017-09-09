@@ -18,6 +18,8 @@ import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
 
+import me.drakeet.materialdialog.MaterialDialog;
+
 /**
  * Created by jzy on 8/5/17.
  */
@@ -30,6 +32,9 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String BoxIP;
 
+    private MaterialEditText validationEt, bedNum;//房间号、床位
+    Button validateBt;
+    boolean checkinput=true,checkfull=false;//检测输入是否为空，检测是否盒子已满
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +42,25 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         setContentView(R.layout.manage_medicine);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        validationEt = (MaterialEditText) findViewById(R.id.validationEt);
+        bedNum=(MaterialEditText)findViewById(R.id.bedNum);
+        validateBt = (Button) findViewById(R.id.validateBt);
         initValidationEt();
 
 
     }
 
     private void initValidationEt() {
-        final MaterialEditText validationEt = (MaterialEditText) findViewById(R.id.validationEt);
-        validationEt.addValidator(new RegexpValidator("仅可输入数字!", "\\d+"));
-        final Button validateBt = (Button) findViewById(R.id.validateBt);
+
+
+        //final MaterialEditText validationEt = (MaterialEditText) findViewById(R.id.validationEt);
+       // validationEt.addValidator(new RegexpValidator("仅可输入数字!", "\\d+"));
+        //final Button validateBt = (Button) findViewById(R.id.validateBt);
         /**
          * get the parameter of xmrRpcServer
          */
+
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
@@ -58,6 +70,48 @@ public class ManagerMedicineActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // validate
+
+                checkinput=true;
+                //点击后检测输入是否为空
+                if(validationEt.getText().length()<=0)
+                {
+                    Toast.makeText(ManagerMedicineActivity.this,validationEt.getText().length()+" 1 ",Toast.LENGTH_SHORT).show();
+                   validationEt.addValidator(new RegexpValidator("请输入病房号!", "\\d+"));
+                  //  bedNum.addValidator(new RegexpValidator("请输入病房号!", "\\d+"));
+                    checkinput=false;
+                }
+               if(bedNum.getText().length()<=0)
+                {
+                    Toast.makeText(ManagerMedicineActivity.this,validationEt.getText().length()+" 2 ",Toast.LENGTH_SHORT).show();
+                    bedNum.addValidator(new RegexpValidator("请输入床位号!", "\\d+"));
+                    checkinput=false;
+                }
+
+                //如果药盒已满
+                if(checkfull&&checkinput)
+                {
+                    final MaterialDialog mMaterialDialog = new MaterialDialog(ManagerMedicineActivity.this);
+                           mMaterialDialog.setMessage("药盒已满")
+                            .setPositiveButton("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mMaterialDialog.dismiss();
+                         }
+                            })
+                            .setNegativeButton("取消", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mMaterialDialog.dismiss();
+                                }
+                            });
+
+                    mMaterialDialog.show();
+
+                    checkinput=true;
+                }
+
+
+
                 if(validationEt.validate()){
                     new Thread(new Runnable(){
                         @Override

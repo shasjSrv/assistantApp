@@ -3,21 +3,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/validationEt"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Validation"
+        android:hint="Room Number"
+        app:met_floatingLabel="normal"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         app:met_helperText="Integer" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/bedNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Bed Number"
+        app:met_floatingLabel="normal"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        app:met_helperText="Integer"
+        />
 
     <Button
         android:id="@+id/validateBt"
-        android:layout_width="120dp"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginLeft="8dp"
-        android:text="VALIDATE" />
+        android:layout_marginTop="8dp"
+        android:text="放置药物"
+        android:textColor="@color/cpb_white"
+        android:background="#FF03A9F4"
+        android:textSize="16sp"/>
 
 </LinearLayout>
