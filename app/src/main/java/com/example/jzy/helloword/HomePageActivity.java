@@ -139,11 +139,11 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-        btnVideo = (Button) findViewById(R.id.btn_video);
-//        btnChat = (Button) findViewById(R.id.btn_chat);
+//        btnVideo = (Button) findViewById(R.id.btn_video);
+        btnChat = (Button) findViewById(R.id.btn_chat);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
-        btnVideo.setOnClickListener(this);
-//        btnChat.setOnClickListener(this);
+//        btnVideo.setOnClickListener(this);
+        btnChat.setOnClickListener(this);
 //        btnDiagnose.setOnClickListener(this);
 
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
@@ -188,7 +188,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
      * 跳转至ChatActivity
      */
     private void jumpToChatActivity() {
-        Intent intent = new Intent(HomePageActivity.this, ChatActivity.class);
+        Intent intent = new Intent(HomePageActivity.this, ManagerMedicineActivity.class);
         startActivityForResult(intent, Keys.CHAT_REQUEST);
     }
 
@@ -288,7 +288,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 return;
             }
         }
-        //ChatActivity return
+        //ManagerMedicineActivity return
         if (requestCode == Keys.CHAT_REQUEST && resultCode == Keys.CHAT_RESULT) {
             if (data != null) {
 
@@ -299,13 +299,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_video:
+            /*case R.id.btn_video:
                 checkPermission();
-                break;
+                break;*/
 
-//            case R.id.btn_chat:
-//                jumpToChatActivity();
-//                break;
+            case R.id.btn_chat:
+                jumpToChatActivity();
+                break;
 //
 //            case R.id.btn_diagnose:
 //                jumpToDiagnoseActivity();

@@ -62,7 +62,7 @@
         </activity>
 
         <activity
-            android:name=".ChatActivity"
+            android:name=".ManagerMedicineActivity"
             android:label="@string/Chat">
 
         </activity>

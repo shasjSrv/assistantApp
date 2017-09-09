@@ -81,7 +81,10 @@ public class DecisionServices extends Service {
     private MySpeechUnderstander mSpeechUnderstander;
 
     //StateMachine
+    /*control the state of deciseion*/
     private ControlStateMachine mCsm;
+
+
 
     private MediaPlayer mp;
 
@@ -89,7 +92,7 @@ public class DecisionServices extends Service {
     private String answerText;
     private MyResult myAnswerResult;
     private int flag = QUESTIONMODE;
-    private int IsWaker = UNDERDANDSTATU;
+//    private int IsWaker = UNDERDANDSTATU;
 
 
     private class ControlStateMachine  extends StateMachine {
@@ -438,7 +441,7 @@ public class DecisionServices extends Service {
         public void onResult(final UnderstanderResult result) {
             if (null != result) {
 
-                IsWaker = UNDERDANDSTATU;
+//                IsWaker = UNDERDANDSTATU;
                 // 显示
                 String jsonReturn = result.getResultString();
                 Log.e(TAG, "result:" + jsonReturn);
@@ -584,7 +587,7 @@ public class DecisionServices extends Service {
             }
             Log.i(TAG,"before TTS onCompleted thread ID: " + android.os.Process.myTid());
             mTts.startSpeaking(answerText, mTtsListener);
-            IsWaker = WAKERSTATU;
+//            IsWaker = WAKERSTATU;
             mCsm.wakeup();
 //            changeActicityCondition(answerText);
 
@@ -634,7 +637,7 @@ public class DecisionServices extends Service {
         Log.i(TAG,"Start thread ID: " + android.os.Process.myTid());
 
         Log.d(TAG, "before new client");
-//        cli = new Client(ChatActivity.ServerIP,ChatActivity.ServerPort);
+//        cli = new Client(ManagerMedicineActivity.ServerIP,ManagerMedicineActivity.ServerPort);
         Log.d(TAG, "before new MediaPlayer");
         mp = new MediaPlayer();
         Log.d(TAG, "Begin");
@@ -665,7 +668,7 @@ public class DecisionServices extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        Log.e(ChatActivity.TAG,"the service start");
+//        Log.e(ManagerMedicineActivity.TAG,"the service start");
         Log.i(HomePageActivity.TAG, "the service start");
         HomePageActivity.showTip("the service start");
         return super.onStartCommand(intent, flags, startId);
