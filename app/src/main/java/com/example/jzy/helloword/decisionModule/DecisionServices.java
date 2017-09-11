@@ -105,6 +105,7 @@ public class DecisionServices extends Service {
         private final static int MSG_TEMPLATE = 5;
         private final static int MSG_QUESTION = 6;
         private final static int MSG_TTS_COMPLETE = 7;
+        private final static int MSG_BACK_SLEEP = 8;
         private int state = 0;
         private int latestState = 0;
 
@@ -160,6 +161,10 @@ public class DecisionServices extends Service {
             sendMessage(MSG_TTS_COMPLETE);
         }
 
+        public void backToSleep(){
+            sendMessage(MSG_BACK_SLEEP);
+        }
+
         private boolean checkResult(MyResult myResult){
             if(myResult == null){
                 Log.i("Sys","myResult is null");
@@ -168,6 +173,22 @@ public class DecisionServices extends Service {
             return true;
         }
 
+        public void dealTTSState(){
+            switch (latestState) {
+                case MSG_ANSWER:
+                    break;
+                case MSG_QUESTION:
+                    Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
+                    th.start();
+                    break;
+                case MSG_TEMPLATE:
+                    mTts.startSpeaking("嗯",mTtsListener);
+                    break;
+                default:
+                    return;
+            }
+
+        }
 
 
         private State mDefaulteState = new DefaultState();
@@ -241,9 +262,11 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_ANSWER;
                 Log.i(TAG, "AnswerText: " + name);
+                waker.stopListening();
                 mTts.startSpeaking(name, mTtsListener);
-                //mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-                changeToTempMode();
+//                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+
+//                changeToTempMode();
 //                notifyUI(getName());
             }
 
@@ -270,7 +293,8 @@ public class DecisionServices extends Service {
             public void enter() {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_TEMPLATE;
-                Calendar c = Calendar.getInstance();
+//                mTts.startSpeaking("嗯",mTtsListener);
+                /*Calendar c = Calendar.getInstance();
                 lastestTime = c.get(Calendar.MILLISECOND);
                 while(true) {
                     c = Calendar.getInstance();
@@ -285,7 +309,7 @@ public class DecisionServices extends Service {
                         continue;
                     }
                     break;
-                }
+                }*/
                 mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
 //                notifyUI(getName());
             }
@@ -319,7 +343,7 @@ public class DecisionServices extends Service {
             @Override
             public boolean processMessage(Message msg) {
                 switch (msg.what) {
-                    case MSG_ANSWER:
+                    case MSG_BACK_SLEEP:
                         transitionTo(mSleepState);
                         break;
                     case MSG_TTS_COMPLETE:
@@ -340,17 +364,19 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 switch (latestState) {
                     case MSG_QUESTION:
-                        Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
-                        th.start();
+
                         mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
                         changeToQuestionMode();
                         break;
                     case MSG_TEMPLATE:
-                        mTts.startSpeaking("嗯",mTtsListener);
                         mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
                         changeToQuestionMode();
                         break;
                     case MSG_WAKE_UP:
+                        break;
+                    case MSG_ANSWER:
+//                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                        changeToTempMode();
                         break;
                     default:
 
@@ -465,14 +491,15 @@ public class DecisionServices extends Service {
                 myAnswerResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
 //                MyResult myResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
 //                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
-               /* answerText = myResult.getResult();
+                /*answerText = myAnswerResult.getText();
                 if (answerText != null) {
                     mTts.startSpeaking(answerText, mTtsListener);
-                    changeActicityCondition(text);
+//                    changeActicityCondition(text);
                 }else
                     mTts.startSpeaking("识别结果不正确。", mTtsListener);*/
 //                }
-//                dealResult(myResult);
+//                dealResult(myAnswerResult);
+                mCsm.dealTTSState();
 
                 //TODO 语音理解
             } else {
@@ -480,15 +507,9 @@ public class DecisionServices extends Service {
             }
 
         }
-        private void changeActicityCondition(String text){
-            int index = text.indexOf("增加用户");
-            Log.i(TAG, "index:" + index);
-            if(index != -1){
-                EventBus.getDefault().post(new AddEvent(text));
-            }
-        }
 
-        private void dealResult(MyResult myResult){
+
+       /* private void dealResult(MyResult myResult){
             if(myResult == null){
                 Log.i("Sys","myResult is null");
             }
@@ -525,7 +546,7 @@ public class DecisionServices extends Service {
                     flag = QUESTIONMODE;
                 }
             }
-        }
+        }*/
 
         private String drainStream(InputStream in) {
             Scanner s = new Scanner(in).useDelimiter("\\A");
@@ -562,8 +583,10 @@ public class DecisionServices extends Service {
             // 14002
             Log.e(TAG, "YU YIN ERROR");
             HomePageActivity.showTip(error.getPlainDescription(true));
+            mCsm.backToSleep();
             answerText = WELCOME;
             waker.startListening(mWakeuperListener);
+
         }
 
         @Override
@@ -690,9 +713,10 @@ public class DecisionServices extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BackEnvent event) {
         //Do something
+
         name = "你好" + event.toString() + "今天拿药吃了吗";
         mCsm.detectSuccess();
-        waker.stopListening();
+
         /*mTts.startSpeaking("你好" + event.toString() + "今天拿药吃了吗", mTtsListener);
 
 
