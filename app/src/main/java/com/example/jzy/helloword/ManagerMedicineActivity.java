@@ -32,9 +32,10 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String BoxIP;
 
-    private MaterialEditText validationEt, bedNum;//房间号、床位
+    private MaterialEditText validationEt;//房间号
+    private MaterialEditText bedNum;//床位
     Button validateBt;
-    boolean checkinput=true,checkfull=false;//检测输入是否为空，检测是否盒子已满
+    boolean checkInput = true;//检测输入是否为空
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         validationEt = (MaterialEditText) findViewById(R.id.validationEt);
-        bedNum=(MaterialEditText)findViewById(R.id.bedNum);
+        bedNum = (MaterialEditText) findViewById(R.id.bedNum);
         validateBt = (Button) findViewById(R.id.validateBt);
         initValidationEt();
 
@@ -55,103 +56,99 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
 
         //final MaterialEditText validationEt = (MaterialEditText) findViewById(R.id.validationEt);
-       // validationEt.addValidator(new RegexpValidator("仅可输入数字!", "\\d+"));
+        // validationEt.addValidator(new RegexpValidator("仅可输入数字!", "\\d+"));
         //final Button validateBt = (Button) findViewById(R.id.validateBt);
         /**
          * get the parameter of xmrRpcServer
          */
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+    /*    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
         BoxIP = sharedPref.getString(
-                keyPrefBoxIP, getString(R.string.pref_box_ip_default));
+                keyPrefBoxIP, getString(R.string.pref_box_ip_default));*/
         validateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // validate
-
-                checkinput=true;
                 //点击后检测输入是否为空
-                if(validationEt.getText().length()<=0)
-                {
-                    Toast.makeText(ManagerMedicineActivity.this,validationEt.getText().length()+" 1 ",Toast.LENGTH_SHORT).show();
-                   validationEt.addValidator(new RegexpValidator("请输入病房号!", "\\d+"));
-                  //  bedNum.addValidator(new RegexpValidator("请输入病房号!", "\\d+"));
-                    checkinput=false;
+                checkInput = true;
+                if (validationEt.getText().length() <= 0) {
+                    validationEt.setError("请输入房间号");
+                    checkInput = false;
                 }
-               if(bedNum.getText().length()<=0)
-                {
-                    Toast.makeText(ManagerMedicineActivity.this,validationEt.getText().length()+" 2 ",Toast.LENGTH_SHORT).show();
-                    bedNum.addValidator(new RegexpValidator("请输入床位号!", "\\d+"));
-                    checkinput=false;
+                if (bedNum.getText().length() <= 0) {
+                    bedNum.setError("请输入床位号");
+                    checkInput = false;
                 }
 
-                //如果药盒已满
-                if(checkfull&&checkinput)
-                {
-                    final MaterialDialog mMaterialDialog = new MaterialDialog(ManagerMedicineActivity.this);
-                           mMaterialDialog.setMessage("药盒已满")
-                            .setPositiveButton("确定", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mMaterialDialog.dismiss();
-                         }
-                            })
-                            .setNegativeButton("取消", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mMaterialDialog.dismiss();
+                //若输入不为空
+                if (checkInput) {
+                    //如果药盒已满则弹出提示框
+                    boolean checkFull = true;
+                    if (checkFull) {
+                        final MaterialDialog mMaterialDialog = new MaterialDialog(ManagerMedicineActivity.this);
+                        mMaterialDialog.setMessage("药盒已满")
+                                .setPositiveButton("确定", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMaterialDialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("取消", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMaterialDialog.dismiss();
+                                    }
+                                });
+
+                        mMaterialDialog.show();
+                    }
+                    //否则进行房间号验证 然后放药
+                    else {
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                XMLRPCClient client = new XMLRPCClient(BoxIP);
+                                try {
+                                    Log.i(TAG, "int: " + validationEt.getText().toString());
+                                    int result = (Integer) client.call("QueryMedicine", "94E316");
+                                    Log.i("XMLRPC Test", "QueryMedicine 94E316 result  = " + result);
+                                    result = (Integer) client.call("QueryMedicine", "94AA92");
+                                    Log.i("XMLRPC Test", "QueryMedicine 94AA92 result  = " + result);
+                                    result = (Integer) client.call("QueryMedicine", "9576AA");
+                                    Log.i("XMLRPC Test", "QueryMedicine 9576AA result  = " + result);
+                                    result = (Integer) client.call("QueryMedicine", "957B3D");
+                                    Log.i("XMLRPC Test", "QueryMedicine 957B3D rresult  = " + result);
+                                    result = (Integer) client.call("Put", "94E316");
+                                    Log.i("XMLRPC Test", "Put 94E316 result  = " + result);
+                                    result = (Integer) client.call("Put", "94AA92");
+                                    Log.i("XMLRPC Test", "Put 94AA92 result  = " + result);
+                                    result = (Integer) client.call("Put", "9576AA");
+                                    Log.i("XMLRPC Test", "Put 9576AA result  = " + result);
+                                    result = (Integer) client.call("Put", "957B3D");
+                                    Log.i("XMLRPC Test", "Put 957B3D result  = " + result);
+                                    result = (Integer) client.call("Put", "94E316");
+                                    Log.i("XMLRPC Test", "Put 94E316 result  = " + result);
+                                    result = (Integer) client.call("Put", "94AA92");
+                                    Log.i("XMLRPC Test", "Put 94AA92 result  = " + result);
+                                    result = (Integer) client.call("Put", "9576AA");
+                                    Log.i("XMLRPC Test", "Put 9576AA result  = " + result);
+                                    result = (Integer) client.call("Put", "957B3D");
+                                    Log.i("XMLRPC Test", "Put 957B3D result  = " + result);
+                                    result = (Integer) client.call("QueryAvailable");
+                                    Log.i("XMLRPC Test", "QueryAvailable remain result  = " + result);
+
+                                } catch (XMLRPCException e) {
+                                    Log.i("XMLRPC Test", "Error", e);
                                 }
-                            });
-
-                    mMaterialDialog.show();
-
-                    checkinput=true;
-                }
-
-
-
-                if(validationEt.validate()){
-                    new Thread(new Runnable(){
-                        @Override
-                        public void run() {
-                            XMLRPCClient client = new XMLRPCClient(BoxIP);
-                            try {
-                                Log.i(TAG,"int: " + validationEt.getText().toString());
-                                int result = (Integer) client.call("QueryMedicine","94E316");
-                                Log.i("XMLRPC Test", "QueryMedicine 94E316 result  = " + result);
-                                result = (Integer) client.call("QueryMedicine","94AA92");
-                                Log.i("XMLRPC Test", "QueryMedicine 94AA92 result  = " + result);
-                                result = (Integer) client.call("QueryMedicine","9576AA");
-                                Log.i("XMLRPC Test", "QueryMedicine 9576AA result  = " + result);
-                                result = (Integer) client.call("QueryMedicine","957B3D");
-                                Log.i("XMLRPC Test", "QueryMedicine 957B3D rresult  = " + result);
-                                result = (Integer) client.call("Put","94E316");
-                                Log.i("XMLRPC Test", "Put 94E316 result  = " + result);
-                                result = (Integer) client.call("Put","94AA92");
-                                Log.i("XMLRPC Test", "Put 94AA92 result  = " + result);
-                                result = (Integer) client.call("Put","9576AA");
-                                Log.i("XMLRPC Test", "Put 9576AA result  = " + result);
-                                result = (Integer) client.call("Put","957B3D");
-                                Log.i("XMLRPC Test", "Put 957B3D result  = " + result);
-                                result = (Integer) client.call("Put","94E316");
-                                Log.i("XMLRPC Test", "Put 94E316 result  = " + result);
-                                result = (Integer) client.call("Put","94AA92");
-                                Log.i("XMLRPC Test", "Put 94AA92 result  = " + result);
-                                result = (Integer) client.call("Put","9576AA");
-                                Log.i("XMLRPC Test", "Put 9576AA result  = " + result);
-                                result = (Integer) client.call("Put","957B3D");
-                                Log.i("XMLRPC Test", "Put 957B3D result  = " + result);
-                                result = (Integer) client.call("QueryAvailable");
-                                Log.i("XMLRPC Test", "QueryAvailable remain result  = " + result);
-
-                            }catch (XMLRPCException e){
-                                Log.i("XMLRPC Test", "Error", e);
                             }
-                        }
-                    }).start();
+                        }).start();
+
+                    }
                 }
+
             }
         });
     }
@@ -166,7 +163,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }*/
-    public static Context getContext(){
+    public static Context getContext() {
         return context;
     }
 
