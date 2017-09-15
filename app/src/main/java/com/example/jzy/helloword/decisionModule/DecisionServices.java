@@ -264,10 +264,6 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "AnswerText: " + name);
                 waker.stopListening();
                 mTts.startSpeaking(name, mTtsListener);
-//                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-
-//                changeToTempMode();
-//                notifyUI(getName());
             }
 
             @Override
@@ -293,23 +289,6 @@ public class DecisionServices extends Service {
             public void enter() {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_TEMPLATE;
-//                mTts.startSpeaking("嗯",mTtsListener);
-                /*Calendar c = Calendar.getInstance();
-                lastestTime = c.get(Calendar.MILLISECOND);
-                while(true) {
-                    c = Calendar.getInstance();
-                    int seconds = c.get(Calendar.MILLISECOND);
-                    if(lastestTime > 955){
-                        lastestTime -= 1000;
-                        seconds  -= 1000;
-                    }
-                    if (seconds - lastestTime < 5) {
-                        Log.i("Sys", "seconds:" + seconds);
-                        Log.i("Sys", "lastestTime:" + lastestTime);
-                        continue;
-                    }
-                    break;
-                }*/
                 mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
 //                notifyUI(getName());
             }
