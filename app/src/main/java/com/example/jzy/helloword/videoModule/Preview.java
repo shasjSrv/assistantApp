@@ -20,18 +20,20 @@ import android.graphics.ImageFormat;
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "Preview";
 
-    String serverURL;
-    SurfaceView mSurfaceView;
-    SurfaceHolder mHolder;
+    private String serverURL;
+    private String userInfoURL;
+    private SurfaceView mSurfaceView;
+    private SurfaceHolder mHolder;
     Size mPreviewSize;
     List<Size> mSupportedPreviewSizes;
-    Camera mCamera;
-    StreamIt mStreamIt;
+    private Camera mCamera;
+    private StreamIt mStreamIt;
     private int flag;
 
-    Preview(Context context, SurfaceView sv, String URL,int flag) {
+    Preview(Context context, SurfaceView sv, String URL,int flag,String userInfoURL) {
         super(context);
         serverURL = URL;
+        this.userInfoURL = userInfoURL;
         mSurfaceView = sv;
         this.flag = flag;
 //        addView(mSurfaceView);
@@ -78,7 +80,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
                 parameters.setPictureFormat(ImageFormat.NV21);
                 mCamera.setPreviewDisplay(mHolder);
-                mStreamIt = new StreamIt(serverURL,flag);
+                mStreamIt = new StreamIt(serverURL,flag,userInfoURL);
                 mCamera.setPreviewCallback(mStreamIt);
             } catch (IOException e) {
                 e.printStackTrace();
