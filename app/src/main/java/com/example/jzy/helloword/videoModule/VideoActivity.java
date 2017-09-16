@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import com.example.jzy.helloword.event.MessageEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by jzy on 8/2/17.
@@ -98,11 +101,30 @@ public class VideoActivity extends AppCompatActivity {
     public void onMessageEvent(ChangeEvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.getText());
-        if (remindDialog == null) {
+      /*  if (remindDialog == null) {
             remindDialog = new RemindDialog(this, event.getText());
         }
         remindDialog.setTitle(event.getText());
-        remindDialog.show();
+        remindDialog.show();*/
+
+        final MaterialDialog mMaterialDialog = new MaterialDialog(VideoActivity.this);
+        mMaterialDialog.setMessage(event.getText());
+        mMaterialDialog.setPositiveButton("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMaterialDialog.dismiss();
+                    }
+                })
+                .setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMaterialDialog.dismiss();
+                    }
+                });
+
+        mMaterialDialog.show();
+
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
