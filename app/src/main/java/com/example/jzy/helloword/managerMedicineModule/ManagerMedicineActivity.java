@@ -1,30 +1,24 @@
-package com.example.jzy.helloword;
+package com.example.jzy.helloword.managerMedicineModule;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
-import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
+import com.example.jzy.helloword.Keys;
+import com.example.jzy.helloword.R;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rengwuxian.materialedittext.validation.RegexpValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by jzy on 8/5/17.

@@ -1,4 +1,4 @@
-package com.example.jzy.helloword;
+package com.example.jzy.helloword.managerMedicineModule;
 
 /**
  * Created by xiashu on 17-9-12.

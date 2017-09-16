@@ -23,6 +23,7 @@ import com.example.jzy.helloword.event.AddEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.decisionModule.DecisionServices;
+import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
 import com.example.jzy.helloword.videoModule.VideoActivity;
 import com.example.jzy.helloword.videoModule.RemindDialog;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;

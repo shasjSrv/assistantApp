@@ -16,7 +16,6 @@ import android.widget.Toast;
 import android.content.Intent;
 
 import com.example.jzy.helloword.Keys;
-import com.example.jzy.helloword.ManagerMedicineActivity;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
