@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -58,21 +59,24 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
         String[] name={"阿莫西林","青霉素","清热感冒颗粒","板蓝根"};
         int[] num={1,3,4,2};
-        String[] info={"一日三次，一次一粒","无","一日三次，一次两包，冲服","一日三次，一次一包"};
+        String[] info={"3次/日，1粒/次","无","3次/日，2包/次，冲服","3次/日，1包/次"};
         List<Map<String,Object>> list_map=new ArrayList<Map<String,Object>>();
 
 
         for (int i = 0; i < 4; i++) {
             Map<String,Object> items=new HashMap<String,Object>();
             items.put("name",name[i]);
-            items.put("num",num[i]);
+            items.put("num",num[i]+"盒");
             items.put("info",info[i]);
            // medicines.add(new medicine_item("药品"+i,(i+2),"一日三次，每次两粒"));
             list_map.add(items);
         }
         SimpleAdapter simpleAdapter=new SimpleAdapter(context,list_map,R.layout.listitem_medicine,
                 new String[]{"name","num","info"},new int[]{R.id.m_name,R.id.m_num,R.id.m_infor});
+
         holder.medicine_list.setAdapter(simpleAdapter);
+        setListVIewHeight(holder.medicine_list);
+      //  holder.medicine_list.
 
 
 
@@ -83,6 +87,25 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         medicineList.add("清热解毒颗粒    1盒     3次/日，1包/次，冲服");
         holder.medicine_list.setAdapter(new ArrayAdapter<String>(context, R.layout.listitem_medicine_1, medicineList));
 */
+    }
+
+
+    //根据子listview中控件计算得到listview的高度
+    public static void setListVIewHeight(ListView listView){
+        ListAdapter listAdapter=listView.getAdapter();
+        if(listAdapter==null)
+            return;
+
+        int len=listAdapter.getCount();
+        int totalHeight=0;
+        for(int i=0;i<len;i++){
+            View listItem=listAdapter.getView(i,null,listView);
+            listItem.measure(0,0);
+            totalHeight+=listItem.getMeasuredHeight()+listView.getDividerHeight()/2;
+        }
+        ViewGroup.LayoutParams params=listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1))+60;
+        listView.setLayoutParams(params);
     }
 
 
@@ -102,7 +125,6 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             this.num = num;
             this.infor = infor;
         }
-
     }
 
 }

@@ -51,21 +51,19 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.manage_medicine);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+      //  getSupportActionBar().setDisplayHomeAsUpEnabled(false);
        // getSupportActionBar().setDisplayShowTitleEnabled(true);
 
       /*  validationEt = (MaterialEditText) findViewById(R.id.validationEt);
         bedNum = (MaterialEditText) findViewById(R.id.bedNum);
         validateBt = (Button) findViewById(R.id.validateBt);
         initValidationEt();
-
 */
 
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view) ;
-
-
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         initPatients();
@@ -79,11 +77,10 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
     private void initPatients(){
 
-        for(int i=0;i<4;i++)
-        {
-            Patient patient=new Patient("id-"+i,"name"+i,"medicineinfor"+i);
-            patientList.add(patient);
-        }
+        patientList.add(new Patient("20172104","张三"," "));
+        patientList.add(new Patient("20172105","李四"," "));
+        patientList.add(new Patient("20172004","王五"," "));
+        patientList.add(new Patient("20172156","小花"," "));
 
     }
 
