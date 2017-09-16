@@ -51,8 +51,8 @@
     <string name="pref_box_ip_dlg">Enter a Medicinal Box IP.</string>
     <string name="pref_box_ip_default" translatable="false">http://192.168.3.154:15000</string>
 
-    <string name="pref_tracing_key">tracing_preference</string>
-    <string name="pref_tracing_title">Debug performance tracing.</string>
-    <string name="pref_tracing_dlg">Debug performance tracing.</string>
-    <string name="pref_tracing_default" translatable="false">false</string>
+    <string name="pref_user_info_ip_key">user_info_ip_preference</string>
+    <string name="pref_user_info_ip_title">user_info_ip.</string>
+    <string name="pref_user_info_ip_dlg">Enter a userInfor server ip.</string>
+    <string name="pref_user_info_ip_default" translatable="false">http://118.89.57.249:5000</string>
 </resources>

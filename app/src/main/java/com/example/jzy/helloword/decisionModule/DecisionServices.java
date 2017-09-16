@@ -11,9 +11,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.jzy.helloword.HomePageActivity;
-import com.example.jzy.helloword.event.AddEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
-import com.example.jzy.helloword.event.BackEnvent;
+import com.example.jzy.helloword.event.PatientBackEnvent;
+import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.voiceModule.HandleResult;
 import com.example.jzy.helloword.voiceModule.MyResult;
@@ -42,7 +42,6 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Calendar;
 import java.util.Scanner;
 
 import javax.net.ssl.HostnameVerifier;
@@ -61,17 +60,8 @@ public class DecisionServices extends Service {
 
     private final static String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
-    private final static int ANSWERMODE = 1;
-    private final static int QUESTIONMODE = 0;
-    private final static int ANSWERTWOMODE = 2;
-    private final static int WAKERSTATU = 0;
-    private final static int UNDERDANDSTATU = 1;
     private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
-
-    private int count;
     private String name = "";
-    private int lastestTime;
-
     // Waker
     private Waker waker;
 
@@ -88,25 +78,24 @@ public class DecisionServices extends Service {
 
     private MediaPlayer mp;
 
-    private boolean isPlaying, isRecording;
+    private boolean isPlaying;
     private String answerText;
     private MyResult myAnswerResult;
-    private int flag = QUESTIONMODE;
-//    private int IsWaker = UNDERDANDSTATU;
 
 
     private class ControlStateMachine  extends StateMachine {
 //        private final String TAG1 = MyStateMachine.class.getSimpleName();
 
         private final static int MSG_WAKE_UP = 1;
-        private final static int MSG_DETECTION_SUCCESS = 2;
-        private final static int MSG_DETECTION_FALSE = 3;
+        private final static int MSG_DETECTION_PATIENT_SUCCESS = 2;
+        private final static int MSG_DETECTION_PATIENT_FALSE = 3;
         private final static int MSG_ANSWER = 4;
         private final static int MSG_TEMPLATE = 5;
         private final static int MSG_QUESTION = 6;
         private final static int MSG_TTS_COMPLETE = 7;
         private final static int MSG_BACK_SLEEP = 8;
-        private int state = 0;
+        private final static int MSG_DETECTION_NURSE_SUCCESS = 9;
+        private final static int MSG_DETECTION_NURSE_FALSE = 10;
         private int latestState = 0;
 
 //        private UpdateUIListener listener = null;
@@ -127,26 +116,16 @@ public class DecisionServices extends Service {
             start(); // 状态机进入初始状态等候外界的命令
         }
 
-       /* public void registerListener(UpdateUIListener l) {
-            this.listener = l;
-        }
-
-        private void notifyUI(String text) {
-            if (listener != null) {
-                listener.update(text);
-            }
-        }*/
-
         public void wakeup() {
             sendMessage(MSG_WAKE_UP);
         }
 
-        public void detectSuccess() {
-            sendMessage(MSG_DETECTION_SUCCESS);
+        public void detectPatientSuccess() {
+            sendMessage(MSG_DETECTION_PATIENT_SUCCESS);
         }
 
-        public void changeToAnswerMode() {
-            sendMessage(MSG_ANSWER);
+        public void detectNurseSuccess() {
+            sendMessage(MSG_DETECTION_NURSE_SUCCESS);
         }
 
         public void changeToTempMode() {
@@ -197,7 +176,6 @@ public class DecisionServices extends Service {
 
             @Override
             public boolean processMessage(Message msg) {
-//                notifyUI("DefaultState: wrong command");
                 return true;
             }
         }
@@ -208,13 +186,8 @@ public class DecisionServices extends Service {
             @Override
             public void enter() {
                 Log.i(TAG, "enter " + getName());
-                state = WAKERSTATU;
                 latestState = MSG_WAKE_UP;
                 waker.startListening(mWakeuperListener);
-
-
-
-//                notifyUI(getName());
             }
 
             @Override
@@ -237,16 +210,17 @@ public class DecisionServices extends Service {
             public void enter() {
                 Log.i(TAG, "enter " + getName());
                 EventBus.getDefault().post(new Tip(""));
-                changeToAnswerMode();
-//                notifyUI(getName());
+//                changeToAnswerMode();
             }
 
             @Override
             public boolean processMessage(Message msg) {
                 switch (msg.what) {
-                    case MSG_DETECTION_SUCCESS:
+                    case MSG_DETECTION_PATIENT_SUCCESS:
                         transitionTo(mAnswerState);
                         break;
+                    case MSG_DETECTION_NURSE_SUCCESS:
+                        transitionTo(mAnswerState);
                     default:
                         return false;
                 }
@@ -290,7 +264,6 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_TEMPLATE;
                 mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-//                notifyUI(getName());
             }
 
             @Override
@@ -354,14 +327,10 @@ public class DecisionServices extends Service {
                     case MSG_WAKE_UP:
                         break;
                     case MSG_ANSWER:
-//                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
                         changeToTempMode();
                         break;
                     default:
-
                 }
-
-//                notifyUI(getName());
             }
 
             @Override
@@ -407,11 +376,7 @@ public class DecisionServices extends Service {
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
-//            switch(count){
-//                case 2: iv.setImageResource(R.drawable.face2); count++; break;
-//                case 3: iv.setImageResource(R.drawable.face3); count++; break;
-//                case 4: iv.setImageResource(R.drawable.face4); count=2; break;
-//            }
+
         }
 
         @Override
@@ -419,11 +384,8 @@ public class DecisionServices extends Service {
             Log.i(TAG,"TTS onCompleted thread ID: " + android.os.Process.myTid());
             if (error == null) {
                 isPlaying = false;
-                // iv.setImageResource(R.drawable.face2);
                 mCsm.ttsComplete();
-                /*if(IsWaker == UNDERDANDSTATU) {
-                    mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-                }*/
+
             } else {
                 HomePageActivity.showTip(error.getPlainDescription(true));
             }
@@ -468,16 +430,6 @@ public class DecisionServices extends Service {
                 }*/
 //                if(service==HandleResult.ANSWER){
                 myAnswerResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
-//                MyResult myResult = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
-//                answerText = HandleResult.parseAnswer(jsonReturn, result1, text/*,cli*/);
-                /*answerText = myAnswerResult.getText();
-                if (answerText != null) {
-                    mTts.startSpeaking(answerText, mTtsListener);
-//                    changeActicityCondition(text);
-                }else
-                    mTts.startSpeaking("识别结果不正确。", mTtsListener);*/
-//                }
-//                dealResult(myAnswerResult);
                 mCsm.dealTTSState();
 
                 //TODO 语音理解
@@ -486,46 +438,6 @@ public class DecisionServices extends Service {
             }
 
         }
-
-
-       /* private void dealResult(MyResult myResult){
-            if(myResult == null){
-                Log.i("Sys","myResult is null");
-            }
-            if(myResult == null) {
-                if (flag == QUESTIONMODE) {
-                    mTts.startSpeaking("对不起，我没有听清楚。", mTtsListener);
-                }
-            }else {
-                if(flag == QUESTIONMODE) {
-                    Thread th = new SendChatThread(serverURL, myResult.getText());
-                    th.start();
-                }else if(flag == ANSWERMODE){
-//                        mTts.startSpeaking("嗯",mTtsListener);
-                    Calendar c = Calendar.getInstance();
-                    lastestTime = c.get(Calendar.MILLISECOND);
-                    while(true) {
-                        c = Calendar.getInstance();
-                        int seconds = c.get(Calendar.MILLISECOND);
-                        if(lastestTime > 955){
-                            lastestTime -= 1000;
-                            seconds  -= 1000;
-                        }
-                        if (seconds - lastestTime < 10) {
-                            Log.i("Sys", "seconds:" + seconds);
-                            Log.i("Sys", "lastestTime:" + lastestTime);
-                            continue;
-                        }
-                        break;
-                    }
-                    mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-                    flag = ANSWERTWOMODE;
-                }else if(flag == ANSWERTWOMODE){
-                    mTts.startSpeaking("嗯",mTtsListener);
-                    flag = QUESTIONMODE;
-                }
-            }
-        }*/
 
         private String drainStream(InputStream in) {
             Scanner s = new Scanner(in).useDelimiter("\\A");
@@ -542,7 +454,6 @@ public class DecisionServices extends Service {
         @Override
         public void onEndOfSpeech() {
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-            isRecording = false;
             /**
              * @TODO MAKE THE BUTTON INVISIBLE
              */
@@ -553,7 +464,6 @@ public class DecisionServices extends Service {
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
-            isRecording = true;
             HomePageActivity.showTip("开始说话");
         }
 
@@ -655,16 +565,9 @@ public class DecisionServices extends Service {
         mCsm = new ControlStateMachine();
 
         isPlaying = false;
-        isRecording = false;
         answerText = WELCOME;
-        count = 2;
         EventBus.getDefault().register(this);
-        /*new Thread(new Runnable(){
-            @Override
-            public void run() {
-                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-            }
-        }).start();*/
+
     }
 
 
@@ -689,18 +592,15 @@ public class DecisionServices extends Service {
         mSpeechUnderstander.destory();
     }
 
+
+    /*
+    * notify DecisionService change state to detectPatientSuccess
+    */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(BackEnvent event) {
+    public void onMessageEvent(PatientBackEnvent event) {
         //Do something
-
         name = "你好" + event.toString() + "今天拿药吃了吗";
-        mCsm.detectSuccess();
-
-        /*mTts.startSpeaking("你好" + event.toString() + "今天拿药吃了吗", mTtsListener);
-
-
-        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
-        flag = ANSWERMODE;*/
+        mCsm.detectPatientSuccess();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -708,7 +608,15 @@ public class DecisionServices extends Service {
         //Do something
 //        waker.stopListening();
         mTts.startSpeaking(event.getText(), mTtsListener);
-        flag = QUESTIONMODE;
+    }
+    /*
+    * notify DecisionService change state to detectNurseSuccess
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NurseBackEvent event) {
+        //Do something
+        name = "你好" + event.toString() + "今天拿药吃了吗";
+        mCsm.detectNurseSuccess();
     }
 
     private void playMusic(String result) throws JSONException {
@@ -718,7 +626,6 @@ public class DecisionServices extends Service {
         if (url == "null") {
             String answerText = "你想听谁唱的呀？";
             mTts.startSpeaking(answerText, mTtsListener);
-
             mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
         } else {
             initMediaPlayer(url);
@@ -755,9 +662,6 @@ public class DecisionServices extends Service {
 }
 
 class SendChatThread extends Thread {
-    /*    private byte byteBuffer[] = new byte[1024];
-        private OutputStream outsocket;*/
-//    private ByteArrayOutputStream myoutputstream;
     private String Url;
     private String context;
     private String Error = null;
@@ -782,16 +686,9 @@ class SendChatThread extends Thread {
 
         // Send data
         try {
-
-
-
             jsonObject = new JSONObject();
-//            jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
             jsonObject.put("user_id", 1);
             jsonObject.put("content", context);
-            //jsonObject.put("title",myoutputstream.toString());
-
-
             // Send POST data request
             url = new URL(Url);
 //            URLConnection conn = url.openConnection();
@@ -808,25 +705,13 @@ class SendChatThread extends Thread {
             Log.i("Sys", "jsonObject:" + jsonObject.toString());
             wr.close();
 
-            // Get the server response
-           /* reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;*/
-
             InputStream responseStream = conn.getInputStream();
             String response = drainStream(responseStream);
-//            conn.disconnect();
-//            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
             JSONObject resultText = responseJSON.getJSONObject("result");
             String text = resultText.getString("text");
-//            int resultType = responseJSON.getInt("type");
             Log.i("Sys", "text:" + text);
             EventBus.getDefault().post(new AnswerEvent(text));
-//            Log.i("Sys", "resultType:" + resultType);
-
-
-
         } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);

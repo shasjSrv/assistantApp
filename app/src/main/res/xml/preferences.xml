@@ -25,6 +25,13 @@
             android:defaultValue="@string/pref_box_ip_default"
             android:dialogTitle="@string/pref_box_ip_dlg" />
 
+        <EditTextPreference
+            android:key="@string/pref_user_info_ip_key"
+            android:title="@string/pref_user_info_ip_title"
+            android:inputType="text"
+            android:defaultValue="@string/pref_user_info_ip_default"
+            android:dialogTitle="@string/pref_user_info_ip_dlg" />
+
         <!--<CheckBoxPreference-->
             <!--android:key="@string/pref_displayhud_key"-->
             <!--android:title="@string/pref_displayhud_title"-->

@@ -23,7 +23,8 @@ import android.util.Log;
 
 import com.example.jzy.helloword.event.ChangeEvent;
 import com.example.jzy.helloword.event.MessageEvent;
-import com.example.jzy.helloword.event.BackEnvent;
+import com.example.jzy.helloword.event.PatientBackEnvent;
+import com.example.jzy.helloword.event.NurseBackEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,13 +39,15 @@ import java.util.Scanner;
 
 public class StreamIt implements Camera.PreviewCallback {
     private String Url;
+    private String userInfoURL;
     private int lastestTime;
     private int flag;
 
-    public StreamIt(String serverURL,int flag) {
+    public StreamIt(String serverURL,int flag,String userInfoURL) {
         EventBus.getDefault().register(this);
         this.Url = serverURL;
         this.flag = flag;
+        this.userInfoURL = userInfoURL;
     }
 
     public void destroyInstance() {
@@ -91,7 +94,7 @@ public class StreamIt implements Camera.PreviewCallback {
                 outstream.flush();
                 // 启用线程将图像数据发送出去
 
-                Thread th = new SendVideoThread(outstream, Url,flag);
+                Thread th = new SendVideoThread(outstream, Url,flag,userInfoURL);
                 th.start();
               /*  try
                 {
@@ -111,19 +114,25 @@ class SendVideoThread extends Thread {
         private OutputStream outsocket;*/
     private static final int UPDATE = 1;
     private static final int SENDIDSTATUS = 0;
+    private static final int PATIENT = 0;
+    private static final int NURSE = 1;
+    private static final int RESPOSE_SUCCESS = 1;
+    private static final int RESPOSE_FAIL = 0;
 
     private ByteArrayOutputStream myoutputstream;
     private String Url;
+    private String userInfoURL;
     private String Error = null;
     private int flag;
     URL url;
     BufferedReader reader = null;
-    JSONObject jsonObject;
+//    JSONObject jsonObject;
 
-    public SendVideoThread(ByteArrayOutputStream myoutputstream, String Url, int flag) {
+    public SendVideoThread(ByteArrayOutputStream myoutputstream, String Url, int flag, String userInfoURL) {
         this.myoutputstream = myoutputstream;
         this.Url = Url;
         this.flag = flag;
+        this.userInfoURL = userInfoURL;
         try {
             myoutputstream.close();
         } catch (IOException e) {
@@ -138,11 +147,15 @@ class SendVideoThread extends Thread {
         // Send data
         try {
 
+
+            /*
+            * get respose from photo server
+            * */
             //sleep(500);
             int AddUserID = 1;
-            jsonObject = new JSONObject();
+            JSONObject jsonObject = new JSONObject();
             jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
-            if(flag == 1) {
+            if(flag == UPDATE) {
                 jsonObject.put("userID", AddUserID);
                 jsonObject.put("userName", "MrCai");
             }
@@ -169,10 +182,6 @@ class SendVideoThread extends Thread {
             wr.close();
 
             // Get the server response
-           /* reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;*/
-
             InputStream responseStream = conn.getInputStream();
             String response = drainStream(responseStream);
 //            conn.disconnect();
@@ -217,21 +226,80 @@ class SendVideoThread extends Thread {
         Log.i("Sys", "emojiID:" + emojiID);
         if(userID == -2 && status == -1 && emojiID == -1){
             Log.i("Sys", "come false emojiID:" + emojiID);
-//            EventBus.getDefault().post(new BackEnvent(userID,status,emojiID,userName));
+//            EventBus.getDefault().post(new PatientBackEnvent(userID,status,emojiID,userName));
             EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
             Log.i("Sys", "come userId emojiID:" + emojiID);
             EventBus.getDefault().post(new ChangeEvent("我好像不认识你,需要添加新用户吗？"));
         }else{
             Log.i("Sys", "come userID status emojiID:" + emojiID);
-            EventBus.getDefault().post(new BackEnvent(userID,status,emojiID,userName));
+            /*
+            * after get user id then query user information
+            * */
+            queryUserInfo(userID);
+//            EventBus.getDefault().post(new PatientBackEnvent(userID,status,emojiID,userName));
         }
 
     }
 
+    private void queryUserInfo(int userID) {
+        try {
+            /*
+            * get user information from userInfo server
+            * */
+
+            String URL = userInfoURL;
+            URL += "/QueryID";
+            url = new URL(URL);
+            Log.i("Sys", "URL:" + URL);
+            JSONObject queryJson = new JSONObject();
+            queryJson.put("user_id",userID);
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(queryJson.toString());
+            wr.flush();
+            Log.i("Sys", "jsonObject:" + queryJson.toString());
+            wr.close();
+
+            InputStream responseStream = conn.getInputStream();
+            String response = drainStream(responseStream);
+            JSONObject responseJSON = new JSONObject(response);
+            JSONObject result = responseJSON.getJSONObject("result");
+            int isSuccess = result.getInt("isSuccess");
+            String userName = result.getString("userName");
+            int type = result.getInt("type");
+
+            dealUserInfo(isSuccess,userName,type,userID);
+
+        } catch (Exception ex) {
+            Error = ex.getMessage();
+            Log.e("ERROR", "create url false:" + Error);
+        } finally {
+            try {
+                reader.close();
+            } catch (Exception ex) {
+            }
+        }
+    }
+
+    private void dealUserInfo(int isSuccess,String userName,int type,int userID){
+        Log.i("Sys", "isSuccess:" + isSuccess);
+        Log.i("Sys", "userName:" + userName);
+        Log.i("Sys", "type:" + type);
+        if(isSuccess == RESPOSE_SUCCESS){
+            if(type == PATIENT) {
+                EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));
+            }else if(type == NURSE){
+                EventBus.getDefault().post(new NurseBackEvent(userID, userName));
+            }
+        }
+    }
+
     private void returnSucc(int ifSucc) {
         if(ifSucc != 0){
-            EventBus.getDefault().post(new BackEnvent("success!"));
+            EventBus.getDefault().post(new PatientBackEnvent("success!"));
         }
 
     }

@@ -18,7 +18,7 @@ import android.content.Intent;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.ManagerMedicineActivity;
 import com.example.jzy.helloword.R;
-import com.example.jzy.helloword.event.BackEnvent;
+import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.ChangeEvent;
 import com.example.jzy.helloword.event.MessageEvent;
 
@@ -39,6 +39,7 @@ public class VideoActivity extends AppCompatActivity {
     private Preview mPreview;
     private Context ctx;
     private String keyprefRoomServerUrl;
+    private String keyprefUserInfoServerUrl;
     private SharedPreferences sharedPref;
     private RemindDialog remindDialog;
     private int flag;
@@ -59,9 +60,12 @@ public class VideoActivity extends AppCompatActivity {
         keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         String roomURL = sharedPref.getString(
                 keyprefRoomServerUrl, getString(R.string.pref_room_server_url_default));
+        keyprefUserInfoServerUrl = getString(R.string.pref_user_info_ip_key);
+        String userInfoURL = sharedPref.getString(
+                keyprefUserInfoServerUrl, getString(R.string.pref_user_info_ip_default));
         Bundle bundle = this.getIntent().getExtras();
         flag = bundle.getInt("flag");
-        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL,flag);
+        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL,flag,userInfoURL);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
@@ -136,7 +140,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(BackEnvent event) {
+    public void onMessageEvent(PatientBackEnvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.toString());
         backToHomePage(event.toString());

@@ -14,6 +14,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     private String keyPrefRoomServerUrl;
     private String keyPrefRobotId;
     private String keyPrefBoxIP;
+    private String keyprefUserInfoServerUrl;
     private SettingsFragment settingsFragment;
 
     @Override
@@ -22,6 +23,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         keyPrefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         keyPrefRobotId = getString(R.string.pref_robot_id_key);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
+        keyprefUserInfoServerUrl = getString(R.string.pref_user_info_ip_key);
         // Display the fragment as the main content.
         settingsFragment = new SettingsFragment();
         getFragmentManager()
@@ -40,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         updateSummary(sharedPreferences, keyPrefRoomServerUrl);
         updateSummary(sharedPreferences, keyPrefRobotId);
         updateSummary(sharedPreferences, keyPrefBoxIP);
+        updateSummary(sharedPreferences, keyprefUserInfoServerUrl);
     }
 
     @Override
@@ -57,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         if (key.equals(keyPrefRoomServerUrl)
                 || key.equals(keyPrefRobotId)
                 || key.equals(keyPrefBoxIP)
+                || key.equals(keyprefUserInfoServerUrl)
                 ) {
             updateSummary(sharedPreferences, key);
         }
