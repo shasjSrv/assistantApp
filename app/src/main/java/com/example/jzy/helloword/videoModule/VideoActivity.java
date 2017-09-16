@@ -18,6 +18,7 @@ import android.content.Intent;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.ManagerMedicineActivity;
 import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.ChangeEvent;
 import com.example.jzy.helloword.event.MessageEvent;
@@ -145,6 +146,14 @@ public class VideoActivity extends AppCompatActivity {
         Log.d(TAG, "event:" + event.toString());
         backToHomePage(event.toString());
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NurseBackEvent event) {
+        /* Do something */
+        Log.d(TAG, "event:" + event.toString());
+        backToHomePage(event.toString());
+    }
+
     /**
      * 返回主页
      */

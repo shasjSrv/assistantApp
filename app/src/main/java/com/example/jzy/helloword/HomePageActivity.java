@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jzy.helloword.event.AddEvent;
+import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.decisionModule.DecisionServices;
 import com.example.jzy.helloword.videoModule.VideoActivity;
@@ -257,6 +258,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Log.d(TAG, "flag:" + event.getFlag());
         jumpToVideoActivity(event.getFlag());
 //        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NurseBackEvent event) {
+        /* Do something */
+        Log.d(TAG, "event:" + event.toString());
+        jumpToChatActivity();
     }
 
     @Override

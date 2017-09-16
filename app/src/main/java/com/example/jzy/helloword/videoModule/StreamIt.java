@@ -29,6 +29,7 @@ import com.example.jzy.helloword.event.NurseBackEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static android.util.Base64.DEFAULT;
@@ -270,8 +271,10 @@ class SendVideoThread extends Thread {
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
             int type = result.getInt("type");
+            JSONArray patientArray = result.getJSONArray("patientArray");
 
-            dealUserInfo(isSuccess,userName,type,userID);
+
+            dealUserInfo(isSuccess,userName,type,userID,patientArray);
 
         } catch (Exception ex) {
             Error = ex.getMessage();
@@ -284,7 +287,7 @@ class SendVideoThread extends Thread {
         }
     }
 
-    private void dealUserInfo(int isSuccess,String userName,int type,int userID){
+    private void dealUserInfo(int isSuccess,String userName,int type,int userID,JSONArray patientArray){
         Log.i("Sys", "isSuccess:" + isSuccess);
         Log.i("Sys", "userName:" + userName);
         Log.i("Sys", "type:" + type);

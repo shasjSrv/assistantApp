@@ -98,7 +98,6 @@ public class DecisionServices extends Service {
         private final static int MSG_DETECTION_NURSE_FALSE = 10;
         private int latestState = 0;
 
-//        private UpdateUIListener listener = null;
 
 
         public ControlStateMachine() {
@@ -111,6 +110,7 @@ public class DecisionServices extends Service {
             addState(mTempState, mDefaulteState);
             addState(mQuestionState, mDefaulteState);
             addState(mTtsCompleteState,mDefaulteState);
+            addState(mPutMedicineState,mDefaulteState);
             setInitialState(mSleepState); // sleep状态为初始状态
             Log.d(TAG, "ctor X");
             start(); // 状态机进入初始状态等候外界的命令
@@ -220,7 +220,7 @@ public class DecisionServices extends Service {
                         transitionTo(mAnswerState);
                         break;
                     case MSG_DETECTION_NURSE_SUCCESS:
-                        transitionTo(mAnswerState);
+                        transitionTo(mPutMedicineState);
                     default:
                         return false;
                 }
@@ -238,6 +238,35 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "AnswerText: " + name);
                 waker.stopListening();
                 mTts.startSpeaking(name, mTtsListener);
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_TEMPLATE:
+                        transitionTo(mTempState);
+                        break;
+                    case MSG_TTS_COMPLETE:
+                        transitionTo(mTtsCompleteState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mPutMedicineState = new PutMedicineState();
+
+        class PutMedicineState extends State {
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+                latestState = MSG_DETECTION_NURSE_SUCCESS;
+                Log.i(TAG, "AnswerText: " + name);
+                waker.stopListening();
+                mTts.startSpeaking(name, mTtsListener);
+                transitionTo(mSleepState);
             }
 
             @Override
@@ -615,7 +644,7 @@ public class DecisionServices extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(NurseBackEvent event) {
         //Do something
-        name = "你好" + event.toString() + "今天拿药吃了吗";
+        name = "你好" + event.toString() + "你要为以下几位病人放药";
         mCsm.detectNurseSuccess();
     }
 
