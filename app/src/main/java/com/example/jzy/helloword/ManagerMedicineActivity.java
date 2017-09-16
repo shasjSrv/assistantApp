@@ -6,9 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -17,6 +20,9 @@ import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.RegexpValidator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.drakeet.materialdialog.MaterialDialog;
 
@@ -38,17 +44,43 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     boolean checkInput = true;//检测输入是否为空
 
 
+    private RecyclerView recyclerView;
+    private List<Patient> patientList=new ArrayList<>();
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manage_medicine);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        validationEt = (MaterialEditText) findViewById(R.id.validationEt);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.manage_medicine);
+      //  getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+       // getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+      /*  validationEt = (MaterialEditText) findViewById(R.id.validationEt);
         bedNum = (MaterialEditText) findViewById(R.id.bedNum);
         validateBt = (Button) findViewById(R.id.validateBt);
         initValidationEt();
+*/
 
+        recyclerView=(RecyclerView)findViewById(R.id.recycler_view) ;
+        LinearLayoutManager layoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        initPatients();
+        PatientsAdapter adapter=new PatientsAdapter(patientList,ManagerMedicineActivity.this);
+        recyclerView.setAdapter(adapter);
+
+
+
+
+    }
+
+    private void initPatients(){
+
+        patientList.add(new Patient("20172104","张三"," "));
+        patientList.add(new Patient("20172105","李四"," "));
+        patientList.add(new Patient("20172004","王五"," "));
+        patientList.add(new Patient("20172156","小花"," "));
 
     }
 
@@ -67,7 +99,8 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
         BoxIP = sharedPref.getString(
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));*/
-        validateBt.setOnClickListener(new View.OnClickListener() {
+
+  /*      validateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // validate
@@ -150,7 +183,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
     }
 
     /*@Override
