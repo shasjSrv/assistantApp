@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,17 +66,20 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         PatientsAdapter adapter=new PatientsAdapter(patientList,ManagerMedicineActivity.this);
         recyclerView.setAdapter(adapter);
 
-
-
-
     }
 
     private void initPatients(){
+        Bundle bundle = this.getIntent().getExtras();
+        ArrayList<String> patientNameArray = bundle.getStringArrayList("patientName");
+        ArrayList<String> patientIDArray = bundle.getStringArrayList("patientID");
+        for (int i = 0; i < patientNameArray.size(); ++i) {
+            patientList.add(new Patient(patientIDArray.get(i),patientNameArray.get(i)," "));
+        }
 
-        patientList.add(new Patient("20172104","张三"," "));
+      /*  patientList.add(new Patient("20172104","张三"," "));
         patientList.add(new Patient("20172105","李四"," "));
         patientList.add(new Patient("20172004","王五"," "));
-        patientList.add(new Patient("20172156","小花"," "));
+        patientList.add(new Patient("20172156","小花"," "));*/
 
     }
 
@@ -179,6 +184,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
             }
         });*/
     }
+
 
     /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {

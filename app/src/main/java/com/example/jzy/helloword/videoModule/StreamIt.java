@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import static android.util.Base64.DEFAULT;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
 
@@ -271,10 +272,19 @@ class SendVideoThread extends Thread {
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
             int type = result.getInt("type");
-            JSONArray patientArray = result.getJSONArray("patientArray");
+            JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
+            JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
 
 
-            dealUserInfo(isSuccess,userName,type,userID,patientArray);
+            ArrayList<String> patientIDArray = new ArrayList<String>();
+            ArrayList<String> patientNameArray = new ArrayList<String>();
+            for(int i = 0; i < patientNameGetArray.length(); ++i) {
+                patientNameArray.add(patientNameGetArray.getString(i));
+                patientIDArray.add(patientIDGetArray.getString(i));
+            }
+
+
+            dealUserInfo(isSuccess,userName,type,userID,patientNameArray,patientIDArray);
 
         } catch (Exception ex) {
             Error = ex.getMessage();
@@ -287,7 +297,11 @@ class SendVideoThread extends Thread {
         }
     }
 
-    private void dealUserInfo(int isSuccess,String userName,int type,int userID,JSONArray patientArray){
+    private void dealUserInfo(int isSuccess
+            ,String userName
+            ,int type,int userID
+            ,ArrayList<String> patientNameArray
+            ,ArrayList<String> patientIDArray){
         Log.i("Sys", "isSuccess:" + isSuccess);
         Log.i("Sys", "userName:" + userName);
         Log.i("Sys", "type:" + type);
@@ -295,7 +309,7 @@ class SendVideoThread extends Thread {
             if(type == PATIENT) {
                 EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));
             }else if(type == NURSE){
-                EventBus.getDefault().post(new NurseBackEvent(userID, userName));
+                EventBus.getDefault().post(new NurseBackEvent(userID, userName,patientNameArray,patientIDArray));
             }
         }
     }

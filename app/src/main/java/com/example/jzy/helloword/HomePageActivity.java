@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -189,8 +190,16 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     /**
      * 跳转至ChatActivity
      */
-    private void jumpToChatActivity() {
+    private void jumpToManagerMedicineActivity(NurseBackEvent event) {
         Intent intent = new Intent(HomePageActivity.this, ManagerMedicineActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("patientName",event.getPatientNameArray());
+        bundle.putStringArrayList("patientID",event.getpatientIDArray());
+        /*字符、字符串、布尔、字节数组、浮点数等等，都可以传*/
+
+//        bundle.putInt("flag",flag);
+        /*把bundle对象assign给Intent*/
+        intent.putExtras(bundle);
         startActivityForResult(intent, Keys.CHAT_REQUEST);
     }
 
@@ -265,7 +274,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onMessageEvent(NurseBackEvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.toString());
-        jumpToChatActivity();
+        jumpToManagerMedicineActivity(event);
     }
 
     @Override
@@ -313,7 +322,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;*/
 
             case R.id.btn_chat:
-                jumpToChatActivity();
+                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",new ArrayList<String>(),new ArrayList<String>()));
                 break;
 //
 //            case R.id.btn_diagnose:
