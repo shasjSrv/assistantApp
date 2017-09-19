@@ -381,7 +381,8 @@ public class DecisionServices extends Service {
 
     };
 
-        private SynthesizerListener mTtsListener = new SynthesizerListener() {
+
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
 
         @Override
         public void onSpeakBegin() {

@@ -16,8 +16,12 @@ import android.widget.Toast;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
 
+import com.example.jzy.helloword.event.NurseBackEvent;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private List<Patient> patientList=new ArrayList<>();
+    PatientsAdapter adapter;
 
 
 
@@ -63,7 +68,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         initPatients();
-        PatientsAdapter adapter=new PatientsAdapter(patientList,ManagerMedicineActivity.this);
+        adapter =new PatientsAdapter(patientList,ManagerMedicineActivity.this);
         recyclerView.setAdapter(adapter);
 
     }
@@ -83,6 +88,23 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
     }
 
+   /* private void updatePatients(NurseBackEvent event){
+        ArrayList<String> patientNameArray = event.getPatientNameArray();
+        ArrayList<String> patientIDArray = event.getpatientIDArray();
+        for (int i = 0; i < patientNameArray.size(); ++i) {
+            patientList.add(new Patient(patientIDArray.get(i),patientNameArray.get(i)," "));
+        }
+        Log.i("sys","start updatePatients");
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NurseBackEvent event) {
+        *//* Do something *//*
+        Log.d(TAG, "event:" + event.toString());
+        updatePatients(event);
+    }*/
     private void initValidationEt() {
 
 
