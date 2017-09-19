@@ -127,7 +127,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         BoxIP = sharedPref.getString(
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));
 
-        new Thread(new Runnable(){
+        /*new Thread(new Runnable(){
             @Override
             public void run() {
                 XMLRPCClient client = new XMLRPCClient(BoxIP);
@@ -139,7 +139,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         }).start();
-
+*/
 
 
 //        btnVideo = (Button) findViewById(R.id.btn_video);
@@ -199,6 +199,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 //        bundle.putInt("flag",flag);
         /*把bundle对象assign给Intent*/
+
         intent.putExtras(bundle);
         startActivityForResult(intent, Keys.CHAT_REQUEST);
     }
