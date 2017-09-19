@@ -75,11 +75,18 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
     private void initPatients(){
         Bundle bundle = this.getIntent().getExtras();
-        ArrayList<String> patientNameArray = bundle.getStringArrayList("patientName");
+        ArrayList<Patient> patientArray=bundle.getParcelableArrayList("patientArray");
+        Log.d("test","patientCount: "+patientArray.size());
+        patientList=patientArray;
+
+
+      /*  ArrayList<String> patientNameArray = bundle.getStringArrayList("patientName");
         ArrayList<String> patientIDArray = bundle.getStringArrayList("patientID");
         for (int i = 0; i < patientNameArray.size(); ++i) {
+            ArrayList<MedicineInfo> medicineList=new ArrayList<MedicineInfo>();
+          //  medicineList.add(new MedicineInfo());
             patientList.add(new Patient(patientIDArray.get(i),patientNameArray.get(i)," "));
-        }
+        }*/
 
       /*  patientList.add(new Patient("20172104","张三"," "));
         patientList.add(new Patient("20172105","李四"," "));

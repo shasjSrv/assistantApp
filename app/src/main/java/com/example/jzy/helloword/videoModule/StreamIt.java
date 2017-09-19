@@ -25,6 +25,8 @@ import com.example.jzy.helloword.event.ChangeEvent;
 import com.example.jzy.helloword.event.MessageEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
+import com.example.jzy.helloword.managerMedicineModule.Patient;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -276,15 +278,25 @@ class SendVideoThread extends Thread {
             JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
 
 
-            ArrayList<String> patientIDArray = new ArrayList<String>();
+           /* ArrayList<String> patientIDArray = new ArrayList<String>();
             ArrayList<String> patientNameArray = new ArrayList<String>();
             for(int i = 0; i < patientNameGetArray.length(); ++i) {
                 patientNameArray.add(patientNameGetArray.getString(i));
                 patientIDArray.add(patientIDGetArray.getString(i));
+            }*/
+
+
+            ArrayList<Patient> patientArray=new ArrayList<Patient>();
+            for(int i=0;i<patientNameGetArray.length();++i){
+                ArrayList<MedicineInfo> medicineList=new ArrayList<MedicineInfo>();
+                medicineList.add(new MedicineInfo("name"+i,"count"+i,"infor"+i));
+                patientArray.add(new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicineList));
             }
 
 
-            dealUserInfo(isSuccess,userName,type,userID,patientNameArray,patientIDArray);
+
+
+            dealUserInfo(isSuccess,userName,type,userID,patientArray);
 
         } catch (Exception ex) {
             Error = ex.getMessage();
@@ -300,8 +312,7 @@ class SendVideoThread extends Thread {
     private void dealUserInfo(int isSuccess
             ,String userName
             ,int type,int userID
-            ,ArrayList<String> patientNameArray
-            ,ArrayList<String> patientIDArray){
+            ,ArrayList<Patient> patientArray){
         Log.i("Sys", "isSuccess:" + isSuccess);
         Log.i("Sys", "userName:" + userName);
         Log.i("Sys", "type:" + type);
@@ -309,7 +320,7 @@ class SendVideoThread extends Thread {
             if(type == PATIENT) {
                 EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));
             }else if(type == NURSE){
-                EventBus.getDefault().post(new NurseBackEvent(userID, userName,patientNameArray,patientIDArray));
+                EventBus.getDefault().post(new NurseBackEvent(userID, userName,patientArray));
             }
         }
     }

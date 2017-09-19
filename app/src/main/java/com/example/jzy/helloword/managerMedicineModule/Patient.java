@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +17,7 @@ public class Patient implements Parcelable {
     private ArrayList<MedicineInfo> medicineInfos;
 
 
-    Patient(String id,String name,ArrayList<MedicineInfo> medicineInfos){
+    public Patient(String id,String name,ArrayList<MedicineInfo> medicineInfos){
         this.id = id;
         this.name = name;
         this.medicineInfos = medicineInfos;
@@ -38,6 +38,8 @@ public class Patient implements Parcelable {
     public void setId(String id) {
         this.id = id;
     }
+
+    public ArrayList<MedicineInfo> getMedicineInfos(){return medicineInfos;}
 
 
    public static final Parcelable.Creator<Patient> CREATOR = new Creator<Patient>() {

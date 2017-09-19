@@ -7,12 +7,12 @@ import android.os.Parcelable;
  * Created by jzy on 9/19/17.
  */
 
-class MedicineInfo implements Parcelable {
+public class MedicineInfo implements Parcelable {
     String medicineName;
     String medicineCount;
     String medicineDosage;
 
-    MedicineInfo(String medicineName,String medicineCount,String medicineDosage){
+    public MedicineInfo(String medicineName, String medicineCount, String medicineDosage){
         this.medicineName = medicineName;
         this.medicineCount = medicineCount;
         this.medicineDosage = medicineDosage;

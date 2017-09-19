@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by xiashu on 17-9-12.
@@ -53,18 +54,56 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(PatientsAdapter.ViewHolder holder, int position) {
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Random random=new Random();
+                int num=random.nextInt(2);
+                //假设药盒已满
+                if(num==0)
+                {
+                    
+
+                }
+                //假设可以成功放药
+                else{
+
+
+                }
+
+            }
+        });
+
         Patient patient = mPatients.get(position);
         holder.patient_id.setText(patient.getId());
         holder.patient_name.setText(patient.getName());
 
 
-        String[] name={"阿莫西林","青霉素","清热感冒颗粒","板蓝根"};
+
+        ArrayList<MedicineInfo> medicineInfos=patient.getMedicineInfos();
+        int count=medicineInfos.size();
+        String[] name=new String[count];
+        String[] num=new String[count];
+        String[] info=new String[count];
+
+        for(int i=0;i<count;i++)
+        {
+            MedicineInfo medicineInfo=medicineInfos.get(i);
+            name[i]=medicineInfo.getMedicineName();
+            num[i]=medicineInfo.getMedicineCount();
+            info[i]=medicineInfo.getMedicineDosage();
+
+        }
+
+      /*  String[] name={"阿莫西林","青霉素","清热感冒颗粒","板蓝根"};
         int[] num={1,3,4,2};
-        String[] info={"3次/日，1粒/次","无","3次/日，2包/次，冲服","3次/日，1包/次"};
+        String[] info={"3次/日，1粒/次","无","3次/日，2包/次，冲服","3次/日，1包/次"};*/
         List<Map<String,Object>> list_map=new ArrayList<Map<String,Object>>();
 
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < count; i++) {
             Map<String,Object> items=new HashMap<String,Object>();
             items.put("name",name[i]);
             items.put("num",num[i]+"盒");

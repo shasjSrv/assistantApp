@@ -24,6 +24,8 @@ import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.decisionModule.DecisionServices;
 import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
+import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
+import com.example.jzy.helloword.managerMedicineModule.Patient;
 import com.example.jzy.helloword.videoModule.VideoActivity;
 import com.example.jzy.helloword.videoModule.RemindDialog;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
@@ -193,8 +195,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void jumpToManagerMedicineActivity(NurseBackEvent event) {
         Intent intent = new Intent(HomePageActivity.this, ManagerMedicineActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList("patientName",event.getPatientNameArray());
-        bundle.putStringArrayList("patientID",event.getpatientIDArray());
+       // bundle.putStringArrayList("patientName",event.getPatientNameArray());
+       // bundle.putStringArrayList("patientID",event.getpatientIDArray());
+        bundle.putParcelableArrayList("patientArray",event.getUserPatiens());
         /*字符、字符串、布尔、字节数组、浮点数等等，都可以传*/
 
 //        bundle.putInt("flag",flag);
@@ -323,7 +326,21 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;*/
 
             case R.id.btn_chat:
-                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",new ArrayList<String>(),new ArrayList<String>()));
+
+
+                ArrayList<Patient> patients=new ArrayList<Patient>();
+                ArrayList<MedicineInfo> medicines1=new ArrayList<MedicineInfo>();
+                medicines1.add(new MedicineInfo("m1_name","m1_c","m1_more"));
+                medicines1.add(new MedicineInfo("m1_name_2","m1_c2","m1_more_2"));
+
+                ArrayList<MedicineInfo> medicines2=new ArrayList<MedicineInfo>();
+                medicines2.add(new MedicineInfo("m2_name","m2_c","m2_more"));
+                medicines2.add(new MedicineInfo("m2_name_2","m2_c2","m2_more_2"));
+                medicines2.add(new MedicineInfo("m2_name_3","m1_c3","m1_more_3"));
+
+                patients.add(new Patient("p_id_1","p_name_1",medicines1));
+                patients.add(new Patient("p_id_2","p_name_2",medicines2));
+                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));
                 break;
 //
 //            case R.id.btn_diagnose:
