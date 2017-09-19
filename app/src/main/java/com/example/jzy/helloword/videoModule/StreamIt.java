@@ -277,6 +277,26 @@ class SendVideoThread extends Thread {
             JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
             JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
 
+            JSONArray medicineNameArray=result.getJSONArray("medicineNameArray");
+            JSONArray medicineCountArray=result.getJSONArray("medicineCountArray");
+            JSONArray medicineDosageArray=result.getJSONArray("medicineDosageArray");
+
+            ArrayList<Patient> patientArray=new ArrayList<Patient>();
+            int patientCount=patientNameGetArray.length();
+            for(int i=0;i<patientCount;i++) {
+                JSONArray m_name= medicineNameArray.getJSONArray(i);
+                JSONArray m_count=medicineCountArray.getJSONArray(i);
+                JSONArray m_dosage=medicineDosageArray.getJSONArray(i);
+                int medicineCount=m_name.length();
+                ArrayList<MedicineInfo> medicines=new ArrayList<MedicineInfo>();
+                for(int j=0;j<medicineCount;j++){
+                    MedicineInfo medicineInfo=new MedicineInfo(m_name.getString(j),m_count.getString(j),m_dosage.getString(j));
+                    medicines.add(medicineInfo);
+                }
+                Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines);
+                patientArray.add(patient);
+            }
+
 
            /* ArrayList<String> patientIDArray = new ArrayList<String>();
             ArrayList<String> patientNameArray = new ArrayList<String>();
@@ -286,15 +306,13 @@ class SendVideoThread extends Thread {
             }*/
 
 
-            ArrayList<Patient> patientArray=new ArrayList<Patient>();
+           /*
             for(int i=0;i<patientNameGetArray.length();++i){
                 ArrayList<MedicineInfo> medicineList=new ArrayList<MedicineInfo>();
                 medicineList.add(new MedicineInfo("name"+i,"count"+i,"infor"+i));
                 patientArray.add(new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicineList));
             }
-
-
-
+            */
 
             dealUserInfo(isSuccess,userName,type,userID,patientArray);
 
