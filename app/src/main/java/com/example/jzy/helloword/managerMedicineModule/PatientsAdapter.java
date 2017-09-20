@@ -2,6 +2,7 @@ package com.example.jzy.helloword.managerMedicineModule;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,23 @@ import android.widget.TextView;
 
 import com.example.jzy.helloword.R;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
+
+import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by xiashu on 17-9-12.
@@ -37,7 +50,6 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             patient_name = (TextView) itemView.findViewById(R.id.patient_name);
             medicine_list = (ListView) itemView.findViewById(R.id.medicine_list);
         }
-
     }
 
     public PatientsAdapter(List<Patient> patientList, Context context) {
@@ -53,7 +65,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(PatientsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(PatientsAdapter.ViewHolder holder, final int position) {
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -64,13 +76,61 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                 //假设药盒已满
                 if(num==0)
                 {
-                    
+                   final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+                    mMaterialDialog.setMessage("药盒已满")
+                            .setPositiveButton("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
 
+                                    mMaterialDialog.dismiss();
+                                }
+                            })
+                            .setNegativeButton("取消", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mMaterialDialog.dismiss();
+                                }
+                            });
+
+                    mMaterialDialog.show();
                 }
                 //假设可以成功放药
                 else{
+                  final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+                    mMaterialDialog.setMessage("确定要为该病人放药吗")
+                            .setPositiveButton("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mMaterialDialog.dismiss();
+                                    //点击确认后提示用户放药
+                                    final MaterialDialog mMaterialDialog2 = new MaterialDialog(context);
+                                    mMaterialDialog2.setMessage("请为该病人放药")
+                                            .setPositiveButton("放置已完成", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
 
+                                                    putMedicine(position);
+                                                    mMaterialDialog2.dismiss();
 
+                                                }
+                                            })
+                                            .setNegativeButton("取消", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    mMaterialDialog2.dismiss();
+                                                }
+                                            });
+                                    mMaterialDialog2.show();
+
+                                }
+                            })
+                            .setNegativeButton("取消", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mMaterialDialog.dismiss();
+                                }
+                            });
+                    mMaterialDialog.show();
                 }
 
             }
@@ -129,6 +189,67 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 */
     }
 
+    public void putMedicine(int position){
+        final Patient patient=mPatients.get(position);
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+
+                try {
+                    String userInfoURL = context.getResources().getString(R.string.pref_user_info_ip_default);
+                    String URL = userInfoURL;
+                    URL += "/UpdateUIDMID";
+                    URL url = new URL(URL);
+                    Log.i("Sys", "URL:" + URL);
+                    JSONObject queryJson = new JSONObject();
+
+                    //获取药物id列表
+                    ArrayList<String> medicine_id_list=new ArrayList<String>();
+                    ArrayList<MedicineInfo> medicineInfos=patient.getMedicineInfos();
+                    for(int i=0;i<medicineInfos.size();i++)
+                    {
+                        medicine_id_list.add(medicineInfos.get(i).getMedicineId());
+                    }
+
+                    Calendar calendar=Calendar.getInstance();
+
+                    queryJson.put("user_id",patient.getId());
+                    queryJson.put("medicine_id_arraylist",medicine_id_list);
+                    queryJson.put("date_yyyy",String.valueOf(calendar.get(Calendar.YEAR)));
+                    queryJson.put("date_mm",String.format("%02d",calendar.get(Calendar.MONTH)+1));
+                    queryJson.put("date_dd",String.valueOf(calendar.get(Calendar.DATE)));
+
+
+                    URLConnection conn = url.openConnection();
+                    conn.setDoOutput(true);
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                    wr.write(queryJson.toString());
+                    wr.flush();
+                    Log.i("Sys", "jsonObject:" + queryJson.toString());
+                    wr.close();
+
+                    InputStream responseStream = conn.getInputStream();
+                    String response = drainStream(responseStream);
+                    JSONObject responseJSON = new JSONObject(response);
+                    JSONObject result = responseJSON.getJSONObject("result");
+                    int isSuccess = result.getInt("updateSuccess");
+
+                    Log.i("Sys","isSuccess:"+isSuccess);
+
+                }catch (Exception ex){
+                    Log.i("Send Infor", "Error", ex);
+                }
+            }
+        }).start();
+
+
+    }
+
+    private static String drainStream(InputStream in) {
+        Scanner s = new Scanner(in).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
     //根据子listview中控件计算得到listview的高度
     public static void setListVIewHeight(ListView listView){
@@ -154,17 +275,5 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         return mPatients.size();
     }
 
-
-    public class medicine_item {
-        private String name;
-        private int num;
-        private String infor;
-
-        public medicine_item(String name, int num, String infor) {
-            this.name = name;
-            this.num = num;
-            this.infor = infor;
-        }
-    }
 
 }

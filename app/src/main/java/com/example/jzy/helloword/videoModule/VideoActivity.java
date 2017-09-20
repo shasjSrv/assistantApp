@@ -179,4 +179,11 @@ public class VideoActivity extends AppCompatActivity {
     public static void showTip(final String str) {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("Sys","i am back");
+        backToHomePage("My name is linjiqin");
+
+    }
 }

@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -327,19 +328,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_chat:
 
-
                 ArrayList<Patient> patients=new ArrayList<Patient>();
                 ArrayList<MedicineInfo> medicines1=new ArrayList<MedicineInfo>();
-                medicines1.add(new MedicineInfo("m1_name","m1_c","m1_more"));
-                medicines1.add(new MedicineInfo("m1_name_2","m1_c2","m1_more_2"));
+                medicines1.add(new MedicineInfo("id","m1_name","m1_c","m1_more"));
+                medicines1.add(new MedicineInfo("id","m1_name_2","m1_c2","m1_more_2"));
 
                 ArrayList<MedicineInfo> medicines2=new ArrayList<MedicineInfo>();
-                medicines2.add(new MedicineInfo("m2_name","m2_c","m2_more"));
-                medicines2.add(new MedicineInfo("m2_name_2","m2_c2","m2_more_2"));
-                medicines2.add(new MedicineInfo("m2_name_3","m1_c3","m1_more_3"));
+                medicines2.add(new MedicineInfo("id","m2_name","m2_c","m2_more"));
+                medicines2.add(new MedicineInfo("id","m2_name_2","m2_c2","m2_more_2"));
+                medicines2.add(new MedicineInfo("id","m2_name_3","m1_c3","m1_more_3"));
 
-                patients.add(new Patient("p_id_1","p_name_1",medicines1));
-                patients.add(new Patient("p_id_2","p_name_2",medicines2));
+                patients.add(new Patient("p_id_1","p_name_1",medicines1,""));
+                patients.add(new Patient("p_id_2","p_name_2",medicines2,""));
                 jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));
                 break;
 //

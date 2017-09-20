@@ -240,4 +240,10 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.d("Sys","i am back");
+        backToHomePage("My name is linjiqin");
+
+    }
 }

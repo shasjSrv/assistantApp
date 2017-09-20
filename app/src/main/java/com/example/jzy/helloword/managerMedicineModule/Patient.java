@@ -15,12 +15,14 @@ public class Patient implements Parcelable {
     private String name;
     private String id;
     private ArrayList<MedicineInfo> medicineInfos;
+    private String patientRFID;
 
 
-    public Patient(String id,String name,ArrayList<MedicineInfo> medicineInfos){
+    public Patient(String id,String name,ArrayList<MedicineInfo> medicineInfos,String patientRFID){
         this.id = id;
         this.name = name;
         this.medicineInfos = medicineInfos;
+        this.patientRFID=patientRFID;
 
     }
     public String getName() {
@@ -39,14 +41,21 @@ public class Patient implements Parcelable {
         this.id = id;
     }
 
+    public void setPatientRFID(String patientRFID) { this.patientRFID=patientRFID; }
+
+    public String getPatientRFID() { return patientRFID;}
+
     public ArrayList<MedicineInfo> getMedicineInfos(){return medicineInfos;}
+
+
 
 
    public static final Parcelable.Creator<Patient> CREATOR = new Creator<Patient>() {
 
        @Override
        public Patient createFromParcel(Parcel source) {
-           Patient patient = new Patient(source.readString(),source.readString(),source.createTypedArrayList(MedicineInfo.CREATOR));
+         //  Patient patient = new Patient(source.readString(),source.readString(),source.createTypedArrayList(MedicineInfo.CREATOR),source.readString());
+           Patient patient = new Patient(source.readString(),source.readString(),source.createTypedArrayList(MedicineInfo.CREATOR),source.readString());
            /*patient.name = source.readString();
            patient.id = source.readString();*/
            return patient;
@@ -68,6 +77,7 @@ public class Patient implements Parcelable {
         out.writeString(name);
         out.writeString(id);
         out.writeTypedList(medicineInfos);
+        out.writeString(patientRFID);
 
     }
 

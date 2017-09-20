@@ -8,15 +8,19 @@ import android.os.Parcelable;
  */
 
 public class MedicineInfo implements Parcelable {
+    String medicineId;
     String medicineName;
     String medicineCount;
     String medicineDosage;
 
-    public MedicineInfo(String medicineName, String medicineCount, String medicineDosage){
+    public MedicineInfo(String medicineId,String medicineName, String medicineCount, String medicineDosage){
+        this.medicineId=medicineId;
         this.medicineName = medicineName;
         this.medicineCount = medicineCount;
         this.medicineDosage = medicineDosage;
     }
+
+    public String getMedicineId(){return this.medicineId;}
 
     public String getMedicineName(){return this.medicineName;}
 
@@ -27,7 +31,7 @@ public class MedicineInfo implements Parcelable {
     public final static Parcelable.Creator<MedicineInfo> CREATOR = new Creator<MedicineInfo>() {
         @Override
         public MedicineInfo createFromParcel(Parcel source) {
-            MedicineInfo medicineInfo = new MedicineInfo(source.readString(),source.readString(),source.readString());
+            MedicineInfo medicineInfo = new MedicineInfo(source.readString(),source.readString(),source.readString(),source.readString());
             return medicineInfo;
         }
 
@@ -44,6 +48,7 @@ public class MedicineInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(medicineId);
         parcel.writeString(medicineName);
         parcel.writeString(medicineCount);
         parcel.writeString(medicineDosage);

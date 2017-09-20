@@ -274,9 +274,12 @@ class SendVideoThread extends Thread {
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
             int type = result.getInt("type");
-            JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
             JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
+            JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
+            JSONArray patientRFIDGetArray = result.getJSONArray("patientRfIDArray");
 
+
+            JSONArray medicineIDGetArray = result.getJSONArray("medicineIDArray");
             JSONArray medicineNameArray=result.getJSONArray("medicineNameArray");
             JSONArray medicineCountArray=result.getJSONArray("medicineCountArray");
             JSONArray medicineDosageArray=result.getJSONArray("medicineDosageArray");
@@ -284,16 +287,17 @@ class SendVideoThread extends Thread {
             ArrayList<Patient> patientArray=new ArrayList<Patient>();
             int patientCount=patientNameGetArray.length();
             for(int i=0;i<patientCount;i++) {
+                JSONArray m_id=medicineIDGetArray.getJSONArray(i);
                 JSONArray m_name= medicineNameArray.getJSONArray(i);
                 JSONArray m_count=medicineCountArray.getJSONArray(i);
                 JSONArray m_dosage=medicineDosageArray.getJSONArray(i);
                 int medicineCount=m_name.length();
                 ArrayList<MedicineInfo> medicines=new ArrayList<MedicineInfo>();
                 for(int j=0;j<medicineCount;j++){
-                    MedicineInfo medicineInfo=new MedicineInfo(m_name.getString(j),m_count.getString(j),m_dosage.getString(j));
+                    MedicineInfo medicineInfo=new MedicineInfo(m_id.getString(j),m_name.getString(j),m_count.getString(j),m_dosage.getString(j));
                     medicines.add(medicineInfo);
                 }
-                Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines);
+                Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines,"");
                 patientArray.add(patient);
             }
 
