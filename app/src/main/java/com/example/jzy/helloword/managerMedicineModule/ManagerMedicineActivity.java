@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +36,6 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     public static Context context;
     private static Toast mToast;
     private String keyPrefBoxIP;
-    private SharedPreferences sharedPref;
     private String BoxIP;
 
     private MaterialEditText validationEt;//房间号
@@ -43,6 +43,10 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     Button validateBt;
     boolean checkInput = true;//检测输入是否为空
 
+
+    private String keyprefUserInfoServerUrl;
+    private SharedPreferences sharedPref;
+    private String userInfoURL;
 
     private RecyclerView recyclerView;
     private List<Patient> patientList=new ArrayList<>();
@@ -63,6 +67,12 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         validateBt = (Button) findViewById(R.id.validateBt);
         initValidationEt();
 */
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        keyprefUserInfoServerUrl = getString(R.string.pref_user_info_ip_key);
+        userInfoURL = sharedPref.getString(
+                keyprefUserInfoServerUrl, getString(R.string.pref_user_info_ip_default));
 
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view) ;
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
@@ -78,40 +88,17 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         ArrayList<Patient> patientArray=bundle.getParcelableArrayList("patientArray");
         Log.d("test","patientCount: "+patientArray.size());
         patientList=patientArray;
-
-
-      /*  ArrayList<String> patientNameArray = bundle.getStringArrayList("patientName");
-        ArrayList<String> patientIDArray = bundle.getStringArrayList("patientID");
-        for (int i = 0; i < patientNameArray.size(); ++i) {
-            ArrayList<MedicineInfo> medicineList=new ArrayList<MedicineInfo>();
-          //  medicineList.add(new MedicineInfo());
-            patientList.add(new Patient(patientIDArray.get(i),patientNameArray.get(i)," "));
-        }*/
-
-      /*  patientList.add(new Patient("20172104","张三"," "));
-        patientList.add(new Patient("20172105","李四"," "));
-        patientList.add(new Patient("20172004","王五"," "));
-        patientList.add(new Patient("20172156","小花"," "));*/
-
     }
 
-   /* private void updatePatients(NurseBackEvent event){
-        ArrayList<String> patientNameArray = event.getPatientNameArray();
-        ArrayList<String> patientIDArray = event.getpatientIDArray();
-        for (int i = 0; i < patientNameArray.size(); ++i) {
-            patientList.add(new Patient(patientIDArray.get(i),patientNameArray.get(i)," "));
-        }
-        Log.i("sys","start updatePatients");
-        adapter.notifyDataSetChanged();
+    private void updateSendMedicineInfo(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+            }
+        }).start();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NurseBackEvent event) {
-        *//* Do something *//*
-        Log.d(TAG, "event:" + event.toString());
-        updatePatients(event);
-    }*/
     private void initValidationEt() {
 
 

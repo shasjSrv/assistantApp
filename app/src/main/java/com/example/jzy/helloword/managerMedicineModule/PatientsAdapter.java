@@ -106,7 +106,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         for (int i = 0; i < count; i++) {
             Map<String,Object> items=new HashMap<String,Object>();
             items.put("name",name[i]);
-            items.put("num",num[i]+"盒");
+            items.put("num",num[i]);
             items.put("info",info[i]);
            // medicines.add(new medicine_item("药品"+i,(i+2),"一日三次，每次两粒"));
             list_map.add(items);
