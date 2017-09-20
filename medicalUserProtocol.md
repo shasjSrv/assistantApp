@@ -19,9 +19,11 @@
 | type                | int32     |
 | patientNameArray    | JSONArray |
 | patientIDArray      | JSONArray |
+| patientRfIDArray    | JSONArray |
 | medicineNameArray   | JSONArray |
 | medicineCountArray  | JSONArray |
 | medicineDosageArray | JSONArray |
+| medicineIDArray     | JSONArray |
 
 
 
