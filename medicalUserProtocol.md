@@ -62,13 +62,13 @@
 
 ### 机器人发送送端消息格式:
 
-| name                  | type   |
-| --------------------- | ------ |
-| user_id               | String |
-| medicine_id_arraylist | int32  |
-| date_yyyy             | String |
-| date_mm               | String |
-| date_dd               | String |
+| name                  | type      |
+| --------------------- | --------- |
+| user_id               | String    |
+| medicine_id_arraylist | JSONArray |
+| date_yyyy             | String    |
+| date_mm               | String    |
+| date_dd               | String    |
 
 
 
