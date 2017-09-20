@@ -1,6 +1,6 @@
 # Protocol
 
-
+### 方法一:查询userID
 
 ### 使用post方法，接口的地址为'/QueryID'
 
@@ -51,6 +51,35 @@
 
 
 ### 服务器访问地址为'http//118.89.57.249:5000'(IP should be changed by real IP)
+
+
+
+### 方法二:更新送药信息
+
+### 使用post方法，接口的地址为'/UpdateUIDMID'
+
+### 机器人发送送端消息格式:
+
+| name                  | type   |
+| --------------------- | ------ |
+| user_id               | String |
+| medicine_id_arraylist | int32  |
+| date_yyyy             | String |
+| date_mm               | String |
+| date_dd               | String |
+
+
+
+
+
+### 返回值对应的含义
+
+| mean | updateSuccess |
+| ---- | ------------- |
+| 失败   | 0             |
+| 成功   | 1             |
+
+
 
 
 
