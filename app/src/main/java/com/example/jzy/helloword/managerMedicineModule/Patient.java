@@ -74,8 +74,8 @@ public class Patient implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(name);
         out.writeString(id);
+        out.writeString(name);
         out.writeTypedList(medicineInfos);
         out.writeString(patientRFID);
 

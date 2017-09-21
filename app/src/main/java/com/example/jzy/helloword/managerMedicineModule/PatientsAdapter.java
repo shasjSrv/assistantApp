@@ -214,6 +214,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     Calendar calendar=Calendar.getInstance();
 
                     queryJson.put("user_id",patient.getId());
+                    Log.i("Sys", "patientID:" + patient.getId());
+                    Log.i("Sys", "patientName:" + patient.getName());
                     queryJson.put("medicine_id_arraylist",medicine_id_list);
                     queryJson.put("date_yyyy",String.valueOf(calendar.get(Calendar.YEAR)));
                     queryJson.put("date_mm",String.format("%02d",calendar.get(Calendar.MONTH)+1));

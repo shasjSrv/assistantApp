@@ -274,8 +274,9 @@ class SendVideoThread extends Thread {
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
             int type = result.getInt("type");
-            JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
+
             JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
+            JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
             JSONArray patientRFIDGetArray = result.getJSONArray("patientRfIDArray");
 
 
@@ -297,7 +298,7 @@ class SendVideoThread extends Thread {
                     MedicineInfo medicineInfo=new MedicineInfo(m_id.getString(j),m_name.getString(j),m_count.getString(j),m_dosage.getString(j));
                     medicines.add(medicineInfo);
                 }
-                Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines,"");
+                Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines,patientRFIDGetArray.getString(i));
                 patientArray.add(patient);
             }
 
