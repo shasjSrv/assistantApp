@@ -21,7 +21,7 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
-import com.example.jzy.helloword.event.ChangeEvent;
+import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.MessageEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
@@ -234,7 +234,7 @@ class SendVideoThread extends Thread {
             EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
             Log.i("Sys", "come userId emojiID:" + emojiID);
-            EventBus.getDefault().post(new ChangeEvent("我好像不认识你,需要添加新用户吗？"));
+            EventBus.getDefault().post(new AddPatientEvent("我好像不认识你,需要添加新用户吗？"));
         }else{
             Log.i("Sys", "come userID status emojiID:" + emojiID);
             /*

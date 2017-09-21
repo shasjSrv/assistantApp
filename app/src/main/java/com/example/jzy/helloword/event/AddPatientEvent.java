@@ -4,10 +4,10 @@ package com.example.jzy.helloword.event;
  * Created by jzy on 8/26/17.
  */
 
-public class ChangeEvent {
+public class AddPatientEvent {
     private String text;
     private int flag;
-    public ChangeEvent(String text){
+    public AddPatientEvent(String text){
         this.text = text;
         this.flag = 1;
     }
