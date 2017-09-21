@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.event.AnswerEvent;
+import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
@@ -221,6 +222,10 @@ public class DecisionServices extends Service {
                         break;
                     case MSG_DETECTION_NURSE_SUCCESS:
                         transitionTo(mPutMedicineState);
+                        break;
+                    case MSG_BACK_SLEEP:
+                        transitionTo(mSleepState);
+                        break;
                     default:
                         return false;
                 }
@@ -648,6 +653,17 @@ public class DecisionServices extends Service {
         name = "你好" + event.toString() + "你要为以下几位病人放药";
         mCsm.detectNurseSuccess();
     }
+
+
+    /*
+    * notify DecisionService change state to sleepState
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BackPressedEvent event) {
+        //Do something
+        mCsm.backToSleep();
+    }
+
 
     private void playMusic(String result) throws JSONException {
         String url = null;

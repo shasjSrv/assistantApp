@@ -241,7 +241,6 @@ class SendVideoThread extends Thread {
             * after get user id then query user information
             * */
             queryUserInfo(userID);
-//            EventBus.getDefault().post(new PatientBackEnvent(userID,status,emojiID,userName));
         }
 
     }
@@ -279,7 +278,6 @@ class SendVideoThread extends Thread {
             JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
             JSONArray patientRFIDGetArray = result.getJSONArray("patientRfIDArray");
 
-
             JSONArray medicineIDGetArray = result.getJSONArray("medicineIDArray");
             JSONArray medicineNameArray=result.getJSONArray("medicineNameArray");
             JSONArray medicineCountArray=result.getJSONArray("medicineCountArray");
@@ -301,23 +299,6 @@ class SendVideoThread extends Thread {
                 Patient patient = new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicines,patientRFIDGetArray.getString(i));
                 patientArray.add(patient);
             }
-
-
-           /* ArrayList<String> patientIDArray = new ArrayList<String>();
-            ArrayList<String> patientNameArray = new ArrayList<String>();
-            for(int i = 0; i < patientNameGetArray.length(); ++i) {
-                patientNameArray.add(patientNameGetArray.getString(i));
-                patientIDArray.add(patientIDGetArray.getString(i));
-            }*/
-
-
-           /*
-            for(int i=0;i<patientNameGetArray.length();++i){
-                ArrayList<MedicineInfo> medicineList=new ArrayList<MedicineInfo>();
-                medicineList.add(new MedicineInfo("name"+i,"count"+i,"infor"+i));
-                patientArray.add(new Patient(patientIDGetArray.getString(i),patientNameGetArray.getString(i),medicineList));
-            }
-            */
 
             dealUserInfo(isSuccess,userName,type,userID,patientArray);
 

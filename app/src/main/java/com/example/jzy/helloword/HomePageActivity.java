@@ -2,8 +2,10 @@ package com.example.jzy.helloword;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -11,38 +13,30 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.example.jzy.helloword.event.AddEvent;
-import com.example.jzy.helloword.event.NurseBackEvent;
-import com.example.jzy.helloword.event.Tip;
-import com.example.jzy.helloword.decisionModule.DecisionServices;
-import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
-import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
-import com.example.jzy.helloword.managerMedicineModule.Patient;
-import com.example.jzy.helloword.videoModule.VideoActivity;
-import com.example.jzy.helloword.videoModule.RemindDialog;
-import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
-import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
-
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.jzy.helloword.decisionModule.DecisionServices;
+import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.event.Tip;
+import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
+import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
+import com.example.jzy.helloword.managerMedicineModule.Patient;
+import com.example.jzy.helloword.videoModule.RemindDialog;
+import com.example.jzy.helloword.videoModule.VideoActivity;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -267,13 +261,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 //        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(AddEvent event) {
-        /* Do something */
-        Log.d(TAG, "flag:" + event.getFlag());
-        jumpToVideoActivity(event.getFlag());
-//        Toast.makeText(getApplicationContext(), tip.getMessage(), Toast.LENGTH_SHORT).show();
-    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(NurseBackEvent event) {

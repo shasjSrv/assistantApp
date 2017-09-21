@@ -17,6 +17,7 @@ import android.content.Intent;
 
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.AddPatientEvent;
@@ -172,6 +173,7 @@ public class VideoActivity extends AppCompatActivity {
         //Android.R.id.home对应应用程序图标的id
         if (item.getItemId() == android.R.id.home) {
             backToHomePage("My name is linjiqin");
+            EventBus.getDefault().post(new BackPressedEvent(""));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -184,6 +186,6 @@ public class VideoActivity extends AppCompatActivity {
     public void onBackPressed() {
         Log.d("Sys","i am back");
         backToHomePage("My name is linjiqin");
-
+        EventBus.getDefault().post(new BackPressedEvent(""));
     }
 }
