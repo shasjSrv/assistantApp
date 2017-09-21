@@ -204,11 +204,13 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     JSONObject queryJson = new JSONObject();
 
                     //获取药物id列表
-                    ArrayList<String> medicine_id_list=new ArrayList<String>();
+//                    ArrayList<String> medicine_id_list=new ArrayList<String>();
+                    JSONArray  medicine_id_list = new JSONArray();
                     ArrayList<MedicineInfo> medicineInfos=patient.getMedicineInfos();
                     for(int i=0;i<medicineInfos.size();i++)
                     {
-                        medicine_id_list.add(medicineInfos.get(i).getMedicineId());
+                        medicine_id_list.put(medicineInfos.get(i).getMedicineId());
+//                        medicine_id_list.add(medicineInfos.get(i).getMedicineId());
                     }
 
                     Calendar calendar=Calendar.getInstance();
