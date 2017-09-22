@@ -35,17 +35,17 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     public static final String TAG = "demoService";
     public static Context context;
     private static Toast mToast;
-    private String keyPrefBoxIP;
-    private String BoxIP;
+
 
     private MaterialEditText validationEt;//房间号
     private MaterialEditText bedNum;//床位
     Button validateBt;
     boolean checkInput = true;//检测输入是否为空
 
-
-    private String keyprefUserInfoServerUrl;
     private SharedPreferences sharedPref;
+    private String keyprefUserInfoServerUrl;
+    private String keyPrefBoxIP;
+    private String medicineBoxIP;
     private String userInfoURL;
 
     private RecyclerView recyclerView;
@@ -73,12 +73,15 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         keyprefUserInfoServerUrl = getString(R.string.pref_user_info_ip_key);
         userInfoURL = sharedPref.getString(
                 keyprefUserInfoServerUrl, getString(R.string.pref_user_info_ip_default));
+        keyPrefBoxIP = getString(R.string.pref_box_ip_key);
+        medicineBoxIP = sharedPref.getString(
+                keyPrefBoxIP, getString(R.string.pref_box_ip_default));
 
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view) ;
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         initPatients();
-        adapter =new PatientsAdapter(patientList,ManagerMedicineActivity.this);
+        adapter =new PatientsAdapter(patientList,ManagerMedicineActivity.this,medicineBoxIP,userInfoURL);
         recyclerView.setAdapter(adapter);
 
     }
@@ -112,7 +115,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     /*    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
-        BoxIP = sharedPref.getString(
+        medicineBoxIP = sharedPref.getString(
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));*/
 
   /*      validateBt.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +161,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                XMLRPCClient client = new XMLRPCClient(BoxIP);
+                                XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
                                 try {
                                     Log.i(TAG, "int: " + validationEt.getText().toString());
                                     int result = (Integer) client.call("QueryMedicine", "94E316");

@@ -12,6 +12,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,6 +40,17 @@ import me.drakeet.materialdialog.MaterialDialog;
 public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHolder> {
     private List<Patient> mPatients;
     Context context;
+    private String medicineBoxIP;
+    private String userInfoURL;
+    private int queryState;
+
+    private int putMedicineState;
+
+    private final static int  HAVE_TAKEN_MEDICINE = 1;
+    private final static int  DONT_TAKEN_MEDICINE = 0;
+    private final static int  PATIETN_DONT_TAKEN_MEDICINE = 2;
+
+    private static int FLAG = 0;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView patient_id;
@@ -52,9 +65,11 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         }
     }
 
-    public PatientsAdapter(List<Patient> patientList, Context context) {
+    public PatientsAdapter(List<Patient> patientList, Context context, String medicineBoxIP, String userInfoURL) {
         mPatients = patientList;
         this.context = context;
+        this.medicineBoxIP = medicineBoxIP;
+        this.userInfoURL = userInfoURL;
     }
 
     @Override
@@ -62,6 +77,46 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_inforcard, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
+    }
+
+
+    private void patientDontTakeMedDigShow(final int position){
+        final Patient patient=mPatients.get(position);
+        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+
+//                                    if(putMedicineState == PATIETN_DONT_TAKEN_MEDICINE)
+        mMaterialDialog.setMessage(patient.getName() + "的药未拿取，请通知病人" )
+                .setPositiveButton("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        putMedicine(position);
+                        mMaterialDialog.dismiss();
+
+                    }
+                });
+        mMaterialDialog.show();
+    }
+
+    private void queryPutMedicineDigShow(final int position){
+        final MaterialDialog MaterialDialog = new MaterialDialog(context);
+        MaterialDialog.setMessage("请打开药盒为该病人放药")
+                .setPositiveButton("放置已完成", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        putMedicine(position);
+                        MaterialDialog.dismiss();
+
+                    }
+                })
+                .setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MaterialDialog.dismiss();
+                    }
+                });
+        MaterialDialog.show();
     }
 
     @Override
@@ -72,9 +127,12 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Random random=new Random();
-                int num=random.nextInt(2);
+                qureyBoxStatus(position);
+                //wait for network thread get the result,can add ProgressDialog remind user
+                while (FLAG != 1) {
+                }
                 //假设药盒已满
-                if(num==0)
+                if(queryState == DONT_TAKEN_MEDICINE)
                 {
                    final MaterialDialog mMaterialDialog = new MaterialDialog(context);
                     mMaterialDialog.setMessage("药盒已满")
@@ -96,41 +154,26 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                 }
                 //假设可以成功放药
                 else{
-                  final MaterialDialog mMaterialDialog = new MaterialDialog(context);
-                    mMaterialDialog.setMessage("确定要为该病人放药吗")
-                            .setPositiveButton("确定", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mMaterialDialog.dismiss();
-                                    //点击确认后提示用户放药
-                                    final MaterialDialog mMaterialDialog2 = new MaterialDialog(context);
-                                    mMaterialDialog2.setMessage("请为该病人放药")
-                                            .setPositiveButton("放置已完成", new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-
-                                                    putMedicine(position);
-                                                    mMaterialDialog2.dismiss();
-
-                                                }
-                                            })
-                                            .setNegativeButton("取消", new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    mMaterialDialog2.dismiss();
-                                                }
-                                            });
-                                    mMaterialDialog2.show();
-
-                                }
-                            })
-                            .setNegativeButton("取消", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mMaterialDialog.dismiss();
-                                }
-                            });
-                    mMaterialDialog.show();
+                    if(putMedicineState == HAVE_TAKEN_MEDICINE){
+                        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+                        mMaterialDialog.setMessage("确定要为该病人放药吗")
+                                .setPositiveButton("确定", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMaterialDialog.dismiss();
+                                        queryPutMedicineDigShow(position);
+                                    }
+                                })
+                                .setNegativeButton("取消", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMaterialDialog.dismiss();
+                                    }
+                                });
+                        mMaterialDialog.show();
+                    }else if(putMedicineState == PATIETN_DONT_TAKEN_MEDICINE){
+                        patientDontTakeMedDigShow(position);
+                    }
                 }
 
             }
@@ -176,27 +219,37 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
         holder.medicine_list.setAdapter(simpleAdapter);
         setListVIewHeight(holder.medicine_list);
-      //  holder.medicine_list.
 
-
-
-      /*  List<String> medicineList = new ArrayList<String>();
-
-        medicineList.add("阿莫西林       2盒     3次/日，1包/次");
-        medicineList.add("青霉素         1支     无");
-        medicineList.add("清热解毒颗粒    1盒     3次/日，1包/次，冲服");
-        holder.medicine_list.setAdapter(new ArrayAdapter<String>(context, R.layout.listitem_medicine_1, medicineList));
-*/
     }
 
-    public void putMedicine(int position){
+    private void qureyBoxStatus(int position){
+        final Patient patient=mPatients.get(position);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
+                try {
+                    queryState = (Integer) client.call("QueryAvailable");
+                    Log.i("XMLRPC Test", "QueryMedicine queryState  = " + queryState);
+                    if(queryState != DONT_TAKEN_MEDICINE){
+                        putMedicineState = (Integer) client.call("Put",patient.getPatientRFID());
+                    }
+                    FLAG = 1;
+                } catch (XMLRPCException e) {
+                    Log.i("XMLRPC Test", "Error", e);
+                }
+            }
+        }).start();
+    }
+
+    private void putMedicine(int position){
         final Patient patient=mPatients.get(position);
         new Thread(new Runnable(){
             @Override
             public void run() {
 
                 try {
-                    String userInfoURL = context.getResources().getString(R.string.pref_user_info_ip_default);
+//                    String userInfoURL = context.getResources().getString(R.string.pref_user_info_ip_default);
                     String URL = userInfoURL;
                     URL += "/UpdateUIDMID";
                     URL url = new URL(URL);
