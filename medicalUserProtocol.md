@@ -87,15 +87,15 @@
 
 ### 返回值对应的含义
 
-| name      | type   | mean | success | false |
-| --------- | ------ | ---- | ------- | ----- |
-| user_id   | int32  | 用户ID | ID号     | null  |
-| user_name | String | 用户名  | 用户姓名    | null  |
-| age       | int32  | 年龄   | 用户年龄    | null  |
-| gender    | String | 性别   | 男/女     | null  |
-| rfid      | String | rfid | rfid号   | null  |
-| roomNo    | int32  | 病房号  | 病房号数字   | null  |
-| berthNo   | int32  | 床位号  | 床位号数字   | null  |
+| name      | type      | mean | success | false |
+| --------- | --------- | ---- | ------- | ----- |
+| user_id   | JSONArray | 用户ID | ID号     | null  |
+| user_name | JSONArray | 用户名  | 用户姓名    | null  |
+| age       | JSONArray | 年龄   | 用户年龄    | null  |
+| gender    | JSONArray | 性别   | 男/女     | null  |
+| rfid      | JSONArray | rfid | rfid号   | null  |
+| roomNo    | JSONArray | 病房号  | 病房号数字   | null  |
+| berthNo   | JSONArray | 床位号  | 床位号数字   | null  |
 
 
 
