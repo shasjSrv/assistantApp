@@ -16,7 +16,9 @@
         android:src="@drawable/close_eye" />
 
 
+
     <com.balysv.materialripple.MaterialRippleLayout
+        android:id="@+id/chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity=""
@@ -42,5 +44,17 @@
             android:textSize="16sp" />
 
     </com.balysv.materialripple.MaterialRippleLayout>
+    <Button
+        android:id="@+id/btn_addface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF03A9F4"
+        android:textColor="@color/cpb_white"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:textSize="16sp"
+        android:layout_above="@id/chat"
+        android:text="添加人脸"/>
 
 </RelativeLayout>

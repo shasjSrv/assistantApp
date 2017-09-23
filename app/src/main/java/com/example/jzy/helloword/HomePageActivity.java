@@ -2,6 +2,7 @@ package com.example.jzy.helloword;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,12 +13,15 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -45,7 +49,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     public static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
-    private Button btnVideo, btnChat, btnDiagnose;
+    private Button btnVideo, btnChat, btnDiagnose,btnAddFace;
     private ImageView ivWelcome;
     private Timer timer;
     private TimerTask timerTask;
@@ -127,9 +131,11 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 //        btnVideo = (Button) findViewById(R.id.btn_video);
         btnChat = (Button) findViewById(R.id.btn_chat);
+        btnAddFace=(Button) findViewById(R.id.btn_addface);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
 //        btnVideo.setOnClickListener(this);
         btnChat.setOnClickListener(this);
+        btnAddFace.setOnClickListener(this);
 //        btnDiagnose.setOnClickListener(this);
 
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
@@ -316,6 +322,51 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 patients.add(new Patient("p_id_2","p_name_2",medicines2,""));
                 jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));*/
                 break;
+
+            case R.id.btn_addface:
+
+                final AlertDialog.Builder remindINfor = new AlertDialog.Builder(HomePageActivity.this);
+                remindINfor.setMessage("未识别成功\n是否要添加新的人脸信息")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //添加人脸
+                                View view=(View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
+                                final EditText inputId= (EditText) view.findViewById(R.id.inputId);
+                                final EditText inputName= (EditText) view.findViewById(R.id.inputName);
+                                final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
+                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).create();
+
+                                dialog.show();
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (TextUtils.isEmpty(inputId.getText())) {
+                                            inputId.setError("请输入ID");
+                                            return;
+                                        }
+                                        if(TextUtils.isEmpty(inputName.getText())){
+                                            inputName.setError("请输入名字");
+                                            return;
+                                        }
+                                        Toast.makeText(context,"ID: "+inputId.getText().toString()+" Name: "+inputName.getText().toString(),Toast.LENGTH_SHORT).show();
+                                        //  dialog.dismiss();
+                                    }
+                                });
+
+                            }
+                        })
+                        .setNegativeButton("取消",null);
+
+                remindINfor.show();
+
+                break;
+
 //
 //            case R.id.btn_diagnose:
 //                jumpToDiagnoseActivity();
