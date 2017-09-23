@@ -124,20 +124,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         BoxIP = sharedPref.getString(
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));
 
-        /*new Thread(new Runnable(){
-            @Override
-            public void run() {
-                XMLRPCClient client = new XMLRPCClient(BoxIP);
-                try {
-                    String hello = (String) client.call("Hello");
-                    Log.i("XMLRPC Test", "result String hello = " + hello);
-                }catch (XMLRPCException e){
-                    Log.i("XMLRPC Test", "Error", e);
-                }
-            }
-        }).start();
-*/
-
 
 //        btnVideo = (Button) findViewById(R.id.btn_video);
         btnChat = (Button) findViewById(R.id.btn_chat);
@@ -315,8 +301,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;*/
 
             case R.id.btn_chat:
-
-                ArrayList<Patient> patients=new ArrayList<Patient>();
+                checkPermission();
+                /*ArrayList<Patient> patients=new ArrayList<Patient>();
                 ArrayList<MedicineInfo> medicines1=new ArrayList<MedicineInfo>();
                 medicines1.add(new MedicineInfo("id","m1_name","m1_c","m1_more"));
                 medicines1.add(new MedicineInfo("id","m1_name_2","m1_c2","m1_more_2"));
@@ -328,7 +314,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
                 patients.add(new Patient("p_id_1","p_name_1",medicines1,""));
                 patients.add(new Patient("p_id_2","p_name_2",medicines2,""));
-                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));
+                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));*/
                 break;
 //
 //            case R.id.btn_diagnose:

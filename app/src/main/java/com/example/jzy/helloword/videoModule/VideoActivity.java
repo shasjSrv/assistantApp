@@ -86,7 +86,7 @@ public class VideoActivity extends AppCompatActivity {
                 mPreview.setCamera(mCamera);
 
             } catch (RuntimeException ex) {
-                Toast.makeText(ctx, getString(R.string.camera_not_found), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, getString(R.string.camera_not_found), Toast.LENGTH_LONG).show();
             }
         }
     }
