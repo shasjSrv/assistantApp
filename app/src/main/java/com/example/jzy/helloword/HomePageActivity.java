@@ -325,6 +325,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_addface:
 
+
                 break;
 
 //
