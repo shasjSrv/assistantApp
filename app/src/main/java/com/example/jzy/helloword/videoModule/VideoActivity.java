@@ -2,19 +2,24 @@ package com.example.jzy.helloword.videoModule;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -167,6 +172,51 @@ public class VideoActivity extends AppCompatActivity {
         //关闭Activity
         finish();
     }
+
+    void addFace(){
+
+        final AlertDialog.Builder remindINfor = new AlertDialog.Builder(VideoActivity.this);
+        remindINfor.setMessage("未识别成功\n是否要添加新的人脸信息")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //添加人脸
+                        View view=(View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
+                        final EditText inputId= (EditText) view.findViewById(R.id.inputId);
+                        final EditText inputName= (EditText) view.findViewById(R.id.inputName);
+                        final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (TextUtils.isEmpty(inputId.getText())) {
+                                    inputId.setError("请输入ID");
+                                    return;
+                                }
+                                if(TextUtils.isEmpty(inputName.getText())){
+                                    inputName.setError("请输入名字");
+                                    return;
+                                }
+                                Toast.makeText(context,"ID: "+inputId.getText().toString()+" Name: "+inputName.getText().toString(),Toast.LENGTH_SHORT).show();
+                                //  dialog.dismiss();
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton("取消",null);
+
+        remindINfor.show();
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

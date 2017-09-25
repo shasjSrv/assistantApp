@@ -325,45 +325,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_addface:
 
-                final AlertDialog.Builder remindINfor = new AlertDialog.Builder(HomePageActivity.this);
-                remindINfor.setMessage("未识别成功\n是否要添加新的人脸信息")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //添加人脸
-                                View view=(View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
-                                final EditText inputId= (EditText) view.findViewById(R.id.inputId);
-                                final EditText inputName= (EditText) view.findViewById(R.id.inputName);
-                                final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
-                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        }).create();
-
-                                dialog.show();
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        if (TextUtils.isEmpty(inputId.getText())) {
-                                            inputId.setError("请输入ID");
-                                            return;
-                                        }
-                                        if(TextUtils.isEmpty(inputName.getText())){
-                                            inputName.setError("请输入名字");
-                                            return;
-                                        }
-                                        Toast.makeText(context,"ID: "+inputId.getText().toString()+" Name: "+inputName.getText().toString(),Toast.LENGTH_SHORT).show();
-                                        //  dialog.dismiss();
-                                    }
-                                });
-
-                            }
-                        })
-                        .setNegativeButton("取消",null);
-
-                remindINfor.show();
 
                 break;
 
