@@ -2,19 +2,24 @@ package com.example.jzy.helloword.videoModule;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -26,6 +31,12 @@ import com.example.jzy.helloword.event.MessageEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 
 import me.drakeet.materialdialog.MaterialDialog;
 
@@ -103,34 +114,52 @@ public class VideoActivity extends AppCompatActivity {
         super.onPause();
     }
 
+
+
+    private void enterUserInfo(){
+        final AlertDialog.Builder remindINfor = new AlertDialog.Builder(VideoActivity.this);
+        remindINfor.setMessage("未识别成功\n是否要添加新的人脸信息")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //添加人脸
+                        View view=(View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
+                        final EditText inputId= (EditText) view.findViewById(R.id.inputId);
+                        final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (TextUtils.isEmpty(inputId.getText())) {
+                                    inputId.setError("请输入诊疗卡号");
+                                    return;
+                                }
+                                Toast.makeText(context,"ID: "+inputId.getText().toString(),Toast.LENGTH_SHORT).show();
+                                mPreview.setUserId(inputId.getText().toString(),1);
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("取消",null);
+
+        remindINfor.show();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AddPatientEvent event) {
         /* Do something */
         Log.d(TAG, "event:" + event.getText());
-     /*   if (remindDialog == null) {
-            remindDialog = new RemindDialog(this, event.getText());
-        }
-        remindDialog.setTitle(event.getText());
-        remindDialog.show();*/
-
-        final MaterialDialog mMaterialDialog = new MaterialDialog(VideoActivity.this);
-        mMaterialDialog.setMessage("message: "+event.getText())
-                .setPositiveButton("确定", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mMaterialDialog.dismiss();
-                    }
-                })
-                .setNegativeButton("取消", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mMaterialDialog.dismiss();
-                    }
-                });
-
-        mMaterialDialog.show();
-
-
+        /*
+        show enterUserID dialog
+        */
+        enterUserInfo();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

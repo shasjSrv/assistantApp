@@ -29,6 +29,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private Camera mCamera;
     private StreamIt mStreamIt;
     private int flag;
+    private String userID;
 
     Preview(Context context, SurfaceView sv, String URL,int flag,String userInfoURL) {
         super(context);
@@ -36,6 +37,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         this.userInfoURL = userInfoURL;
         mSurfaceView = sv;
         this.flag = flag;
+        userID = "-1";
 //        addView(mSurfaceView);
 
         mHolder = mSurfaceView.getHolder();
@@ -60,6 +62,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
     }
 
+    public void setUserId(String ID,int flag){
+        userID = ID;
+        this.flag = flag;
+    }
 
     public void setCamera(Camera camera) {
         if (mCamera == camera) {
