@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="#00ff00"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/bg"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/bg2" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/bg"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="-50dp"
+                android:src="@drawable/pic" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="姓名"/>
+            <TextView
+                android:id="@+id/show_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="谢耳朵"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="性别"/>
+            <TextView
+                android:id="@+id/show_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="男"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="年龄"/>
+            <TextView
+                android:id="@+id/show_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="病房号"/>
+            <TextView
+                android:id="@+id/show_roomid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="614"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="床位号"/>
+            <TextView
+                android:id="@+id/show_bedid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="03"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="48dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="诊断卡号"/>
+            <TextView
+                android:id="@+id/show_diagnoseid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20172104"
+                android:textSize="18sp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="#44909090" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:divider="@color/card_shadow"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="不是我"
+                android:textSize="18sp"
+                android:gravity="center_horizontal"
+                android:layout_weight="1"/>
+            <View
+                android:layout_width="1dp"
+                android:background="#44909090"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/btn_sure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:gravity="center_horizontal"
+
+                android:text="确认"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

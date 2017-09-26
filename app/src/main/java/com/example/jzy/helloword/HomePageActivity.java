@@ -49,7 +49,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     public static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
-    private Button btnVideo, btnChat, btnDiagnose,btnAddFace;
+    private Button btnVideo, btnChat, btnDiagnose;
     private ImageView ivWelcome;
     private Timer timer;
     private TimerTask timerTask;
@@ -131,11 +131,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 //        btnVideo = (Button) findViewById(R.id.btn_video);
         btnChat = (Button) findViewById(R.id.btn_chat);
-        btnAddFace=(Button) findViewById(R.id.btn_addface);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
 //        btnVideo.setOnClickListener(this);
         btnChat.setOnClickListener(this);
-        btnAddFace.setOnClickListener(this);
 //        btnDiagnose.setOnClickListener(this);
 
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
@@ -321,11 +319,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 patients.add(new Patient("p_id_1","p_name_1",medicines1,""));
                 patients.add(new Patient("p_id_2","p_name_2",medicines2,""));
                 jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));*/
-                break;
-
-            case R.id.btn_addface:
-
-
                 break;
 
 //

@@ -1,5 +1,10 @@
 package com.example.jzy.helloword.videoModule;
 
+import android.app.Notification;
+import android.app.ProgressDialog;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -15,29 +20,50 @@ import java.util.Scanner;
  * Created by jzy on 9/25/17.
  */
 
-public class QueryUserInfoThread extends Thread{
-//    private String Url;
+public class QueryUserInfoThread extends Thread {
+    //    private String Url;
     private String userInfoURL;
     private String Error = null;
     private String userID;
-//    private int flag;
+    private Handler handler;
+    //    private int flag;
     URL url;
     BufferedReader reader = null;
 
-    public QueryUserInfoThread(String userInfoURL, String userID){
+    public QueryUserInfoThread(String userInfoURL, String userID, Handler handler) {
         this.userInfoURL = userInfoURL;
         this.userID = userID;
+        this.handler = handler;
     }
 
-
     public void run() {
-        try{
+        try {
+             sleep(300);
+            // dialog.show();
+            //模拟数据
+            JSONObject resulttest = new JSONObject();
+            resulttest.put("username", "艾米");
+            resulttest.put("age", 18);
+            resulttest.put("gender", "女");
+            resulttest.put("roomNo", 615);
+            resulttest.put("berthNo", 02);
+            resulttest.put("diagnoseId",userID);
+
+            Message msg = new Message();
+            msg.what = 1;
+            msg.obj = resulttest;
+             /*Bundle bundle=new Bundle();
+            bundle.putString("username",userName);
+            bundle.putString("");*/
+            handler.sendMessage(msg);
+
+
             String URL = userInfoURL;
             URL += "/CheckUpdateCondition";
             url = new URL(URL);
             Log.i("Sys", "URL:" + URL);
             JSONObject queryJson = new JSONObject();
-            queryJson.put("user_id",userID);
+            queryJson.put("user_id", userID);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
@@ -59,7 +85,7 @@ public class QueryUserInfoThread extends Thread{
             int roomNo = result.getInt("roomNo");
             int berthNo = result.getInt("berthNo");
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);
         } finally {
@@ -70,7 +96,7 @@ public class QueryUserInfoThread extends Thread{
         }
     }
 
-    private void dealRespose(){
+    private void dealRespose() {
 
     }
 

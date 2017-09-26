@@ -1,11 +1,14 @@
 package com.example.jzy.helloword.videoModule;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
@@ -31,12 +35,16 @@ import com.example.jzy.helloword.event.MessageEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Scanner;
 
 import me.drakeet.materialdialog.MaterialDialog;
 
@@ -55,6 +63,81 @@ public class VideoActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private RemindDialog remindDialog;
     private int flag;
+    ProgressDialog progressDialog;
+    private Handler uiHandler = new Handler() {
+
+        //得到用户信息后显示出来，用户确认后发送脸部信息
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    Log.d("Syss", "message: " + msg.what);
+                    final JSONObject result= (JSONObject) msg.obj;
+
+                    View view = (View) getLayoutInflater().inflate(R.layout.dialog_show_infor, null);
+                    TextView userName=(TextView)view.findViewById(R.id.show_name);
+                    userName.setText("hi here");
+                    TextView userGeneder=(TextView)view.findViewById(R.id.show_gender);
+                    TextView userAge=(TextView)view.findViewById(R.id.show_age);
+                    TextView userRoom=(TextView)view.findViewById(R.id.show_roomid);
+                    TextView userBed=(TextView)view.findViewById(R.id.show_bedid);
+                    TextView userDiagnoseid=(TextView)view.findViewById(R.id.show_diagnoseid);
+
+                    try {
+                        Log.d("Syss","json: "+result.toString());
+                        Log.d("Syss","username: "+result.getString("username"));
+                        userName.setText(result.getString("username"));
+                        userGeneder.setText(result.getString("gender"));
+                        int a =result.getInt("age");
+                        Log.d("Syss","aaa:  "+a);
+                        userAge.setText(""+result.getInt("age"));
+                        userRoom.setText(""+result.getInt("roomNo"));
+                        userBed.setText(""+result.getInt("berthNo"));
+                        userDiagnoseid.setText(result.getString("diagnoseId"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }finally {
+                        progressDialog.dismiss();
+                    }
+
+
+                    TextView btn_sure = (TextView) view.findViewById(R.id.btn_sure);
+                    final AlertDialog dialog = new AlertDialog.Builder(context).setView(view)
+                            .create();
+
+                    btn_sure.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d("Syss", "here----->");
+                            dialog.dismiss();
+                            try {
+                                //切换为当前用户
+                                mPreview.setUserId(result.getString("diagnoseId"), 1);
+
+                                //向服务器发送脸部信息
+                                //。。。。。。。。。。。。。。。
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    TextView btn_cancel=(TextView)view.findViewById(R.id.btn_cancel);
+                    btn_cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    //去掉黑色边角
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    dialog.show();
+                    break;
+            }
+        }
+    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +146,7 @@ public class VideoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         EventBus.getDefault().register(this);
-
+        progressDialog=new ProgressDialog(VideoActivity.this);
         /**
          * get the parameter of URL
          */
@@ -77,8 +160,10 @@ public class VideoActivity extends AppCompatActivity {
                 keyprefUserInfoServerUrl, getString(R.string.pref_user_info_ip_default));
         Bundle bundle = this.getIntent().getExtras();
         flag = bundle.getInt("flag");
-        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL,flag,userInfoURL);
+        mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL, flag, userInfoURL);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        //enterUserInfo();
     }
 
     @Override
@@ -115,16 +200,15 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-
-    private void enterUserInfo(){
+    private void enterUserInfo() {
         final AlertDialog.Builder remindINfor = new AlertDialog.Builder(VideoActivity.this);
-        remindINfor.setMessage("未识别成功\n是否要添加新的人脸信息")
+        remindINfor.setTitle("未识别成功\n是否要添加新的人脸信息")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //添加人脸
-                        View view=(View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
-                        final EditText inputId= (EditText) view.findViewById(R.id.inputId);
+                        View view = (View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
+                        final EditText inputId = (EditText) view.findViewById(R.id.inputId);
                         final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
                                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                     @Override
@@ -138,19 +222,25 @@ public class VideoActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 if (TextUtils.isEmpty(inputId.getText())) {
-                                    inputId.setError("请输入诊疗卡号");
+                                    inputId.setError("输入不能为空");
                                     return;
                                 }
-                                Toast.makeText(context,"ID: "+inputId.getText().toString(),Toast.LENGTH_SHORT).show();
-                                mPreview.setUserId(inputId.getText().toString(),1);
+                                Toast.makeText(context, "ID: " + inputId.getText().toString(), Toast.LENGTH_SHORT).show();
+                                progressDialog.show();
+                                QueryUserInfoThread queryUserInfoThread = new QueryUserInfoThread("", inputId.getText().toString(), uiHandler);
+                                queryUserInfoThread.start();
+
+                                dialog.dismiss();
+
                             }
                         });
                     }
                 })
-                .setNegativeButton("取消",null);
+                .setNegativeButton("取消", null);
 
         remindINfor.show();
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AddPatientEvent event) {
@@ -214,7 +304,7 @@ public class VideoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d("Sys","i am back");
+        Log.d("Sys", "i am back");
         backToHomePage("My name is linjiqin");
         EventBus.getDefault().post(new BackPressedEvent(""));
     }

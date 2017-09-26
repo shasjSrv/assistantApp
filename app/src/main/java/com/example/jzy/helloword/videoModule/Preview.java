@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.graphics.ImageFormat;
 
+import com.example.jzy.helloword.MyApplication;
+
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "Preview";
 
@@ -57,15 +59,20 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             // applications. Applications should release the camera immediately
             // during onPause() and re-open() it during onResume()).
             mCamera.release();
-
             mCamera = null;
         }
     }
 
     public void setUserId(String ID,int flag){
         userID = ID;
+        MyApplication app=(MyApplication)getContext().getApplicationContext();
+        Log.d("Syss","setUsrId: "+app.getUserID());
+        app.setUserID(ID);
+        Log.d("Syss","setUsrId-2: "+app.getUserID());
+
         this.flag = flag;
     }
+
 
     public void setCamera(Camera camera) {
         if (mCamera == camera) {
