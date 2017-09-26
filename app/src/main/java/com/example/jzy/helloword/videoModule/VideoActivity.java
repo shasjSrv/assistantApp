@@ -83,17 +83,17 @@ public class VideoActivity extends AppCompatActivity {
                     TextView userBed=(TextView)view.findViewById(R.id.show_bedid);
                     TextView userDiagnoseid=(TextView)view.findViewById(R.id.show_diagnoseid);
 
+
+
                     try {
                         Log.d("Syss","json: "+result.toString());
-                        Log.d("Syss","username: "+result.getString("username"));
-                        userName.setText(result.getString("username"));
+                       // Log.d("Syss","username: "+result.getString("username"));
+                        userName.setText(result.getString("userName"));
                         userGeneder.setText(result.getString("gender"));
-                        int a =result.getInt("age");
-                        Log.d("Syss","aaa:  "+a);
                         userAge.setText(""+result.getInt("age"));
                         userRoom.setText(""+result.getInt("roomNo"));
                         userBed.setText(""+result.getInt("berthNo"));
-                        userDiagnoseid.setText(result.getString("diagnoseId"));
+                        userDiagnoseid.setText(result.getString("userID"));
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -163,7 +163,7 @@ public class VideoActivity extends AppCompatActivity {
         mPreview = new Preview(this, (SurfaceView) findViewById(R.id.surfaceView), roomURL, flag, userInfoURL);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        //enterUserInfo();
+        enterUserInfo();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class VideoActivity extends AppCompatActivity {
                                 }
                                 Toast.makeText(context, "ID: " + inputId.getText().toString(), Toast.LENGTH_SHORT).show();
                                 progressDialog.show();
-                                QueryUserInfoThread queryUserInfoThread = new QueryUserInfoThread("", inputId.getText().toString(), uiHandler);
+                                QueryUserInfoThread queryUserInfoThread = new QueryUserInfoThread(getString(R.string.pref_user_info_ip_default), inputId.getText().toString(), uiHandler);
                                 queryUserInfoThread.start();
 
                                 dialog.dismiss();
