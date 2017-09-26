@@ -33,7 +33,7 @@ public class QueryUserInfoThread extends Thread{
     public void run() {
         try{
             String URL = userInfoURL;
-            URL += "/QueryID";
+            URL += "/CheckUpdateCondition";
             url = new URL(URL);
             Log.i("Sys", "URL:" + URL);
             JSONObject queryJson = new JSONObject();
