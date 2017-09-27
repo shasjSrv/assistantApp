@@ -15,19 +15,19 @@ public class MyApplication extends Application {
         super.onCreate();
     }
 
-    public void setUserID(String id) {
-        this.userID = id;
+    public static void setUserID(String id) {
+        userID = id;
     }
 
-    public void setUserName(String name) {
-        this.userName = name;
+    public static void setUserName(String name) {
+        userName = name;
     }
 
-    public String getUserID() {
+    public static String getUserID() {
         return userID;
     }
 
-    public String getUserName() {
+    public static String getUserName() {
         return userName;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.jzy.helloword;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,14 +24,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jzy.helloword.decisionModule.DecisionServices;
+import com.example.jzy.helloword.event.AddPatientEvent;
+import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
 import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
 import com.example.jzy.helloword.managerMedicineModule.Patient;
+import com.example.jzy.helloword.videoModule.QueryUserInfoThread;
 import com.example.jzy.helloword.videoModule.RemindDialog;
 import com.example.jzy.helloword.videoModule.VideoActivity;
 import com.iflytek.cloud.SpeechConstant;
@@ -39,6 +44,8 @@ import com.iflytek.cloud.SpeechUtility;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -59,6 +66,85 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private String keyPrefBoxIP;
     private SharedPreferences sharedPref;
     private String BoxIP;
+    ProgressDialog progressDialog;
+
+    private Handler uiHandler = new Handler() {
+
+        //得到用户信息后显示出来，用户确认后发送脸部信息
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    Log.d("Syss", "message: " + msg.what);
+                    final JSONObject result= (JSONObject) msg.obj;
+
+                    View view = (View) getLayoutInflater().inflate(R.layout.dialog_show_infor, null);
+                    TextView userName=(TextView)view.findViewById(R.id.show_name);
+                    userName.setText("hi here");
+                    TextView userGeneder=(TextView)view.findViewById(R.id.show_gender);
+                    TextView userAge=(TextView)view.findViewById(R.id.show_age);
+                    TextView userRoom=(TextView)view.findViewById(R.id.show_roomid);
+                    TextView userBed=(TextView)view.findViewById(R.id.show_bedid);
+                    TextView userDiagnoseid=(TextView)view.findViewById(R.id.show_diagnoseid);
+
+
+
+                    try {
+                        Log.d("Syss","json: "+result.toString());
+                        // Log.d("Syss","username: "+result.getString("username"));
+                        userName.setText(result.getString("userName"));
+                        userGeneder.setText(result.getString("gender"));
+                        userAge.setText(""+result.getInt("age"));
+                        userRoom.setText(""+result.getInt("roomNo"));
+                        userBed.setText(""+result.getInt("berthNo"));
+                        userDiagnoseid.setText(result.getString("userID"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }finally {
+                        progressDialog.dismiss();
+                    }
+
+
+                    TextView btn_sure = (TextView) view.findViewById(R.id.btn_sure);
+                    final AlertDialog dialog = new AlertDialog.Builder(context).setView(view)
+                            .create();
+
+                    btn_sure.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d("Syss", "here----->");
+                            dialog.dismiss();
+                            jumpToVideoActivity(1);
+                            /*try {
+                                //切换为当前用户
+//                                mPreview.setUserId(result.getString("diagnoseId"), 1);
+
+                                //向服务器发送脸部信息
+                                //。。。。。。。。。。。。。。。
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }*/
+                        }
+                    });
+                    TextView btn_cancel=(TextView)view.findViewById(R.id.btn_cancel);
+                    btn_cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    //去掉黑色边角
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    dialog.show();
+                    break;
+            }
+        }
+    };
+
+
 
     private Handler handler = new Handler() {
         @Override
@@ -123,6 +209,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void init() {
         EventBus.getDefault().register(this);
 
+
+        progressDialog=new ProgressDialog(HomePageActivity.this);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
         BoxIP = sharedPref.getString(
@@ -240,6 +328,67 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+
+    private void enterUserInfo() {
+        final AlertDialog.Builder remindINfor = new AlertDialog.Builder(HomePageActivity.this);
+        remindINfor.setTitle("未识别成功\n是否要添加新的人脸信息")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //添加人脸
+                        View view = (View) getLayoutInflater().inflate(R.layout.dialog_add_face, null);
+                        final EditText inputId = (EditText) view.findViewById(R.id.inputId);
+                        final AlertDialog dialog = new AlertDialog.Builder(context).setView(view).setPositiveButton("确定", null)
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        EventBus.getDefault().post(new BackPressedEvent(""));
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (TextUtils.isEmpty(inputId.getText())) {
+                                    inputId.setError("输入不能为空");
+                                    return;
+                                }
+                                Toast.makeText(context, "ID: " + inputId.getText().toString(), Toast.LENGTH_SHORT).show();
+                                progressDialog.show();
+                                QueryUserInfoThread queryUserInfoThread = new QueryUserInfoThread(getString(R.string.pref_user_info_ip_default), inputId.getText().toString(), uiHandler);
+                                queryUserInfoThread.start();
+
+                                dialog.dismiss();
+
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface,int i){
+                        EventBus.getDefault().post(new BackPressedEvent(""));
+                    }
+                });
+
+        remindINfor.show();
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddPatientEvent event) {
+        /* Do something */
+        Log.d(TAG, "event:" + event.getText());
+        /*
+        show enterUserID dialog
+        */
+//        backToHomePage("");
+        enterUserInfo();
+    }
+
     /**
      * 跳转VideoActivity人脸识别
      */
@@ -252,7 +401,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-
+    /*
+    * jump to ManagerMedicineActivity
+    */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(NurseBackEvent event) {
         /* Do something */
@@ -306,21 +457,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_chat:
                 checkPermission();
-                /*ArrayList<Patient> patients=new ArrayList<Patient>();
-                ArrayList<MedicineInfo> medicines1=new ArrayList<MedicineInfo>();
-                medicines1.add(new MedicineInfo("id","m1_name","m1_c","m1_more"));
-                medicines1.add(new MedicineInfo("id","m1_name_2","m1_c2","m1_more_2"));
-
-                ArrayList<MedicineInfo> medicines2=new ArrayList<MedicineInfo>();
-                medicines2.add(new MedicineInfo("id","m2_name","m2_c","m2_more"));
-                medicines2.add(new MedicineInfo("id","m2_name_2","m2_c2","m2_more_2"));
-                medicines2.add(new MedicineInfo("id","m2_name_3","m1_c3","m1_more_3"));
-
-                patients.add(new Patient("p_id_1","p_name_1",medicines1,""));
-                patients.add(new Patient("p_id_2","p_name_2",medicines2,""));
-                jumpToManagerMedicineActivity(new NurseBackEvent(1,"MrCai",patients));*/
                 break;
-
 //
 //            case R.id.btn_diagnose:
 //                jumpToDiagnoseActivity();

@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.jzy.helloword.MyApplication;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -38,19 +40,6 @@ public class QueryUserInfoThread extends Thread {
 
     public void run() {
         try {
-            // sleep(300);
-            // dialog.show();
-            //模拟数据
-          /*  JSONObject resulttest = new JSONObject();
-            resulttest.put("username", "艾米");
-            resulttest.put("age", 18);
-            resulttest.put("gender", "女");
-            resulttest.put("roomNo", 615);
-            resulttest.put("berthNo", 02);
-            resulttest.put("diagnoseId",userID); */
-
-
-
 
             String URL = userInfoURL;
             URL += "/CheckUpdateCondition";
@@ -74,6 +63,8 @@ public class QueryUserInfoThread extends Thread {
 
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
+            MyApplication.setUserID(result.getString("userID"));
+            MyApplication.setUserName(result.getString("userName"));
            /*  int age = result.getInt("age");
             String gender = result.getString("gender");
             String rfid = result.getString("rfid");

@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.jzy.helloword.HomePageActivity;
+import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
@@ -89,7 +90,7 @@ public class DecisionServices extends Service {
 
         private final static int MSG_WAKE_UP = 1;
         private final static int MSG_DETECTION_PATIENT_SUCCESS = 2;
-        private final static int MSG_DETECTION_PATIENT_FALSE = 3;
+        private final static int MSG_DETECTION_FALSE = 3;
         private final static int MSG_ANSWER = 4;
         private final static int MSG_TEMPLATE = 5;
         private final static int MSG_QUESTION = 6;
@@ -112,6 +113,7 @@ public class DecisionServices extends Service {
             addState(mQuestionState, mDefaulteState);
             addState(mTtsCompleteState,mDefaulteState);
             addState(mPutMedicineState,mDefaulteState);
+            addState(mAddPatientState,mDefaulteState);
             setInitialState(mSleepState); // sleep状态为初始状态
             Log.d(TAG, "ctor X");
             start(); // 状态机进入初始状态等候外界的命令
@@ -144,6 +146,8 @@ public class DecisionServices extends Service {
         public void backToSleep(){
             sendMessage(MSG_BACK_SLEEP);
         }
+        
+        public void detectFalse(){sendMessage(MSG_DETECTION_FALSE);}
 
         private boolean checkResult(MyResult myResult){
             if(myResult == null){
@@ -168,6 +172,10 @@ public class DecisionServices extends Service {
                     return;
             }
 
+        }
+
+        public void startSpeaking(){
+            mTts.startSpeaking(Corpus.QueryAddPatient, mTtsListener);
         }
 
 
@@ -223,6 +231,8 @@ public class DecisionServices extends Service {
                     case MSG_DETECTION_NURSE_SUCCESS:
                         transitionTo(mPutMedicineState);
                         break;
+                    case MSG_DETECTION_FALSE:
+                        transitionTo(mAddPatientState);
                     case MSG_BACK_SLEEP:
                         transitionTo(mSleepState);
                         break;
@@ -282,6 +292,33 @@ public class DecisionServices extends Service {
                         break;
                     case MSG_TTS_COMPLETE:
                         transitionTo(mTtsCompleteState);
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        private State mAddPatientState = new AddPatientState();
+
+        class AddPatientState extends State{
+            @Override
+            public void enter() {
+                Log.i(TAG, "enter " + getName());
+
+                waker.stopListening();
+                if(latestState !=  MSG_TTS_COMPLETE ) {
+                    startSpeaking();
+                }
+                latestState = MSG_DETECTION_FALSE;
+            }
+
+            @Override
+            public boolean processMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_BACK_SLEEP:
+                        transitionTo(mSleepState);
                         break;
                     default:
                         return false;
@@ -363,8 +400,12 @@ public class DecisionServices extends Service {
                     case MSG_ANSWER:
                         changeToTempMode();
                         break;
+                    case MSG_DETECTION_FALSE:
+                        detectFalse();
+                        break;
                     default:
                 }
+                latestState = MSG_TTS_COMPLETE;
             }
 
             @Override
@@ -627,6 +668,14 @@ public class DecisionServices extends Service {
         mSpeechUnderstander.destory();
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddPatientSuccEvent event) {
+        //Do something
+        name = "你好," + event.getName() + ",你的照片已经添加成功";
+        mTts.startSpeaking(name, mTtsListener);
+        mCsm.backToSleep();
+    }
 
     /*
     * notify DecisionService change state to detectPatientSuccess

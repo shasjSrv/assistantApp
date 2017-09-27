@@ -64,13 +64,13 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
     }
 
     public void setUserId(String ID,int flag){
-        userID = ID;
+        /*userID = ID;
         MyApplication app=(MyApplication)getContext().getApplicationContext();
         Log.d("Syss","setUsrId: "+app.getUserID());
         app.setUserID(ID);
         Log.d("Syss","setUsrId-2: "+app.getUserID());
 
-        this.flag = flag;
+        this.flag = flag;*/
     }
 
 

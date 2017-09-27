@@ -21,7 +21,9 @@ import android.hardware.Camera.Size;
 
 import android.util.Log;
 
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.event.AddPatientEvent;
+import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.MessageEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
@@ -156,12 +158,13 @@ class SendVideoThread extends Thread {
             * get respose from photo server
             * */
             //sleep(500);
-            int AddUserID = 1;
+            String AddUserID = MyApplication.getUserID();
+            String name = MyApplication.getUserName();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("photo", Base64.encodeToString(myoutputstream.toByteArray(), DEFAULT));
             if(flag == UPDATE) {
                 jsonObject.put("userID", AddUserID);
-                jsonObject.put("userName", "MrCai");
+                jsonObject.put("userName", name);
             }
             //jsonObject.put("title",myoutputstream.toString());
 
@@ -204,7 +207,7 @@ class SendVideoThread extends Thread {
             }else if (flag == UPDATE) {
                 int ifSucc = responseJSON.getInt("ifSucc");
                 Log.i("Sys", "ifSucc:" + ifSucc);
-                returnSucc(ifSucc);
+                returnSucc(ifSucc, name);
             }
         } catch (Exception ex) {
             Error = ex.getMessage();
@@ -329,9 +332,9 @@ class SendVideoThread extends Thread {
         }
     }
 
-    private void returnSucc(int ifSucc) {
+    private void returnSucc(int ifSucc, String name) {
         if(ifSucc != 0){
-            EventBus.getDefault().post(new PatientBackEnvent("success!"));
+            EventBus.getDefault().post(new AddPatientSuccEvent(name));
         }
 
     }
