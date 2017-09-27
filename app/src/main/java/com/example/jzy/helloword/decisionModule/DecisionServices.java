@@ -309,7 +309,7 @@ public class DecisionServices extends Service {
 
                 waker.stopListening();
                 if(latestState !=  MSG_TTS_COMPLETE ) {
-                    startSpeaking();
+                    mCsm.startSpeaking();
                 }
                 latestState = MSG_DETECTION_FALSE;
             }

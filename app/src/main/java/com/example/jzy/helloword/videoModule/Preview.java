@@ -81,7 +81,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         stopPreviewAndFreeCamera();
 
         mCamera = camera;
-
         if (mCamera != null) {
             List<Size> localSizes = mCamera.getParameters().getSupportedPreviewSizes();
             mSupportedPreviewSizes = localSizes;

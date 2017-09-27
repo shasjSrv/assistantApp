@@ -4,6 +4,26 @@ package com.example.jzy.helloword.videoModule;
  * Created by jzy on 1/18/17.
  */
 
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.hardware.Camera;
+import android.hardware.Camera.Size;
+import android.util.Base64;
+import android.util.Log;
+
+import com.example.jzy.helloword.MyApplication;
+import com.example.jzy.helloword.event.AddPatientEvent;
+import com.example.jzy.helloword.event.AddPatientSuccEvent;
+import com.example.jzy.helloword.event.MessageEvent;
+import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.event.PatientBackEnvent;
+import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
+import com.example.jzy.helloword.managerMedicineModule.Patient;
+
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,36 +31,11 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-
-import android.util.Base64;
-
-import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.hardware.Camera;
-import android.hardware.Camera.Size;
-
-import android.util.Log;
-
-import com.example.jzy.helloword.MyApplication;
-import com.example.jzy.helloword.event.AddPatientEvent;
-import com.example.jzy.helloword.event.AddPatientSuccEvent;
-import com.example.jzy.helloword.event.MessageEvent;
-import com.example.jzy.helloword.event.PatientBackEnvent;
-import com.example.jzy.helloword.event.NurseBackEvent;
-import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
-import com.example.jzy.helloword.managerMedicineModule.Patient;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import static android.util.Base64.DEFAULT;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
+
+import static android.util.Base64.DEFAULT;
 
 
 public class StreamIt implements Camera.PreviewCallback {
@@ -50,19 +45,15 @@ public class StreamIt implements Camera.PreviewCallback {
     private int flag;
 
     public StreamIt(String serverURL,int flag,String userInfoURL) {
-        EventBus.getDefault().register(this);
+        Log.i("sys","1:come to set camera!");
+//        EventBus.getDefault().register(this);
         this.Url = serverURL;
         this.flag = flag;
         this.userInfoURL = userInfoURL;
     }
 
     public void destroyInstance() {
-        EventBus.getDefault().unregister(this);
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        /* Do something */
     }
 
     @Override
@@ -148,16 +139,11 @@ class SendVideoThread extends Thread {
 
 
     public void run() {
-
-
         // Send data
         try {
-
-
             /*
             * get respose from photo server
             * */
-            //sleep(500);
             String AddUserID = MyApplication.getUserID();
             String name = MyApplication.getUserName();
             JSONObject jsonObject = new JSONObject();
@@ -166,8 +152,6 @@ class SendVideoThread extends Thread {
                 jsonObject.put("userID", AddUserID);
                 jsonObject.put("userName", name);
             }
-            //jsonObject.put("title",myoutputstream.toString());
-
 
             // Send POST data request
             String URL = Url;
@@ -192,7 +176,6 @@ class SendVideoThread extends Thread {
             InputStream responseStream = conn.getInputStream();
             String response = drainStream(responseStream);
 //            conn.disconnect();
-//            Log.i("Sys", "TURN response: " + response);
             JSONObject responseJSON = new JSONObject(response);
             if(flag == SENDIDSTATUS) {
                 int userID = responseJSON.getInt("userID");
@@ -218,8 +201,6 @@ class SendVideoThread extends Thread {
             } catch (Exception ex) {
             }
         }
-
-        /*****************************************************/
     }
 
     private static String drainStream(InputStream in) {
@@ -304,7 +285,6 @@ class SendVideoThread extends Thread {
             }
 
             dealUserInfo(isSuccess,userName,type,userID,patientArray);
-
         } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);

@@ -133,6 +133,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     btn_cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            EventBus.getDefault().post(new BackPressedEvent(""));
                             dialog.dismiss();
                         }
                     });
