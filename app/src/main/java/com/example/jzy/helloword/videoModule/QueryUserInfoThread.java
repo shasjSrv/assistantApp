@@ -38,30 +38,24 @@ public class QueryUserInfoThread extends Thread {
 
     public void run() {
         try {
-             sleep(300);
+            // sleep(300);
             // dialog.show();
             //模拟数据
-            JSONObject resulttest = new JSONObject();
+          /*  JSONObject resulttest = new JSONObject();
             resulttest.put("username", "艾米");
             resulttest.put("age", 18);
             resulttest.put("gender", "女");
             resulttest.put("roomNo", 615);
             resulttest.put("berthNo", 02);
-            resulttest.put("diagnoseId",userID);
+            resulttest.put("diagnoseId",userID); */
 
-            Message msg = new Message();
-            msg.what = 1;
-            msg.obj = resulttest;
-             /*Bundle bundle=new Bundle();
-            bundle.putString("username",userName);
-            bundle.putString("");*/
-            handler.sendMessage(msg);
+
 
 
             String URL = userInfoURL;
             URL += "/CheckUpdateCondition";
             url = new URL(URL);
-            Log.i("Sys", "URL:" + URL);
+            Log.i("Syss", "URL:" + URL);
             JSONObject queryJson = new JSONObject();
             queryJson.put("user_id", userID);
             URLConnection conn = url.openConnection();
@@ -70,20 +64,26 @@ public class QueryUserInfoThread extends Thread {
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(queryJson.toString());
             wr.flush();
-            Log.i("Sys", "jsonObject:" + queryJson.toString());
+            Log.i("Syss", "jsonObject:" + queryJson.toString());
             wr.close();
 
             InputStream responseStream = conn.getInputStream();
             String response = drainStream(responseStream);
             JSONObject responseJSON = new JSONObject(response);
             JSONObject result = responseJSON.getJSONObject("result");
+
             int isSuccess = result.getInt("isSuccess");
             String userName = result.getString("userName");
-            int age = result.getInt("age");
+           /*  int age = result.getInt("age");
             String gender = result.getString("gender");
             String rfid = result.getString("rfid");
             int roomNo = result.getInt("roomNo");
-            int berthNo = result.getInt("berthNo");
+            int berthNo = result.getInt("berthNo");*/
+
+            Message msg = new Message();
+            msg.what = 1;
+            msg.obj = result;
+            handler.sendMessage(msg);
 
         } catch (Exception ex) {
             Error = ex.getMessage();
