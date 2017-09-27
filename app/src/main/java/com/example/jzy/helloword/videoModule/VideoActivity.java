@@ -4,6 +4,7 @@ package com.example.jzy.helloword.videoModule;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -21,32 +22,20 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Intent;
 
-import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
+import com.example.jzy.helloword.event.MessageEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
-import com.example.jzy.helloword.event.AddPatientEvent;
-import com.example.jzy.helloword.event.MessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Scanner;
-
-import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by jzy on 8/2/17.
@@ -139,6 +128,7 @@ public class VideoActivity extends AppCompatActivity {
         }
     };
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;

@@ -79,29 +79,55 @@
 
 
 
+### 方法三：查询单个patient信息
+
+### 使用post方法，接口的地址为'/CheckUpdateCondition'
+
+### 机器人发送送端消息格式:
+
+| name    | type   |
+| ------- | ------ |
+| user_id | String |
+
+### 返回值对应的含义
+
+| name      | type   | mean   | success | false |
+| --------- | ------ | ------ | ------- | ----- |
+| isSuccess | int32  | 发送成功与否 | 1       | 0     |
+| userID    | int32  | 用户ID   | ID号     | -1    |
+| userName  | String | 用户名    | 用户姓名    | null  |
+| age       | int32  | 年龄     | 用户年龄    | -1    |
+| gender    | String | 性别     | 男/女     | null  |
+| rfid      | String | rfid   | rfid号   | null  |
+| roomNo    | int32  | 病房号    | 病房号数字   | -1    |
+| berthNo   | int32  | 床位号    | 床位号数字   | -1    |
 
 
-### 方法三:查询patient完整信息
+
+
+
+### 方法四:查询patient完整信息
 
 ### 使用post方法，接口的地址为'/QueryPatientInfo'
 
 ### 返回值对应的含义
 
-| name     | type      | mean | success | false |
-| -------- | --------- | ---- | ------- | ----- |
-| userID   | JSONArray | 用户ID | ID号     | null  |
-| userName | JSONArray | 用户名  | 用户姓名    | null  |
-| age      | JSONArray | 年龄   | 用户年龄    | null  |
-| gender   | JSONArray | 性别   | 男/女     | null  |
-| rfid     | JSONArray | rfid | rfid号   | null  |
-| roomNo   | JSONArray | 病房号  | 病房号数字   | null  |
-| berthNo  | JSONArray | 床位号  | 床位号数字   | null  |
+| name      | type      | mean   | success | false |
+| --------- | --------- | ------ | ------- | ----- |
+| isSuccess | int32     | 发送成功与否 | 1       | 0     |
+| userID    | JSONArray | 用户ID   | ID号     | null  |
+| userName  | JSONArray | 用户名    | 用户姓名    | null  |
+| age       | JSONArray | 年龄     | 用户年龄    | null  |
+| gender    | JSONArray | 性别     | 男/女     | null  |
+| rfid      | JSONArray | rfid   | rfid号   | null  |
+| roomNo    | JSONArray | 病房号    | 病房号数字   | null  |
+| berthNo   | JSONArray | 床位号    | 床位号数字   | null  |
 
 
 
 
 
-### 方法四:查询病人药物全部信息
+### 方法五:查询病人药物全部信息
 
 ### 使用post方法，接口的地址为'/QueryUserMedicine'
 
