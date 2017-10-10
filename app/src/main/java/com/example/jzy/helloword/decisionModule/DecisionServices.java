@@ -1,6 +1,7 @@
 package com.example.jzy.helloword.decisionModule;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
@@ -9,8 +10,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.jzy.helloword.HomePageActivity;
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -77,7 +80,6 @@ public class DecisionServices extends Service {
     private ControlStateMachine mCsm;
 
 
-
     private MediaPlayer mp;
 
     private boolean isPlaying;
@@ -85,7 +87,7 @@ public class DecisionServices extends Service {
     private MyResult myAnswerResult;
 
 
-    private class ControlStateMachine  extends StateMachine {
+    private class ControlStateMachine extends StateMachine {
 //        private final String TAG1 = MyStateMachine.class.getSimpleName();
 
         private final static int MSG_WAKE_UP = 1;
@@ -101,7 +103,6 @@ public class DecisionServices extends Service {
         private int latestState = 0;
 
 
-
         public ControlStateMachine() {
             super(TAG);  // 调用StateMachine(String name)构造状态机
             Log.d(TAG, "ctor E");
@@ -111,9 +112,9 @@ public class DecisionServices extends Service {
             addState(mAnswerState, mDefaulteState);
             addState(mTempState, mDefaulteState);
             addState(mQuestionState, mDefaulteState);
-            addState(mTtsCompleteState,mDefaulteState);
-            addState(mPutMedicineState,mDefaulteState);
-            addState(mAddPatientState,mDefaulteState);
+            addState(mTtsCompleteState, mDefaulteState);
+            addState(mPutMedicineState, mDefaulteState);
+            addState(mAddPatientState, mDefaulteState);
             setInitialState(mSleepState); // sleep状态为初始状态
             Log.d(TAG, "ctor X");
             start(); // 状态机进入初始状态等候外界的命令
@@ -139,25 +140,27 @@ public class DecisionServices extends Service {
             sendMessage(MSG_QUESTION);
         }
 
-        public void ttsComplete(){
+        public void ttsComplete() {
             sendMessage(MSG_TTS_COMPLETE);
         }
 
-        public void backToSleep(){
+        public void backToSleep() {
             sendMessage(MSG_BACK_SLEEP);
         }
-        
-        public void detectFalse(){sendMessage(MSG_DETECTION_FALSE);}
 
-        private boolean checkResult(MyResult myResult){
-            if(myResult == null){
-                Log.i("Sys","myResult is null");
+        public void detectFalse() {
+            sendMessage(MSG_DETECTION_FALSE);
+        }
+
+        private boolean checkResult(MyResult myResult) {
+            if (myResult == null) {
+                Log.i("Sys", "myResult is null");
                 return false;
             }
             return true;
         }
 
-        public void dealTTSState(){
+        public void dealTTSState() {
             switch (latestState) {
                 case MSG_ANSWER:
                     break;
@@ -166,7 +169,7 @@ public class DecisionServices extends Service {
                     th.start();
                     break;
                 case MSG_TEMPLATE:
-                    mTts.startSpeaking("嗯",mTtsListener);
+                    mTts.startSpeaking("嗯", mTtsListener);
                     break;
                 default:
                     return;
@@ -174,7 +177,7 @@ public class DecisionServices extends Service {
 
         }
 
-        public void startSpeaking(){
+        public void startSpeaking() {
             mTts.startSpeaking(Corpus.QueryAddPatient, mTtsListener);
         }
 
@@ -302,13 +305,13 @@ public class DecisionServices extends Service {
 
         private State mAddPatientState = new AddPatientState();
 
-        class AddPatientState extends State{
+        class AddPatientState extends State {
             @Override
             public void enter() {
                 Log.i(TAG, "enter " + getName());
 
                 waker.stopListening();
-                if(latestState !=  MSG_TTS_COMPLETE ) {
+                if (latestState != MSG_TTS_COMPLETE) {
                     mCsm.startSpeaking();
                 }
                 latestState = MSG_DETECTION_FALSE;
@@ -425,7 +428,9 @@ public class DecisionServices extends Service {
             }
         }
 
-    };
+    }
+
+    ;
 
 
     private SynthesizerListener mTtsListener = new SynthesizerListener() {
@@ -457,7 +462,7 @@ public class DecisionServices extends Service {
 
         @Override
         public void onCompleted(SpeechError error) {
-            Log.i(TAG,"TTS onCompleted thread ID: " + android.os.Process.myTid());
+            Log.i(TAG, "TTS onCompleted thread ID: " + android.os.Process.myTid());
             if (error == null) {
                 isPlaying = false;
                 mCsm.ttsComplete();
@@ -573,7 +578,7 @@ public class DecisionServices extends Service {
             if (mIvw != null) {
                 mIvw.destroy();
             }
-            Log.i(TAG,"before TTS onCompleted thread ID: " + android.os.Process.myTid());
+            Log.i(TAG, "before TTS onCompleted thread ID: " + android.os.Process.myTid());
             mTts.startSpeaking(answerText, mTtsListener);
 //            IsWaker = WAKERSTATU;
             mCsm.wakeup();
@@ -583,10 +588,10 @@ public class DecisionServices extends Service {
             //mIvw.stopListening();
         }
 
-        private void changeActicityCondition(String text){
+        private void changeActicityCondition(String text) {
             int index = text.indexOf("你好");
             Log.i(TAG, "index:" + index);
-            if(text.indexOf("你好") != -1) {
+            if (text.indexOf("你好") != -1) {
                 EventBus.getDefault().post(new Tip(text));
             }
         }
@@ -622,7 +627,7 @@ public class DecisionServices extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG,"Start thread ID: " + android.os.Process.myTid());
+        Log.i(TAG, "Start thread ID: " + android.os.Process.myTid());
 
         Log.d(TAG, "before new client");
 //        cli = new Client(ManagerMedicineActivity.ServerIP,ManagerMedicineActivity.ServerPort);
@@ -636,7 +641,7 @@ public class DecisionServices extends Service {
         mTts = new TTS();
         // 初始化语音语义理解对象
         mSpeechUnderstander = new MySpeechUnderstander();
-        myAnswerResult = new MyResult("","");
+        myAnswerResult = new MyResult("", "");
 
         mCsm = new ControlStateMachine();
 
@@ -652,7 +657,22 @@ public class DecisionServices extends Service {
 //        Log.e(ManagerMedicineActivity.TAG,"the service start");
         Log.i(HomePageActivity.TAG, "the service start");
         HomePageActivity.showTip("the service start");
+
+        String command = intent.getStringExtra("command");
+        if ("alarm".equals(command)) {
+            alarmRemind();
+        }
+
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void alarmRemind() {
+        Context context = MyApplication.getContext();
+        Toast.makeText(context, "run alarmremind", Toast.LENGTH_SHORT).show();
+        //Log.d("alarm","run alarmremind");
+        waker.stopListening();
+        mTts.startSpeaking(Corpus.AlarmRemind, mTtsListener);
+
     }
 
     @Override
@@ -693,6 +713,7 @@ public class DecisionServices extends Service {
 //        waker.stopListening();
         mTts.startSpeaking(event.getText(), mTtsListener);
     }
+
     /*
     * notify DecisionService change state to detectNurseSuccess
     */
@@ -791,7 +812,7 @@ class SendChatThread extends Thread {
             sc.init(null, new TrustManager[]{new MyTrustManager()}, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(new MyHostnameVerifier());
-            HttpsURLConnection conn= (HttpsURLConnection) new URL(Url).openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -819,6 +840,7 @@ class SendChatThread extends Thread {
 
         /*****************************************************/
     }
+
     private class MyHostnameVerifier implements HostnameVerifier {
 
         @Override
@@ -842,6 +864,7 @@ class SendChatThread extends Thread {
 
 
         }
+
         @Override
 
         public void checkServerTrusted(X509Certificate[] chain, String authType)
@@ -850,6 +873,7 @@ class SendChatThread extends Thread {
 // TODO Auto-generated method stub
 
         }
+
         @Override
 
         public X509Certificate[] getAcceptedIssuers() {

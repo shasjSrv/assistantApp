@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jzy.helloword.decisionModule.Alarm;
 import com.example.jzy.helloword.decisionModule.DecisionServices;
 import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -233,6 +234,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Intent i = new Intent(this, DecisionServices.class);
         Log.d(TAG, "before new startService");
         startService(i);
+
+        //start alarm
+        Alarm.startRemind();
 
     }
 
