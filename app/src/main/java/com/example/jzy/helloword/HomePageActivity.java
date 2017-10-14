@@ -2,6 +2,7 @@ package com.example.jzy.helloword;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -170,6 +171,20 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         context = this;
         setContentView(R.layout.act_homepage);
         init();
+
+
+
+    }
+
+    void startAnotherApp(String packageName,String className){
+       // String packageName="com.example.xiashu.xiashu_test";
+        //String className="com.example.xiashu.xiashu_test.MainActivity";
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        ComponentName cn = new ComponentName(packageName, className);
+        intent.setComponent(cn);
+        startActivity(intent);
+
     }
 
     @Override
