@@ -48,6 +48,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -165,6 +166,10 @@ public class DecisionServices extends Service {
                 case MSG_ANSWER:
                     break;
                 case MSG_QUESTION:
+                    if(isNeedDoctor(myAnswerResult.getText()))
+                    {
+                        callDoctor();
+                    }
                     Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
                     th.start();
                     break;
@@ -174,6 +179,23 @@ public class DecisionServices extends Service {
                 default:
                     return;
             }
+
+        }
+
+        //判断用户是否想要呼叫医生
+       public boolean isNeedDoctor(String inputStr){
+            boolean isMatch=false;
+            String pattern1=".*不(需要|要|用).*医生.*";
+            String pattern2=".*(请|找|叫|呼叫|喊|需要|要).*医生.*";
+
+           boolean isMatchNo= Pattern.matches(pattern1,inputStr);
+           if(!isMatchNo){
+               isMatch=Pattern.matches(pattern2,inputStr);
+           }
+           return isMatch;
+        }
+        //呼叫医生
+        public void callDoctor(){
 
         }
 
