@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.jzy.helloword.HomePageActivity;
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -782,7 +783,7 @@ class SendChatThread extends Thread {
         // Send data
         try {
             jsonObject = new JSONObject();
-            jsonObject.put("user_id", 1);
+            jsonObject.put("user_id", MyApplication.getUserID());
             jsonObject.put("content", context);
             // Send POST data request
             url = new URL(Url);
