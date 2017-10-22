@@ -2,15 +2,17 @@
 
 ### 方法一:查询userID
 
-### 使用post方法，接口的地址为'/QueryID'
+使用post方法，接口的地址为'/QueryID'
 
-### 机器人发送送端消息格式:
+机器人发送送端消息格式:
 
 | name    | type  |
 | ------- | ----- |
 | user_id | int32 |
 
-### 服务器返回消息格式
+
+
+服务器返回消息格式
 
 | name                | type      |
 | ------------------- | :-------- |
@@ -27,9 +29,7 @@
 
 
 
-
-
-### 返回值对应的含义
+返回值对应的含义
 
 | name                | success   | false |
 | ------------------- | --------- | ----- |
@@ -54,9 +54,9 @@
 
 ### 方法二:更新送药信息
 
-### 使用post方法，接口的地址为'/UpdateUIDMID'
+使用post方法，接口的地址为'/UpdateUIDMID'
 
-### 机器人发送端消息格式:
+机器人发送端消息格式:
 
 | name                  | type      |
 | --------------------- | --------- |
@@ -68,9 +68,7 @@
 
 
 
-
-
-### 返回值对应的含义
+返回值对应的含义
 
 | mean | updateSuccess |
 | ---- | ------------- |
@@ -81,15 +79,15 @@
 
 ### 方法三：查询单个patient信息
 
-### 使用post方法，接口的地址为'/CheckUpdateCondition'
+使用post方法，接口的地址为'/CheckUpdateCondition'
 
-### 机器人发送送端消息格式:
+机器人发送送端消息格式:
 
 | name    | type   |
 | ------- | ------ |
 | user_id | String |
 
-### 返回值对应的含义
+返回值对应的含义
 
 | name      | type   | mean   | success | false |
 | --------- | ------ | ------ | ------- | ----- |
@@ -108,9 +106,9 @@
 
 ### 方法四:查询patient完整信息
 
-### 使用post方法，接口的地址为'/QueryPatientInfo'
+使用post方法，接口的地址为'/QueryPatientInfo'
 
-### 返回值对应的含义
+返回值对应的含义
 
 | name      | type      | mean   | success | false |
 | --------- | --------- | ------ | ------- | ----- |
@@ -129,9 +127,9 @@
 
 ### 方法五:查询病人药物全部信息
 
-### 使用post方法，接口的地址为'/QueryUserMedicine'
+使用post方法，接口的地址为'/QueryUserMedicine'
 
-### web发送端消息格式:
+web发送端消息格式:
 
 | name    | type   | mean                 |
 | ------- | ------ | -------------------- |
@@ -146,7 +144,7 @@
 
 
 
-###	返回值对应的含义
+返回值对应的含义
 
 | name           | type      | mean   | success | false |
 | -------------- | --------- | ------ | ------- | ----- |
@@ -160,11 +158,72 @@
 
 
 
+### 方法六:查询全部药物信息
+
+使用get方法，接口的地址为'/QueryMedicineInfo'
+
+服务器返回消息格式及含义:
+
+| name         | type      |
+| ------------ | --------- |
+| MedicineInfo | JSONArray |
+
+
+
+MedicineInfo struct:
+
+| name           | type   | mean   |
+| -------------- | ------ | ------ |
+| medicineID     | string | 药品ID号  |
+| medicineName   | string | 药品名    |
+| medicineDosage | string | 药品数量   |
+| unit           | string | 药品服用方式 |
+
+
+
+### 方法七:给病人添加药物信息
+
+使用POST方法，接口的地址'/QueryUserMedicine/AddUserMedcine'
+
+web发送端消息格式:
+
+| name        | type   | mean  |
+| ----------- | ------ | ----- |
+| user_id     | string | 用户ID号 |
+| medicine_id | string | 药品ID号 |
+| number      | string | 药品数量  |
+
+
+
+服务器返回消息格式及含义:
+
+| name      | type   | mean   | success | false |
+| --------- | ------ | ------ | ------- | ----- |
+| isSuccess | string | 返回插入状态 | true    | false |
 
 
 
 
 
+### 方法八:给病人删除药物信息
+
+使用POST方法，接口的地址'/QueryUserMedicine/DeleteUserMedcine'
+
+web发送端消息格式:
+
+| name        | type   | mean  |
+| ----------- | ------ | ----- |
+| user_id     | string | 用户ID号 |
+| medicine_id | string | 药品ID号 |
+| number      | string | 药品数量  |
+
+
+
+服务器返回消息格式及含义:
+
+| name      | type   | mean   | success | false |
+| --------- | ------ | ------ | ------- | ----- |
+| isSuccess | string | 返回插入状态 | true    | false |
 
 
 

@@ -385,6 +385,7 @@ public class DecisionServices extends Service {
             public void enter() {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_QUESTION;
+                mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
 //                notifyUI(getName());
             }
 
@@ -413,17 +414,19 @@ public class DecisionServices extends Service {
                 switch (latestState) {
                     case MSG_QUESTION:
 
-                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+//                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
                         changeToQuestionMode();
                         break;
                     case MSG_TEMPLATE:
-                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+//                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
                         changeToQuestionMode();
                         break;
                     case MSG_WAKE_UP:
                         break;
                     case MSG_ANSWER:
-                        changeToTempMode();
+//                        mSpeechUnderstander.startUnderStanding(speechUnderstandListener);
+                        changeToQuestionMode();
+//                        changeToTempMode();
                         break;
                     case MSG_DETECTION_FALSE:
                         detectFalse();

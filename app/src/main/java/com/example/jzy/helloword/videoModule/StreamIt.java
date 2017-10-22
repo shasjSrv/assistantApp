@@ -258,6 +258,9 @@ class SendVideoThread extends Thread {
             String userName = result.getString("userName");
             int type = result.getInt("type");
 
+            MyApplication.setUserID(String.valueOf(userID));
+            MyApplication.setUserName(userName);
+
             JSONArray patientNameGetArray = result.getJSONArray("patientNameArray");
             JSONArray patientIDGetArray = result.getJSONArray("patientIDArray");
             JSONArray patientRFIDGetArray = result.getJSONArray("patientRfIDArray");
