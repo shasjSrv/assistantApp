@@ -42,6 +42,7 @@ import com.example.jzy.helloword.videoModule.RemindDialog;
 import com.example.jzy.helloword.videoModule.VideoActivity;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
+import com.inbot.padbot.PadBotSdk;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -171,8 +172,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         context = this;
         setContentView(R.layout.act_homepage);
         init();
+        initPadbot();
+    }
 
-
+    void initPadbot(){
+        Intent controlIntent=new Intent(this, ControlPadbotService.class);
+        startService(controlIntent);
 
     }
 
