@@ -276,8 +276,10 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_ANSWER;
                 Log.i(TAG, "AnswerText: " + name);
-                waker.stopListening();
-                mTts.startSpeaking(name, mTtsListener);
+                Thread th = new SendChatThread(serverURL, "");
+                th.start();
+//                waker.stopListening();
+//                mTts.startSpeaking(name, mTtsListener);
             }
 
             @Override
