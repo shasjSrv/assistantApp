@@ -21,6 +21,9 @@
     <string name="confirm">确定</string>
     <string name="settings_name" translatable="false">Assistant Settings</string>
 
+    <string name="p2p_app_name">org.appspot.apprtc</string>
+    <string name="start_activity">ConnectActivity</string>
+
     <array name="sample_list">
         <item>@string/IndeterminateProgressSample</item>
         <item>@string/IntegerProgressSample</item>

@@ -17,6 +17,7 @@ import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
+import com.example.jzy.helloword.event.CallDoctorEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
@@ -161,6 +162,7 @@ public class DecisionServices extends Service {
             return true;
         }
 
+        //deal with state of TTS in different states
         public void dealTTSState() {
             switch (latestState) {
                 case MSG_ANSWER:
@@ -169,6 +171,7 @@ public class DecisionServices extends Service {
                     if(isNeedDoctor(myAnswerResult.getText()))
                     {
                         callDoctor();
+                        break;
                     }
                     Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
                     th.start();
@@ -196,7 +199,8 @@ public class DecisionServices extends Service {
         }
         //呼叫医生
         public void callDoctor(){
-
+            this.backToSleep();
+            EventBus.getDefault().post(new CallDoctorEvent());
         }
 
         public void startSpeaking() {

@@ -32,11 +32,13 @@ import com.example.jzy.helloword.decisionModule.Alarm;
 import com.example.jzy.helloword.decisionModule.DecisionServices;
 import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
+import com.example.jzy.helloword.event.CallDoctorEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
 import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
 import com.example.jzy.helloword.managerMedicineModule.Patient;
+import com.example.jzy.helloword.socketio.Socketio;
 import com.example.jzy.helloword.videoModule.QueryUserInfoThread;
 import com.example.jzy.helloword.videoModule.RemindDialog;
 import com.example.jzy.helloword.videoModule.VideoActivity;
@@ -70,6 +72,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private SharedPreferences sharedPref;
     private String BoxIP;
     ProgressDialog progressDialog;
+    private Socketio socketio;
 
     private Handler uiHandler = new Handler() {
 
@@ -181,15 +184,16 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    void startAnotherApp(String packageName,String className){
-       // String packageName="com.example.xiashu.xiashu_test";
-        //String className="com.example.xiashu.xiashu_test.MainActivity";
+    /*start p2p app to connect to web client*/
+    void startAnotherApp(){
+        String packageName=getString(R.string.p2p_app_name);
+        String className=getString(R.string.p2p_app_name) + "." + getString(R.string.start_activity);
+        socketio.attemptSend();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         ComponentName cn = new ComponentName(packageName, className);
         intent.setComponent(cn);
         startActivity(intent);
-
     }
 
     @Override
@@ -224,6 +228,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+        socketio.onDestroy();
         Intent stopIntent = new Intent(this, DecisionServices.class);
         stopService(stopIntent);
     }
@@ -245,12 +250,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 //        btnVideo.setOnClickListener(this);
         btnChat.setOnClickListener(this);
 //        btnDiagnose.setOnClickListener(this);
-
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
 
         StringBuffer param = new StringBuffer();
         param.append("appid=").append(getString(R.string.app_id)).append(",").append(SpeechConstant.ENGINE_MODE).append("=").append(SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(HomePageActivity.this, param.toString());
+
+        socketio = new Socketio();
+        socketio.connect();
         Intent i = new Intent(this, DecisionServices.class);
         Log.d(TAG, "before new startService");
         startService(i);
@@ -436,6 +443,15 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         jumpToManagerMedicineActivity(event);
     }
 
+    /*
+    *
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CallDoctorEvent event){
+        Log.d(TAG, "event: start p2p ");
+        this.startAnotherApp();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST) {
@@ -481,7 +497,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;*/
 
             case R.id.btn_chat:
-                checkPermission();
+                this.startAnotherApp();
+//                checkPermission();
                 break;
 //
 //            case R.id.btn_diagnose:
