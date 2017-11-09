@@ -227,6 +227,35 @@ web发送端消息格式:
 
 
 
+### 方法九:病人管理接口
+
+使用POST方法，接口的地址'/managePatient'
+
+web发送端消息格式:
+
+| name    | type | mean |
+| ------- | ---- | ---- |
+| options | int  | 操作类型 |
+
+
+
+optional field:
+
+
+
+| name        | type   | mean                 |
+| ----------- | ------ | -------------------- |
+| userName    | string | 病人姓名                 |
+| age         | number | patient age          |
+| gender      | string | patient gender       |
+| roomNo      | number | room number          |
+| berthNo     | number | berth number         |
+| rfid        | string | rfid                 |
+| userID      | string | it should be ignored |
+| diseaseType | number | it's like disease id |
+| diseaseDec  | string | describe the disease |
+
+
 # IP
 
 ### 服务器访问地址为'http://118.89.57.249:5000'(IP should be changed by real IP)

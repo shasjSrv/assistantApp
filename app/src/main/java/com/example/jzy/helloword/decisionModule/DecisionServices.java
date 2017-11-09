@@ -79,7 +79,7 @@ public class DecisionServices extends Service {
 
     //StateMachine
     /*control the state of deciseion*/
-    private ControlStateMachine mCsm;
+    public ControlStateMachine mCsm;
 
 
     private MediaPlayer mp;
@@ -162,6 +162,18 @@ public class DecisionServices extends Service {
             return true;
         }
 
+        private void sendTextToChatServer(String text){
+            Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
+                public void uncaughtException(Thread th, Throwable ex) {
+                    Log.e("ERROR","Uncaught exception: " + ex);
+                    mTts.startSpeaking(Corpus.NetWorkBad, mTtsListener);
+                    backToSleep();
+                }
+            };
+            Thread th = new SendChatThread(serverURL, text);
+            th.setUncaughtExceptionHandler(h);
+            th.start();
+        }
         //deal with state of TTS in different states
         public void dealTTSState() {
             switch (latestState) {
@@ -173,8 +185,7 @@ public class DecisionServices extends Service {
                         callDoctor();
                         break;
                     }
-                    Thread th = new SendChatThread(serverURL, myAnswerResult.getText());
-                    th.start();
+                    sendTextToChatServer(myAnswerResult.getText());
                     break;
                 case MSG_TEMPLATE:
                     mTts.startSpeaking("嗯", mTtsListener);
@@ -280,8 +291,7 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_ANSWER;
                 Log.i(TAG, "AnswerText: " + name);
-                Thread th = new SendChatThread(serverURL, "");
-                th.start();
+                sendTextToChatServer("");
 //                waker.stopListening();
 //                mTts.startSpeaking(name, mTtsListener);
             }
@@ -738,6 +748,9 @@ public class DecisionServices extends Service {
         mCsm.detectPatientSuccess();
     }
 
+    /*
+    * get the result from chat server and speak to client(patient or nurse)
+    */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AnswerEvent event) {
         //Do something
@@ -755,6 +768,13 @@ public class DecisionServices extends Service {
         mCsm.detectNurseSuccess();
     }
 
+    /*
+    * tell patient to entern call button and prepare to call doctor via video
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CallDoctorEvent event){
+        mTts.startSpeaking(Corpus.CallDoctor, mTtsListener);
+    }
 
     /*
     * notify DecisionService change state to sleepState
@@ -808,7 +828,7 @@ public class DecisionServices extends Service {
 
 }
 
-class SendChatThread extends Thread {
+class SendChatThread extends Thread implements Runnable{
     private String Url;
     private String context;
     private String Error = null;
@@ -862,13 +882,13 @@ class SendChatThread extends Thread {
         } catch (Exception ex) {
             Error = ex.getMessage();
             Log.e("ERROR", "create url false:" + Error);
+            throw new RuntimeException("The network is too bad!");
         } finally {
             try {
                 reader.close();
             } catch (Exception ex) {
             }
         }
-
         /*****************************************************/
     }
 
