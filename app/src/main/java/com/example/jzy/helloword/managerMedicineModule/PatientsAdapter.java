@@ -49,6 +49,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
     private final static int  HAVE_TAKEN_MEDICINE = 1;
     private final static int  DONT_TAKEN_MEDICINE = 0;
     private final static int  PATIETN_DONT_TAKEN_MEDICINE = 2;
+    private final static int  BOX_FULL = 0;
 
     private static int FLAG = 0;
 
@@ -127,12 +128,40 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Random random=new Random();
+                FLAG = 0;
                 qureyBoxStatus(position);
+                Log.i("type","MYFLAG: " + FLAG);
+                if(FLAG == 0) {
+                    boxError();
+                    return;
+                }
+                /*int i = 0;
                 //wait for network thread get the result,can add ProgressDialog remind user
                 while (FLAG != 1) {
+                    if(i++ > 100){
+                        FLAG = 1;
+                        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+                        mMaterialDialog.setMessage("药盒故障,请维修")
+                                .setPositiveButton("确定", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        mMaterialDialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("取消", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mMaterialDialog.dismiss();
+                                    }
+                                });
+
+                        mMaterialDialog.show();
+                    }
                 }
+                FLAG = 0;*/
                 //假设药盒已满
-                if(queryState == DONT_TAKEN_MEDICINE)
+                if(queryState == BOX_FULL)
                 {
                    final MaterialDialog mMaterialDialog = new MaterialDialog(context);
                     mMaterialDialog.setMessage("药盒已满")
@@ -222,24 +251,60 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
     }
 
+    private void boxError(){
+        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+        mMaterialDialog.setMessage("药盒故障,请维修")
+                .setPositiveButton("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        mMaterialDialog.dismiss();
+                    }
+                })
+                .setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMaterialDialog.dismiss();
+                    }
+                });
+
+        mMaterialDialog.show();
+    }
+
     private void qureyBoxStatus(int position){
         final Patient patient=mPatients.get(position);
-        new Thread(new Runnable() {
+        Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread th, Throwable ex) {
+                System.out.println("Uncaught exception: " + ex);
+                FLAG = 0;
+            }
+
+        };
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
                 try {
+                    XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
                     queryState = (Integer) client.call("QueryAvailable");
                     Log.i("XMLRPC Test", "QueryMedicine queryState  = " + queryState);
-                    if(queryState != DONT_TAKEN_MEDICINE){
-                        putMedicineState = (Integer) client.call("Put",patient.getPatientRFID());
+                    if(queryState != BOX_FULL){
+                        putMedicineState = HAVE_TAKEN_MEDICINE;
                     }
                     FLAG = 1;
                 } catch (XMLRPCException e) {
                     Log.i("XMLRPC Test", "Error", e);
+                    throw new RuntimeException("The network is too bad!");
                 }
             }
-        }).start();
+        });
+        t.setUncaughtExceptionHandler(h);
+        t.start();
+        try {
+            t.join();
+
+        }catch(InterruptedException e){
+            Log.i("InterruptedException", "Error", e);
+        }
     }
 
     private void putMedicine(int position){
@@ -249,6 +314,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             public void run() {
 
                 try {
+                    XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
+                    putMedicineState = (Integer) client.call("Put",patient.getPatientRFID());
 //                    String userInfoURL = context.getResources().getString(R.string.pref_user_info_ip_default);
                     String URL = userInfoURL;
                     URL += "/UpdateUIDMID";
