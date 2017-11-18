@@ -45,7 +45,7 @@ public class StreamIt implements Camera.PreviewCallback {
     private int flag;
 
     public StreamIt(String serverURL,int flag,String userInfoURL) {
-        Log.i("sys","1:come to set camera!");
+        Log.d("sys","1:come to set camera!");
 //        EventBus.getDefault().register(this);
         this.Url = serverURL;
         this.flag = flag;
@@ -62,8 +62,8 @@ public class StreamIt implements Camera.PreviewCallback {
         Calendar c = Calendar.getInstance();
         int seconds = c.get(Calendar.SECOND);
         if (seconds - lastestTime < 10) {
-            Log.i("Sys", "seconds:" + seconds);
-            Log.i("Sys", "lastestTime:" + lastestTime);
+            Log.d("Sys", "seconds:" + seconds);
+            Log.d("Sys", "lastestTime:" + lastestTime);
             return;
         }
         lastestTime = seconds;
@@ -161,7 +161,7 @@ class SendVideoThread extends Thread {
                 URL = Url + "/sendIDStatus";
             }
             url = new URL(URL);
-            Log.i("Sys", "URL:" + URL);
+            Log.d("Sys", "URL:" + URL);
             URLConnection conn = url.openConnection();
 //            HttpURLConnection conn= (HttpURLConnection) new URL(Url).openConnection();
             conn.setDoOutput(true);
@@ -169,7 +169,7 @@ class SendVideoThread extends Thread {
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(jsonObject.toString());
             wr.flush();
-            Log.i("Sys", "jsonObject:" + jsonObject.toString());
+            Log.d("Sys", "jsonObject:" + jsonObject.toString());
             wr.close();
 
             // Get the server response
@@ -182,14 +182,14 @@ class SendVideoThread extends Thread {
                 String userName = responseJSON.getString("userName");
                 int status = responseJSON.getInt("status");
                 int emojiID = responseJSON.getInt("emojiID");
-                Log.i("Sys", "userID:" + userID);
-                Log.i("Sys", "userName:" + userName);
-                Log.i("Sys", "status:" + status);
-                Log.i("Sys", "emojiID:" + emojiID);
+                Log.d("Sys", "userID:" + userID);
+                Log.d("Sys", "userName:" + userName);
+                Log.d("Sys", "status:" + status);
+                Log.d("Sys", "emojiID:" + emojiID);
                 returnResult(userID,status,emojiID,userName);
             }else if (flag == UPDATE) {
                 int ifSucc = responseJSON.getInt("ifSucc");
-                Log.i("Sys", "ifSucc:" + ifSucc);
+                Log.d("Sys", "ifSucc:" + ifSucc);
                 returnSucc(ifSucc, name);
             }
         } catch (Exception ex) {
@@ -209,18 +209,18 @@ class SendVideoThread extends Thread {
     }
 
     private void returnResult(int userID,int status,int emojiID,String userName){
-        Log.i("Sys", "userID:" + userID);
-        Log.i("Sys", "status:" + status);
-        Log.i("Sys", "emojiID:" + emojiID);
+        Log.d("Sys", "userID:" + userID);
+        Log.d("Sys", "status:" + status);
+        Log.d("Sys", "emojiID:" + emojiID);
         if(userID == -2 && status == -1 && emojiID == -1){
-            Log.i("Sys", "come false emojiID:" + emojiID);
+            Log.d("Sys", "come false emojiID:" + emojiID);
 //            EventBus.getDefault().post(new PatientBackEnvent(userID,status,emojiID,userName));
             EventBus.getDefault().post(new MessageEvent("没有识别到脸，请对准镜头"));
         }else if(userID == -1 && status == 0){
-            Log.i("Sys", "come userId emojiID:" + emojiID);
+            Log.d("Sys", "come userId emojiID:" + emojiID);
             EventBus.getDefault().post(new AddPatientEvent("我好像不认识你,需要添加新用户吗？"));
         }else{
-            Log.i("Sys", "come userID status emojiID:" + emojiID);
+            Log.d("Sys", "come userID status emojiID:" + emojiID);
             /*
             * after get user id then query user information
             * */
@@ -238,7 +238,7 @@ class SendVideoThread extends Thread {
             String URL = userInfoURL;
             URL += "/QueryID";
             url = new URL(URL);
-            Log.i("Sys", "URL:" + URL);
+            Log.d("Sys", "URL:" + URL);
             JSONObject queryJson = new JSONObject();
             queryJson.put("user_id",userID);
             URLConnection conn = url.openConnection();
@@ -247,7 +247,7 @@ class SendVideoThread extends Thread {
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(queryJson.toString());
             wr.flush();
-            Log.i("Sys", "jsonObject:" + queryJson.toString());
+            Log.d("Sys", "jsonObject:" + queryJson.toString());
             wr.close();
 
             InputStream responseStream = conn.getInputStream();
@@ -303,9 +303,9 @@ class SendVideoThread extends Thread {
             ,String userName
             ,int type,int userID
             ,ArrayList<Patient> patientArray){
-        Log.i("Sys", "isSuccess:" + isSuccess);
-        Log.i("Sys", "userName:" + userName);
-        Log.i("Sys", "type:" + type);
+        Log.d("Sys", "isSuccess:" + isSuccess);
+        Log.d("Sys", "userName:" + userName);
+        Log.d("Sys", "type:" + type);
         if(isSuccess == RESPOSE_SUCCESS){
             if(type == PATIENT) {
                 EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));

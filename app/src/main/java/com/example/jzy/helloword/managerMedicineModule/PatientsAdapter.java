@@ -100,24 +100,46 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
     }
 
     private void queryPutMedicineDigShow(final int position){
+        putMedicine(position);
         final MaterialDialog MaterialDialog = new MaterialDialog(context);
-        MaterialDialog.setMessage("请打开药盒为该病人放药")
-                .setPositiveButton("放置已完成", new View.OnClickListener() {
+        if(putMedicineState == HAVE_TAKEN_MEDICINE) {
+            MaterialDialog.setMessage("请为该病人放药")
+                    .setPositiveButton("放置已完成", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            MaterialDialog.dismiss();
+                        }
+                    });
+                /*.setNegativeButton("取消", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MaterialDialog.dismiss();
+                    }
+                });*/
+            MaterialDialog.show();
+        }else if(putMedicineState == PATIETN_DONT_TAKEN_MEDICINE){
+            patientDontTakeMedDigShow(position);
+        }
+    }
+
+    private void boxError(){
+        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+        mMaterialDialog.setMessage("药盒故障,请维修")
+                .setPositiveButton("确定", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        putMedicine(position);
-                        MaterialDialog.dismiss();
-
+                        mMaterialDialog.dismiss();
                     }
                 })
                 .setNegativeButton("取消", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MaterialDialog.dismiss();
+                        mMaterialDialog.dismiss();
                     }
                 });
-        MaterialDialog.show();
+
+        mMaterialDialog.show();
     }
 
     @Override
@@ -135,31 +157,6 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     boxError();
                     return;
                 }
-                /*int i = 0;
-                //wait for network thread get the result,can add ProgressDialog remind user
-                while (FLAG != 1) {
-                    if(i++ > 100){
-                        FLAG = 1;
-                        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
-                        mMaterialDialog.setMessage("药盒故障,请维修")
-                                .setPositiveButton("确定", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        mMaterialDialog.dismiss();
-                                    }
-                                })
-                                .setNegativeButton("取消", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        mMaterialDialog.dismiss();
-                                    }
-                                });
-
-                        mMaterialDialog.show();
-                    }
-                }
-                FLAG = 0;*/
                 //假设药盒已满
                 if(queryState == BOX_FULL)
                 {
@@ -182,8 +179,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     mMaterialDialog.show();
                 }
                 //假设可以成功放药
-                else{
-                    if(putMedicineState == HAVE_TAKEN_MEDICINE){
+                else {
+                    if (putMedicineState == HAVE_TAKEN_MEDICINE) {
                         final MaterialDialog mMaterialDialog = new MaterialDialog(context);
                         mMaterialDialog.setMessage("确定要为该病人放药吗")
                                 .setPositiveButton("确定", new View.OnClickListener() {
@@ -251,25 +248,6 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
     }
 
-    private void boxError(){
-        final MaterialDialog mMaterialDialog = new MaterialDialog(context);
-        mMaterialDialog.setMessage("药盒故障,请维修")
-                .setPositiveButton("确定", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        mMaterialDialog.dismiss();
-                    }
-                })
-                .setNegativeButton("取消", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mMaterialDialog.dismiss();
-                    }
-                });
-
-        mMaterialDialog.show();
-    }
 
     private void qureyBoxStatus(int position){
         final Patient patient=mPatients.get(position);
@@ -309,7 +287,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
     private void putMedicine(int position){
         final Patient patient=mPatients.get(position);
-        new Thread(new Runnable(){
+        Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
 
@@ -365,9 +343,14 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     Log.i("Send Infor", "Error", ex);
                 }
             }
-        }).start();
+        });
+        t.start();
+        try {
+            t.join();
 
-
+        }catch(InterruptedException e){
+            Log.i("InterruptedException", "Error", e);
+        }
     }
 
     private static String drainStream(InputStream in) {

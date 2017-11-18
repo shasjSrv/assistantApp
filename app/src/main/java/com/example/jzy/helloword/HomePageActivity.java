@@ -186,14 +186,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     /*start p2p app to connect to web client*/
     void startAnotherApp(){
-        String packageName=getString(R.string.p2p_app_name);
+        /*String packageName=getString(R.string.p2p_app_name);
         String className=getString(R.string.p2p_app_name) + "." + getString(R.string.start_activity);
         socketio.attemptSend();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         ComponentName cn = new ComponentName(packageName, className);
         intent.setComponent(cn);
-        startActivity(intent);
+        startActivity(intent);*/
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getString(R.string.p2p_app_name));
+        if (launchIntent != null) {
+            startActivity(launchIntent);//null pointer check in case package name was not found
+        }
     }
 
     @Override
@@ -216,6 +220,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         } else {
             handler.sendMessage(handler.obtainMessage(1, count));
         }
+        Intent i = new Intent(this, DecisionServices.class);
+        startService(i);
     }
 
     @Override
