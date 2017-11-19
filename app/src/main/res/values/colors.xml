@@ -4,6 +4,13 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="ncolorPrimary">#673AB7</color>
+    <color name="ncolorPrimaryDark">#512da8</color>
+    <color name="ncolorAccent">#FFEB3F</color>
+
+
+
+
     <!-- 透明色 -->
     <color name="trans">#00000000</color>
     <!-- 白色 -->

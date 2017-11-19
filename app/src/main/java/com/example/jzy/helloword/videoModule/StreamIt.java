@@ -12,6 +12,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.example.jzy.helloword.MyApplication;
+import com.example.jzy.helloword.ThemeUtils;
 import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.MessageEvent;
@@ -308,8 +309,10 @@ class SendVideoThread extends Thread {
         Log.d("Sys", "type:" + type);
         if(isSuccess == RESPOSE_SUCCESS){
             if(type == PATIENT) {
+                ThemeUtils.setsTheme(0);
                 EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));
             }else if(type == NURSE){
+                ThemeUtils.setsTheme(1);
                 EventBus.getDefault().post(new NurseBackEvent(userID, userName,patientArray));
             }
         }

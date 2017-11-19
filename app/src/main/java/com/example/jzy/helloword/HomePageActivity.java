@@ -1,6 +1,7 @@
 package com.example.jzy.helloword;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -62,6 +65,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public static final String TAG = HomePageActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST = 1;
     private Button btnVideo, btnChat, btnDiagnose;
+    private ImageView btn_set;
     private ImageView ivWelcome;
     private Timer timer;
     private TimerTask timerTask;
@@ -173,6 +177,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.act_homepage);
         init();
         initPadbot();
@@ -250,7 +255,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));
 
 
-//        btnVideo = (Button) findViewById(R.id.btn_video);
+        //        btnVideo = (Button) findViewById(R.id.btn_video);
         btnChat = (Button) findViewById(R.id.btn_chat);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
 //        btnVideo.setOnClickListener(this);
@@ -478,12 +483,15 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         if (requestCode == Keys.VIDEO_REQUEST && resultCode == Keys.VIDEO_RESULT) {
             if (data != null) {
                 Log.i(TAG, "VIDEO return data: " + data);
+                String result = data.getExtras().getString(Keys.videoResult);
+                Log.i(TAG, "VIDEO return data: --->" + result);
                 /*String result = data.getExtras().getString(Keys.videoResult);
                 if (remindDialog == null) {
                     remindDialog = new RemindDialog(this, result);
                 }
                 remindDialog.setTitle(result);
                 remindDialog.show();*/
+                ThemeUtils.changeToTheme(this, ThemeUtils.getTheme());
                 return;
             }
         }

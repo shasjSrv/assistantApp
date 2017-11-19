@@ -16,4 +16,12 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+
+    <style name="NurseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/ncolorPrimary</item>
+        <item name="colorPrimaryDark">@color/ncolorPrimaryDark</item>
+        <item name="colorAccent">@color/ncolorAccent</item>
+    </style>
+
+
 </resources>

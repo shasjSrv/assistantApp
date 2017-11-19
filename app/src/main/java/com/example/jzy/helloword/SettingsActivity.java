@@ -2,6 +2,7 @@ package com.example.jzy.helloword;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeUtils.onActivityCreateSetTheme(this);
         keyPrefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         keyPrefRobotId = getString(R.string.pref_robot_id_key);
         keyPrefBoxIP = getString(R.string.pref_box_ip_key);
