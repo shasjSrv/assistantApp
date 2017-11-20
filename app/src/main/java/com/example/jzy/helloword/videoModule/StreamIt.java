@@ -308,8 +308,10 @@ class SendVideoThread extends Thread {
         Log.d("Sys", "type:" + type);
         if(isSuccess == RESPOSE_SUCCESS){
             if(type == PATIENT) {
+                MyApplication.setUserType(PATIENT);
                 EventBus.getDefault().post(new PatientBackEnvent(userID, 1, 0, userName));
             }else if(type == NURSE){
+                MyApplication.setUserType(NURSE);
                 EventBus.getDefault().post(new NurseBackEvent(userID, userName,patientArray));
             }
         }

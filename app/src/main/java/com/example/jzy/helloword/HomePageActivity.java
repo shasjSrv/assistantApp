@@ -1,6 +1,7 @@
 package com.example.jzy.helloword;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -202,6 +203,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onResume() {
+
+        Log.i(TAG,"onResume--->");
         super.onResume();
         BoxIP = sharedPref.getString(
                 keyPrefBoxIP, getString(R.string.pref_box_ip_default));
@@ -222,6 +225,28 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
         Intent i = new Intent(this, DecisionServices.class);
         startService(i);
+
+        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null)
+        {
+            switch (MyApplication.getUserType())
+            {
+                case 0:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red));
+                    actionBar.setTitle("病人："+MyApplication.getUserName());
+
+                    break;
+                case 1:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    actionBar.setTitle("护士："+MyApplication.getUserName());
+                    break;
+                case 2:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
+                    actionBar.setTitle("未识别身份");
+                    break;
+        }}
+
+
     }
 
     @Override

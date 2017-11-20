@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.jzy.helloword.Keys;
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
@@ -50,6 +51,7 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.act_video);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
+
     }
 
     private void init() {
@@ -72,6 +74,30 @@ public class VideoActivity extends AppCompatActivity {
 
     }
 
+    private void initViewColor()
+    {
+        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null)
+        {
+            switch (MyApplication.getUserType())
+            {
+                case 0:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red)  );
+
+                    break;
+                case 1:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+
+                    break;
+                case 2:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
+
+                    break;
+            }
+            actionBar.setTitle("识别中......");
+        }
+    }
+
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
@@ -80,6 +106,7 @@ public class VideoActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
+        initViewColor();
         int numCams = Camera.getNumberOfCameras();
         if (numCams > 0) {
             try {

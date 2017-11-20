@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jzy.helloword.Keys;
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 
 import com.example.jzy.helloword.event.NurseBackEvent;
@@ -59,6 +60,10 @@ public class ManagerMedicineActivity extends AppCompatActivity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.manage_medicine);
+
+        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+        actionBar.setTitle("护士："+ MyApplication.getUserName());
       //  getSupportActionBar().setDisplayHomeAsUpEnabled(false);
        // getSupportActionBar().setDisplayShowTitleEnabled(true);
 

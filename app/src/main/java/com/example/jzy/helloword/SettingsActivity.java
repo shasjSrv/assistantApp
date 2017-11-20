@@ -30,6 +30,24 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                 .beginTransaction()
                 .replace(android.R.id.content, settingsFragment)
                 .commit();
+
+
+        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null)
+        {
+            switch (MyApplication.getUserType())
+            {
+                case 0:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red)  );
+                    break;
+                case 1:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    break;
+                case 2:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
+                    break;
+            }}
+
     }
 
     @Override
