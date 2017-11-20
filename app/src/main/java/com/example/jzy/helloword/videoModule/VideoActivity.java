@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
-import com.example.jzy.helloword.ThemeUtils;
 import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -48,7 +47,6 @@ public class VideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.act_video);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();

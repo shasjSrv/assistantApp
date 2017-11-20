@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.R;
 
-import com.example.jzy.helloword.ThemeUtils;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -59,7 +58,6 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.manage_medicine);
       //  getSupportActionBar().setDisplayHomeAsUpEnabled(false);
        // getSupportActionBar().setDisplayShowTitleEnabled(true);
