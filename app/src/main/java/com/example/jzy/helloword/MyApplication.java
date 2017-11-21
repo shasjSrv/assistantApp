@@ -12,7 +12,10 @@ public class MyApplication extends Application {
     private static Context context;
     private static String userID = "user123";
     private static String userName = "patient";
-    private static int userType=2;
+    public static int NO_TYPE = 2;
+    public static int PATIENT_TYPE = 0;
+    public static int NURSE_TYPE = 1;
+    private static int userType=NO_TYPE;
     //0表示病人 1表示护士 2表示未识别
 
     @Override

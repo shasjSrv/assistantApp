@@ -18,12 +18,11 @@ import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 
-import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.event.BackPressedEvent;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,6 +243,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         //Android.R.id.home对应应用程序图标的id
         if (item.getItemId() == android.R.id.home) {
             backToHomePage("My name is linjiqin");
+            EventBus.getDefault().post(new BackPressedEvent(""));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -252,6 +252,6 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     public void onBackPressed() {
         Log.d("Sys","i am back");
         backToHomePage("My name is linjiqin");
-
+        EventBus.getDefault().post(new BackPressedEvent(""));
     }
 }

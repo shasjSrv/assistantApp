@@ -20,6 +20,7 @@ import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.CallDoctorEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.event.SleepEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.voiceModule.HandleResult;
 import com.example.jzy.helloword.voiceModule.MyResult;
@@ -237,6 +238,7 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_WAKE_UP;
                 waker.startListening(mWakeuperListener);
+                EventBus.getDefault().post(new SleepEvent());
             }
 
             @Override
@@ -322,17 +324,14 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "AnswerText: " + name);
                 waker.stopListening();
                 mTts.startSpeaking(name, mTtsListener);
-                transitionTo(mSleepState);
+//                transitionTo(mSleepState);
             }
 
             @Override
             public boolean processMessage(Message msg) {
                 switch (msg.what) {
-                    case MSG_TEMPLATE:
-                        transitionTo(mTempState);
-                        break;
-                    case MSG_TTS_COMPLETE:
-                        transitionTo(mTtsCompleteState);
+                    case MSG_BACK_SLEEP:
+                        transitionTo(mSleepState);
                         break;
                     default:
                         return false;

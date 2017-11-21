@@ -35,6 +35,7 @@ import com.example.jzy.helloword.event.AddPatientEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.CallDoctorEvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
+import com.example.jzy.helloword.event.SleepEvent;
 import com.example.jzy.helloword.event.Tip;
 import com.example.jzy.helloword.managerMedicineModule.ManagerMedicineActivity;
 import com.example.jzy.helloword.managerMedicineModule.MedicineInfo;
@@ -123,17 +124,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                             Log.d("Syss", "here----->");
                             dialog.dismiss();
                             jumpToVideoActivity(1);
-                            /*try {
-                                //切换为当前用户
-//                                mPreview.setUserId(result.getString("diagnoseId"), 1);
-
-                                //向服务器发送脸部信息
-                                //。。。。。。。。。。。。。。。
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }*/
                         }
                     });
                     TextView btn_cancel=(TextView)view.findViewById(R.id.btn_cancel);
@@ -225,7 +215,32 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
         Intent i = new Intent(this, DecisionServices.class);
         startService(i);
+        changeBarColor();
+        /*android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null)
+        {
+            switch (MyApplication.getUserType())
+            {
+                case 0:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red));
+                    actionBar.setTitle("病人："+MyApplication.getUserName());
 
+                    break;
+                case 1:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    actionBar.setTitle("护士："+MyApplication.getUserName());
+                    break;
+                case 2:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
+                    actionBar.setTitle("未识别身份");
+                    break;
+            }
+        }*/
+
+
+    }
+
+    private void changeBarColor(){
         android.support.v7.app.ActionBar actionBar=getSupportActionBar();
         if(actionBar!=null)
         {
@@ -244,10 +259,11 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
                     actionBar.setTitle("未识别身份");
                     break;
-        }}
-
+            }
+        }
 
     }
+
 
     @Override
     public void onStop() {
@@ -439,6 +455,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         remindINfor.show();
     }
 
+    /*
+    *change the login status to logout status in action bar
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSleepEvent(SleepEvent event){
+    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
