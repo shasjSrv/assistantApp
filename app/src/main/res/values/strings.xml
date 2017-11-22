@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Assistant</string>
     <!-- Toast Messages -->
-    <string name="app_id">59e6e159</string>
+    <string name="app_id">5a13ea8c</string>
     <string name="camera_not_found">No camera harware found</string>
     <string name="take_photo_help">Touch anywhere on screen to take picture</string>
     <string name="Video">Video</string>
@@ -27,7 +27,7 @@
     <array name="sample_list">
         <item>@string/IndeterminateProgressSample</item>
         <item>@string/IntegerProgressSample</item>
-        <item>@string/StateChangeSample</item>
+        <item>@string/StateChangeSample</item>z
         <item>@string/ProgressPaddingSample</item>
         <item>@string/CustomSelectorSample</item>
     </array>
@@ -47,7 +47,7 @@
     <string name="pref_robot_id_key">robot_id_preference</string>
     <string name="pref_robot_id_title">Robot ID.</string>
     <string name="pref_robot_id_dlg">Enter a Robot ID number.</string>
-    <string name="pref_robot_id_default" translatable="false">0</string>
+    <string name="pref_robot_id_default" translatable="false">10000</string>
 
     <string name="pref_box_ip_key">Medicinal Box_IP_preference</string>
     <string name="pref_box_ip_title">Medicinal Box_IP.</string>

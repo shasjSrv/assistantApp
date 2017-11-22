@@ -177,18 +177,22 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     /*start p2p app to connect to web client*/
     void startAnotherApp(){
-        /*String packageName=getString(R.string.p2p_app_name);
-        String className=getString(R.string.p2p_app_name) + "." + getString(R.string.start_activity);
-        socketio.attemptSend();
+        String keyPrefRobotId = getString(R.string.pref_robot_id_key);
+        String roomNo = sharedPref.getString(
+                keyPrefRobotId, getString(R.string.pref_robot_id_default));
+        socketio.attemptSend(roomNo);
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        String packageName=getString(R.string.p2p_app_name);
+        String className=getString(R.string.p2p_app_name) + "." + getString(R.string.start_activity);
         ComponentName cn = new ComponentName(packageName, className);
         intent.setComponent(cn);
-        startActivity(intent);*/
-        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getString(R.string.p2p_app_name));
+        intent.putExtra("room_id",roomNo);
+        startActivity(intent);
+        /*Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getString(R.string.p2p_app_name));
         if (launchIntent != null) {
             startActivity(launchIntent);//null pointer check in case package name was not found
-        }
+        }*/
     }
 
     @Override
@@ -216,53 +220,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Intent i = new Intent(this, DecisionServices.class);
         startService(i);
         changeBarColor();
-        /*android.support.v7.app.ActionBar actionBar=getSupportActionBar();
-        if(actionBar!=null)
-        {
-            switch (MyApplication.getUserType())
-            {
-                case 0:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red));
-                    actionBar.setTitle("病人："+MyApplication.getUserName());
-
-                    break;
-                case 1:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
-                    actionBar.setTitle("护士："+MyApplication.getUserName());
-                    break;
-                case 2:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
-                    actionBar.setTitle("未识别身份");
-                    break;
-            }
-        }*/
-
-
     }
 
-    private void changeBarColor(){
-        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
-        if(actionBar!=null)
-        {
-            switch (MyApplication.getUserType())
-            {
-                case 0:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red));
-                    actionBar.setTitle("病人："+MyApplication.getUserName());
 
-                    break;
-                case 1:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
-                    actionBar.setTitle("护士："+MyApplication.getUserName());
-                    break;
-                case 2:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
-                    actionBar.setTitle("未识别身份");
-                    break;
-            }
-        }
-
-    }
 
 
     @Override
@@ -292,10 +252,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 
 //        btnVideo = (Button) findViewById(R.id.btn_video);
-        btnChat = (Button) findViewById(R.id.btn_chat);
+//        btnChat = (Button) findViewById(R.id.btn_chat);
 //        btnDiagnose = (Button) findViewById(R.id.btn_diagnose);
 //        btnVideo.setOnClickListener(this);
-        btnChat.setOnClickListener(this);
+//        btnChat.setOnClickListener(this);
 //        btnDiagnose.setOnClickListener(this);
         ivWelcome = (ImageView) findViewById(R.id.iv_welcome);
 
@@ -455,11 +415,36 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         remindINfor.show();
     }
 
+    private void changeBarColor(){
+        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null)
+        {
+            switch (MyApplication.getUserType())
+            {
+                case 0:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red));
+                    actionBar.setTitle("病人："+MyApplication.getUserName());
+
+                    break;
+                case 1:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    actionBar.setTitle("护士："+MyApplication.getUserName());
+                    break;
+                case 2:
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );
+                    actionBar.setTitle("未识别身份");
+                    break;
+            }
+        }
+
+    }
+
     /*
     *change the login status to logout status in action bar
     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSleepEvent(SleepEvent event){
+        changeBarColor();
     }
 
 
@@ -549,10 +534,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 checkPermission();
                 break;*/
 
-            case R.id.btn_chat:
+       /*     case R.id.btn_chat:
                 this.startAnotherApp();
 //                checkPermission();
-                break;
+                break;*/
 //
 //            case R.id.btn_diagnose:
 //                jumpToDiagnoseActivity();

@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 public class Socketio {
     private Socket mSocket;
     static final int robotType = 0;
-    static final int roomNo = 10000;
+//    static final int roomNo = 10000;
 
     public Socketio()
     {
@@ -30,7 +30,7 @@ public class Socketio {
         mSocket.connect();
     }
 
-    public void attemptSend() {
+    public void attemptSend(String roomNo) {
         JSONObject sendParce = new JSONObject();
         try{
             sendParce.put("room", roomNo);

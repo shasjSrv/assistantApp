@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
 
     private int putMedicineState;
 
+
     private final static int  HAVE_TAKEN_MEDICINE = 1;
     private final static int  DONT_TAKEN_MEDICINE = 0;
     private final static int  PATIETN_DONT_TAKEN_MEDICINE = 2;
@@ -57,12 +59,16 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         TextView patient_id;
         TextView patient_name;
         ListView medicine_list;
+        AVLoadingIndicatorView avi;
 
         public ViewHolder(View itemView) {
             super(itemView);
             patient_id = (TextView) itemView.findViewById(R.id.patient_id);
             patient_name = (TextView) itemView.findViewById(R.id.patient_name);
             medicine_list = (ListView) itemView.findViewById(R.id.medicine_list);
+            avi= (AVLoadingIndicatorView) itemView.findViewById(R.id.avi);
+            avi.setIndicator("BallClipRotateIndicator");
+            avi.hide();
         }
     }
 
@@ -143,7 +149,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(PatientsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final PatientsAdapter.ViewHolder holder, final int position) {
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +157,9 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             public void onClick(View view) {
                 Random random=new Random();
                 FLAG = 0;
+                holder.avi.show();
                 qureyBoxStatus(position);
+                holder.avi.hide();
                 Log.i("type","MYFLAG: " + FLAG);
                 if(FLAG == 0) {
                     boxError();
