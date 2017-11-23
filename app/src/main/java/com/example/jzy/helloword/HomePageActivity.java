@@ -181,18 +181,19 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         String roomNo = sharedPref.getString(
                 keyPrefRobotId, getString(R.string.pref_robot_id_default));
         socketio.attemptSend(roomNo);
-        Intent intent = new Intent(Intent.ACTION_MAIN);
+        /*Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         String packageName=getString(R.string.p2p_app_name);
         String className=getString(R.string.p2p_app_name) + "." + getString(R.string.start_activity);
         ComponentName cn = new ComponentName(packageName, className);
         intent.setComponent(cn);
         intent.putExtra("room_id",roomNo);
-        startActivity(intent);
-        /*Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getString(R.string.p2p_app_name));
+        startActivity(intent);*/
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getString(R.string.p2p_app_name));
         if (launchIntent != null) {
+            launchIntent.putExtra("room_id",roomNo);
             startActivity(launchIntent);//null pointer check in case package name was not found
-        }*/
+        }
     }
 
     @Override

@@ -61,6 +61,9 @@ public class StreamIt implements Camera.PreviewCallback {
 
         Calendar c = Calendar.getInstance();
         int seconds = c.get(Calendar.SECOND);
+        if (seconds - lastestTime < -8){
+            lastestTime = -10;
+        }
         if (seconds - lastestTime < 10) {
             Log.d("Sys", "seconds:" + seconds);
             Log.d("Sys", "lastestTime:" + lastestTime);
@@ -71,7 +74,7 @@ public class StreamIt implements Camera.PreviewCallback {
             lastestTime = 51;
         }*/
         if (lastestTime >= 50) {
-            lastestTime = 0;
+            lastestTime = -10;
             return;
         }
 
