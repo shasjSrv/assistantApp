@@ -427,7 +427,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
                     break;
                 case 1:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.orange)  );
                     actionBar.setTitle("护士："+MyApplication.getUserName());
                     break;
                 case 2:

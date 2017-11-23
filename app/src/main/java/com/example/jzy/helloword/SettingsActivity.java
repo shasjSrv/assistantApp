@@ -41,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                     actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.red)  );
                     break;
                 case 1:
-                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+                    actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.orange)  );
                     break;
                 case 2:
                     actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.purple)  );

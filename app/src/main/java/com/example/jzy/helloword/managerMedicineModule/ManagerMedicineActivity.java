@@ -61,7 +61,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         setContentView(R.layout.manage_medicine);
 
         android.support.v7.app.ActionBar actionBar=getSupportActionBar();
-        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue)  );
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.orange)  );
         actionBar.setTitle("护士："+ MyApplication.getUserName());
       //  getSupportActionBar().setDisplayHomeAsUpEnabled(false);
        // getSupportActionBar().setDisplayShowTitleEnabled(true);

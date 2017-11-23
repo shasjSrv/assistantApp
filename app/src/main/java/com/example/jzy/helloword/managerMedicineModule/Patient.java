@@ -16,6 +16,7 @@ public class Patient implements Parcelable {
     private String id;
     private ArrayList<MedicineInfo> medicineInfos;
     private String patientRFID;
+    private boolean isDone=false;
 
 
     public Patient(String id,String name,ArrayList<MedicineInfo> medicineInfos,String patientRFID){
@@ -47,8 +48,12 @@ public class Patient implements Parcelable {
 
     public ArrayList<MedicineInfo> getMedicineInfos(){return medicineInfos;}
 
-
-
+    public void setDone(){
+        isDone=true;
+    }
+   public boolean getIsDone(){
+       return isDone;
+   }
 
    public static final Parcelable.Creator<Patient> CREATOR = new Creator<Patient>() {
 

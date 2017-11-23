@@ -1,16 +1,20 @@
 package com.example.jzy.helloword.managerMedicineModule;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
@@ -60,9 +64,10 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         TextView patient_name;
         ListView medicine_list;
         AVLoadingIndicatorView avi;
-
+        LinearLayout bg;
         public ViewHolder(View itemView) {
             super(itemView);
+            bg=(LinearLayout) itemView.findViewById(R.id.bg_card) ;
             patient_id = (TextView) itemView.findViewById(R.id.patient_id);
             patient_name = (TextView) itemView.findViewById(R.id.patient_name);
             medicine_list = (ListView) itemView.findViewById(R.id.medicine_list);
@@ -70,6 +75,11 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             avi.setIndicator("BallClipRotateIndicator");
             avi.hide();
         }
+
+     //   static void changeBg(){
+        //    bg.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.gray_bg2));
+
+      //  }
     }
 
     public PatientsAdapter(List<Patient> patientList, Context context, String medicineBoxIP, String userInfoURL) {
@@ -114,6 +124,18 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                         @Override
                         public void onClick(View v) {
                             MaterialDialog.dismiss();
+                            mPatients.get(position).setDone();
+                            for(int i=0;i<mPatients.size();i++){
+                                Patient p=mPatients.get(i);
+                                Log.i("patient",i+"--->"+p.getIsDone());
+                            }
+                            notifyDataSetChanged();
+                                  /*   mPatients.get(position).setDone();
+                for(int i=0;i<mPatients.size();i++){
+                    Patient p=mPatients.get(i);
+                    Log.i("patient",i+"--->"+p.getIsDone());
+                }*/
+                            //   notifyDataSetChanged();
                         }
                     });
                 /*.setNegativeButton("取消", new View.OnClickListener() {
@@ -155,6 +177,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mPatients.get(position).getIsDone())
+                      return;
                 Random random=new Random();
                 FLAG = 0;
                 holder.avi.show();
@@ -216,7 +240,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         Patient patient = mPatients.get(position);
         holder.patient_id.setText(patient.getId());
         holder.patient_name.setText(patient.getName());
-
+        if(mPatients.get(position).getIsDone())
+            holder.bg.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.gray_bg2));
 
 
         ArrayList<MedicineInfo> medicineInfos=patient.getMedicineInfos();
@@ -244,7 +269,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
             Map<String,Object> items=new HashMap<String,Object>();
             items.put("name",name[i]);
             items.put("num",num[i]);
-            items.put("info",info[i]);
+            items.put("info"," ");
            // medicines.add(new medicine_item("药品"+i,(i+2),"一日三次，每次两粒"));
             list_map.add(items);
         }
