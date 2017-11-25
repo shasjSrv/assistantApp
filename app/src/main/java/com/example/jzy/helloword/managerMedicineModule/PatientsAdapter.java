@@ -1,7 +1,10 @@
 package com.example.jzy.helloword.managerMedicineModule;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -157,6 +160,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                     @Override
                     public void onClick(View v) {
 
+//                        context.startActivity();
                         mMaterialDialog.dismiss();
                     }
                 })
@@ -194,10 +198,19 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                 {
                    final MaterialDialog mMaterialDialog = new MaterialDialog(context);
                     mMaterialDialog.setMessage("药盒已满")
-                            .setPositiveButton("确定", new View.OnClickListener() {
+                            .setPositiveButton("准备送药", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    String keyPrefRobotId = context.getString(R.string.pref_robot_id_key);
+                                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                                    String roomNo = sharedPref.getString(
+                                            keyPrefRobotId, context.getString(R.string.pref_robot_id_default));
+                                    MyApplication.getSocketio().attemptSend(roomNo);
+                                    Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getString(R.string.p2p_app_name));
+                                    if (launchIntent != null) {
+                                        launchIntent.putExtra("room_id",roomNo);
+                                        context.startActivity(launchIntent);//null pointer check in case package name was not found
+                                    }
                                     mMaterialDialog.dismiss();
                                 }
                             })

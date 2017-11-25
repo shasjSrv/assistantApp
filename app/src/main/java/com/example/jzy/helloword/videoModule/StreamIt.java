@@ -65,8 +65,8 @@ public class StreamIt implements Camera.PreviewCallback {
             lastestTime = -10;
         }
         if (seconds - lastestTime < 10) {
-            Log.d("Sys", "seconds:" + seconds);
-            Log.d("Sys", "lastestTime:" + lastestTime);
+            Log.i("Sys", "seconds:" + seconds);
+            Log.i("Sys", "lastestTime:" + lastestTime);
             return;
         }
         lastestTime = seconds;
