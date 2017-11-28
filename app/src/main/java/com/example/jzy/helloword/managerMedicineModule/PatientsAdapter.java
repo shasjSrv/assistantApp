@@ -3,6 +3,8 @@ package com.example.jzy.helloword.managerMedicineModule;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
@@ -16,6 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
@@ -59,6 +62,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
     private final static int  DONT_TAKEN_MEDICINE = 0;
     private final static int  PATIETN_DONT_TAKEN_MEDICINE = 2;
     private final static int  BOX_FULL = 0;
+    private static final int CONNECT_Video = 99;
 
     private static int FLAG = 0;
 
@@ -206,11 +210,33 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                                     String roomNo = sharedPref.getString(
                                             keyPrefRobotId, context.getString(R.string.pref_robot_id_default));
                                     MyApplication.getSocketio().attemptSend(roomNo);
-                                    Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getString(R.string.p2p_app_name));
+
+
+                                   /* Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getString(R.string.p2p_app_name));
                                     if (launchIntent != null) {
                                         launchIntent.putExtra("room_id",roomNo);
-                                        context.startActivity(launchIntent);//null pointer check in case package name was not found
+                                       // context.startActivity(launchIntent);//null pointer check in case package name was not found
+                                        ((ManagerMedicineActivity)context).startActivityForResult(launchIntent,CONNECT_Video);
+                                    }*/
+
+                                    String action = context.getString(R.string.p2p_app_name);
+                                    Intent n = new Intent(action);
+
+                                    PackageManager packageManager = context.getPackageManager();
+                                    final Intent intent = new Intent(action);
+                                    List<ResolveInfo> resolveInfo = packageManager
+                                            .queryIntentActivities(intent,
+                                                    PackageManager.MATCH_DEFAULT_ONLY);
+                                    if (resolveInfo.size() > 0) {
+                                        //Toast.makeText(context, "找到了匹配的activity", Toast.LENGTH_SHORT).show();
+                                        Log.d("startAnotherAPp","找到了匹配的activity");
                                     }
+                                    else{
+                                        Toast.makeText(context, "未找到匹配的activity", Toast.LENGTH_SHORT).show();
+                                    }
+                                    ((ManagerMedicineActivity)context).startActivityForResult(n, CONNECT_Video);
+
+
                                     mMaterialDialog.dismiss();
                                 }
                             })

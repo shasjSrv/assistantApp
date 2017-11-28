@@ -18,6 +18,7 @@ import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.CallDoctorEvent;
+import com.example.jzy.helloword.event.NotifyEvent;
 import com.example.jzy.helloword.event.PatientBackEnvent;
 import com.example.jzy.helloword.event.NurseBackEvent;
 import com.example.jzy.helloword.event.SleepEvent;
@@ -756,6 +757,18 @@ public class DecisionServices extends Service {
 //        waker.stopListening();
         mTts.startSpeaking(event.getText(), mTtsListener);
     }
+
+    /*
+    * return from p2p and speak to patient
+    */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NotifyEvent event) {
+        //Do something
+//        waker.stopListening();
+
+        mTts.startSpeaking("         你好，该拿药啦", mTtsListener);
+    }
+
 
     /*
     * notify DecisionService change state to detectNurseSuccess

@@ -19,6 +19,7 @@ import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 
 import com.example.jzy.helloword.event.BackPressedEvent;
+import com.example.jzy.helloword.event.NotifyEvent;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
@@ -35,6 +36,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
     public static final String TAG = "demoService";
     public static Context context;
     private static Toast mToast;
+    private static final int CONNECT_Video = 99;
 
 
     private MaterialEditText validationEt;//房间号
@@ -141,5 +143,23 @@ public class ManagerMedicineActivity extends AppCompatActivity {
         Log.d("Sys","i am back");
         backToHomePage("My name is linjiqin");
         EventBus.getDefault().post(new BackPressedEvent(""));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG,"return "+requestCode+" "+resultCode);
+       switch (requestCode){
+           case CONNECT_Video:
+
+               String resultDate=data.getStringExtra("data_return");
+               Log.d(TAG,"return from p2p------------>"+resultDate);
+               if(resultCode==RESULT_OK){
+                   Toast.makeText(context,"return from video,oh yeah",Toast.LENGTH_LONG).show();
+                   EventBus.getDefault().post(new NotifyEvent());
+                   finish();
+               }
+                break;
+
+       }
     }
 }
