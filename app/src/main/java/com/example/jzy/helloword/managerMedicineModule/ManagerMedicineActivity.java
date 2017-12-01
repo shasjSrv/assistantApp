@@ -152,11 +152,11 @@ public class ManagerMedicineActivity extends AppCompatActivity {
            case CONNECT_Video:
 
                String resultDate=data.getStringExtra("data_return");
-               Log.d(TAG,"return from p2p------------>"+resultDate);
+               Log.i(TAG,"return from p2p------------>"+resultDate);
                if(resultCode==RESULT_OK){
-                   Toast.makeText(context,"return from video,oh yeah",Toast.LENGTH_LONG).show();
+                  // Toast.makeText(context,"return from video,oh yeah",Toast.LENGTH_LONG).show();
                    EventBus.getDefault().post(new NotifyEvent());
-                   finish();
+                   EventBus.getDefault().post(new BackPressedEvent(""));
                }
                 break;
 

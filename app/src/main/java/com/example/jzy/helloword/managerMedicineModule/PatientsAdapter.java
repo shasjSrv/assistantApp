@@ -212,7 +212,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                                     MyApplication.getSocketio().attemptSend(roomNo);
 
 
-                                   /* Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getString(R.string.p2p_app_name));
+                                  /* Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getString(R.string.p2p_app_name));
                                     if (launchIntent != null) {
                                         launchIntent.putExtra("room_id",roomNo);
                                        // context.startActivity(launchIntent);//null pointer check in case package name was not found
@@ -234,6 +234,9 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                                     else{
                                         Toast.makeText(context, "未找到匹配的activity", Toast.LENGTH_SHORT).show();
                                     }
+                                    String RoomNo = sharedPref.getString(
+                                            keyPrefRobotId, context.getString(R.string.pref_robot_id_default));
+                                     n.putExtra("room_id",RoomNo);
                                     ((ManagerMedicineActivity)context).startActivityForResult(n, CONNECT_Video);
 
 
@@ -279,10 +282,9 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
         Patient patient = mPatients.get(position);
         holder.patient_id.setText(patient.getId());
         holder.patient_name.setText(patient.getName());
-        if(mPatients.get(position).getIsDone())
+        if(patient.getIsDone())
             holder.bg.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.gray_bg2));
-
-
+        else holder.bg.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.bg2));
         ArrayList<MedicineInfo> medicineInfos=patient.getMedicineInfos();
         int count=medicineInfos.size();
         String[] name=new String[count];
