@@ -69,7 +69,7 @@ public class DecisionServices extends Service {
 
     private final static String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
-    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
+//    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
     private String name = "";
     // Waker
     private Waker waker;
@@ -595,7 +595,7 @@ public class DecisionServices extends Service {
             Log.e(TAG, "YU YIN ERROR");
             HomePageActivity.showTip(error.getPlainDescription(true));
             mCsm.backToSleep();
-            answerText = WELCOME;
+            answerText = Corpus.Wellcom;
             waker.startListening(mWakeuperListener);
 
         }
@@ -687,7 +687,7 @@ public class DecisionServices extends Service {
         mCsm = new ControlStateMachine();
 
         isPlaying = false;
-        answerText = WELCOME;
+        answerText = Corpus.Wellcom;
         EventBus.getDefault().register(this);
 
     }

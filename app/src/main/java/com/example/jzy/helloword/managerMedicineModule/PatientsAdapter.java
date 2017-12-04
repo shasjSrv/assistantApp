@@ -234,6 +234,7 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                                     else{
                                         Toast.makeText(context, "未找到匹配的activity", Toast.LENGTH_SHORT).show();
                                     }
+                                    n.putExtra("room_id",roomNo);
                                     ((ManagerMedicineActivity)context).startActivityForResult(n, CONNECT_Video);
 
 

@@ -154,8 +154,8 @@ public class ManagerMedicineActivity extends AppCompatActivity {
                String resultDate=data.getStringExtra("data_return");
                Log.d(TAG,"return from p2p------------>"+resultDate);
                if(resultCode==RESULT_OK){
-                   Toast.makeText(context,"return from video,oh yeah",Toast.LENGTH_LONG).show();
                    EventBus.getDefault().post(new NotifyEvent());
+                   EventBus.getDefault().post(new BackPressedEvent(""));
                    finish();
                }
                 break;
