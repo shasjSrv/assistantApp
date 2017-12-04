@@ -766,7 +766,7 @@ public class DecisionServices extends Service {
         //Do something
 //        waker.stopListening();
 
-        mTts.startSpeaking("         你好，该拿药啦", mTtsListener);
+        mTts.startSpeaking("请大家过来拿药", mTtsListener);
     }
 
 
