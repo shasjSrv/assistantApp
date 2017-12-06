@@ -42,7 +42,7 @@
     <string name="pref_room_server_url_title">Photo recognition server URL.</string>
     <string name="pref_room_server_url_dlg">Enter a Photo recognition server URL.</string>
     <!--<string name="pref_room_server_url_default" translatable="false">https://appr.tc</string>-->
-    <string name="pref_room_server_url_default" translatable="false">http://222.201.145.152:5000</string>
+    <string name="pref_room_server_url_default" translatable="false">http://192.168.3.104:5000</string>
 
     <string name="pref_robot_id_key">robot_id_preference</string>
     <string name="pref_robot_id_title">Robot ID.</string>
@@ -52,7 +52,7 @@
     <string name="pref_box_ip_key">Medicinal Box_IP_preference</string>
     <string name="pref_box_ip_title">Medicinal Box_IP.</string>
     <string name="pref_box_ip_dlg">Enter a Medicinal Box IP.</string>
-    <string name="pref_box_ip_default" translatable="false">http://192.168.3.154:15000</string>
+    <string name="pref_box_ip_default" translatable="false">http://192.168.3.184:8080</string>
 
     <string name="pref_user_info_ip_key">user_info_ip_preference</string>
     <string name="pref_user_info_ip_title">user_info_ip.</string>

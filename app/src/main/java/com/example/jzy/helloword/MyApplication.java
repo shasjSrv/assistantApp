@@ -22,6 +22,8 @@ public class MyApplication extends Application {
     public static Socketio socketio;
     //0表示病人 1表示护士 2表示未识别
 
+    public static int availableBoxNum=0;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -56,8 +58,16 @@ public class MyApplication extends Application {
         return userType;
     }
 
+
     public static void setUserType(int userType) {
         MyApplication.userType = userType;
     }
 
+    public static int getAvailableBoxNum() {
+        return availableBoxNum;
+    }
+
+    public static void setAvailableBoxNum(int availableBoxNum) {
+        MyApplication.availableBoxNum = availableBoxNum;
+    }
 }

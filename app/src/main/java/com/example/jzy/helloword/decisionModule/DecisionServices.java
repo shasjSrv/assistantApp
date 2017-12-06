@@ -3,17 +3,20 @@ package com.example.jzy.helloword.decisionModule;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.jzy.helloword.HomePageActivity;
 import com.example.jzy.helloword.MyApplication;
+import com.example.jzy.helloword.R;
 import com.example.jzy.helloword.event.AddPatientSuccEvent;
 import com.example.jzy.helloword.event.AnswerEvent;
 import com.example.jzy.helloword.event.BackPressedEvent;
@@ -28,6 +31,8 @@ import com.example.jzy.helloword.voiceModule.MyResult;
 import com.example.jzy.helloword.voiceModule.MySpeechUnderstander;
 import com.example.jzy.helloword.voiceModule.TTS;
 import com.example.jzy.helloword.voiceModule.Waker;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
+import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechUnderstanderListener;
 import com.iflytek.cloud.SynthesizerListener;
@@ -69,7 +74,7 @@ public class DecisionServices extends Service {
 
     private final static String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
-//    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
+    //    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
     private String name = "";
     // Waker
     private Waker waker;
@@ -199,16 +204,16 @@ public class DecisionServices extends Service {
         }
 
         //判断用户是否想要呼叫医生
-       public boolean isNeedDoctor(String inputStr){
+        public boolean isNeedDoctor(String inputStr){
             boolean isMatch=false;
             String pattern1=".*不(需要|要|用).*医生.*";
             String pattern2=".*(请|找|叫|呼叫|喊|需要|要).*医生.*";
 
-           boolean isMatchNo= Pattern.matches(pattern1,inputStr);
-           if(!isMatchNo){
-               isMatch=Pattern.matches(pattern2,inputStr);
-           }
-           return isMatch;
+            boolean isMatchNo= Pattern.matches(pattern1,inputStr);
+            if(!isMatchNo){
+                isMatch=Pattern.matches(pattern2,inputStr);
+            }
+            return isMatch;
         }
         //呼叫医生
         public void callDoctor(){
@@ -240,6 +245,13 @@ public class DecisionServices extends Service {
                 latestState = MSG_WAKE_UP;
                 waker.startListening(mWakeuperListener);
                 EventBus.getDefault().post(new SleepEvent());
+
+                if(MyApplication.getAvailableBoxNum()==4)
+                {
+                    EventBus.getDefault().post(new CallDoctorEvent());
+                    MyApplication.setAvailableBoxNum(0);
+                }
+
             }
 
             @Override
@@ -269,9 +281,11 @@ public class DecisionServices extends Service {
             public boolean processMessage(Message msg) {
                 switch (msg.what) {
                     case MSG_DETECTION_PATIENT_SUCCESS:
+
                         transitionTo(mAnswerState);
                         break;
                     case MSG_DETECTION_NURSE_SUCCESS:
+
                         transitionTo(mPutMedicineState);
                         break;
                     case MSG_DETECTION_FALSE:
@@ -284,6 +298,9 @@ public class DecisionServices extends Service {
                 }
                 return true;
             }
+
+
+
         }
 
         private State mAnswerState = new AnswerState();
@@ -294,11 +311,42 @@ public class DecisionServices extends Service {
                 Log.i(TAG, "enter " + getName());
                 latestState = MSG_ANSWER;
                 Log.i(TAG, "AnswerText: " + name);
+                queryBoxAvaliable();
                 sendTextToChatServer("");
 //                waker.stopListening();
 //                mTts.startSpeaking(name, mTtsListener);
             }
+            void queryBoxAvaliable(){
 
+                Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
+                    public void uncaughtException(Thread th, Throwable ex) {
+                        System.out.println("Uncaught exception: " + ex);
+                    }
+
+                };
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            SharedPreferences sharedPref= PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
+                            String keyPrefBoxIP=getString(R.string.pref_box_ip_key);
+                            String medicineBoxIP = sharedPref.getString(
+                                    keyPrefBoxIP, getString(R.string.pref_box_ip_default));
+
+                            XMLRPCClient client = new XMLRPCClient(medicineBoxIP);
+                            //int boxAvalib = (Integer) client.call("QueryAvailable");
+                            MyApplication.setAvailableBoxNum((Integer) client.call("QueryAvailable"));
+                            Log.i("XMLRPC Test", "QueryMedicine queryState  = " + MyApplication.getAvailableBoxNum());
+
+                        } catch (XMLRPCException e) {
+                            Log.i("XMLRPC Test", "Error", e);
+                            throw new RuntimeException("The network is too bad!");
+                        }
+                    }
+                });
+                t.setUncaughtExceptionHandler(h);
+                t.start();
+            }
             @Override
             public boolean processMessage(Message msg) {
                 switch (msg.what) {
@@ -954,4 +1002,3 @@ class SendChatThread extends Thread implements Runnable{
 
 
 }
-
