@@ -74,6 +74,7 @@ public class DecisionServices extends Service {
 
     private final static String serverURL = "https://video.moevis.cc:8888/chat";
     private final static String TAG = "All Demo with face";
+    private final static int CallDoctorAvalible = 4;
     //    private static final String WELCOME = "你好，我是小易，请问有什么可以帮到你的";
     private String name = "";
     // Waker
@@ -246,7 +247,7 @@ public class DecisionServices extends Service {
                 waker.startListening(mWakeuperListener);
                 EventBus.getDefault().post(new SleepEvent());
 
-                if(MyApplication.getAvailableBoxNum()==4)
+                if(MyApplication.getAvailableBoxNum() == CallDoctorAvalible)
                 {
                     EventBus.getDefault().post(new CallDoctorEvent());
                     MyApplication.setAvailableBoxNum(0);
@@ -814,7 +815,7 @@ public class DecisionServices extends Service {
         //Do something
 //        waker.stopListening();
 
-        mTts.startSpeaking("请大家过来拿药", mTtsListener);
+        mTts.startSpeaking(event.getNotifyText(),mTtsListener);
     }
 
 

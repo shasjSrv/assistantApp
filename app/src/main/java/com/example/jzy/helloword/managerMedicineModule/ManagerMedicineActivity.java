@@ -18,6 +18,7 @@ import com.example.jzy.helloword.Keys;
 import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
 
+import com.example.jzy.helloword.decisionModule.Corpus;
 import com.example.jzy.helloword.event.BackPressedEvent;
 import com.example.jzy.helloword.event.NotifyEvent;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -154,7 +155,7 @@ public class ManagerMedicineActivity extends AppCompatActivity {
                String resultDate=data.getStringExtra("data_return");
                Log.i(TAG,"return from p2p------------>"+resultDate);
                if(resultCode==RESULT_OK){
-                   EventBus.getDefault().post(new NotifyEvent());
+                   EventBus.getDefault().post(new NotifyEvent(Corpus.notifyPatient));
                    EventBus.getDefault().post(new BackPressedEvent(""));
                    finish();
 

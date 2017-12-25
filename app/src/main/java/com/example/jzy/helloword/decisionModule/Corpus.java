@@ -10,5 +10,6 @@ public class Corpus {
     public final static String NetWorkBad = "现在网络不太好";
     public final static String CallDoctor = "好";
     public final static String Wellcom = "你好，让我看看你是谁？";
-
+    public final static String notifyPatient = "请大家过来拿药";
+    public final static String notifySendMedicine = "开始送药啦!";
 }

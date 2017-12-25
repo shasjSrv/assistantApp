@@ -22,10 +22,13 @@ import android.widget.Toast;
 
 import com.example.jzy.helloword.MyApplication;
 import com.example.jzy.helloword.R;
+import com.example.jzy.helloword.decisionModule.Corpus;
+import com.example.jzy.helloword.event.NotifyEvent;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCClient;
 import com.example.jzy.helloword.xmlrpcLib.XMLRPCException;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -200,7 +203,8 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHo
                 //假设药盒已满
                 if(queryState == BOX_FULL)
                 {
-                   final MaterialDialog mMaterialDialog = new MaterialDialog(context);
+                    EventBus.getDefault().post(new NotifyEvent(Corpus.notifySendMedicine));
+                    final MaterialDialog mMaterialDialog = new MaterialDialog(context);
                     mMaterialDialog.setMessage("药盒已满")
                             .setPositiveButton("准备送药", new View.OnClickListener() {
                                 @Override

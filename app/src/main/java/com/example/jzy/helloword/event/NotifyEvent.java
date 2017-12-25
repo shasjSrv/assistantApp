@@ -5,7 +5,11 @@ package com.example.jzy.helloword.event;
  */
 
 public class NotifyEvent {
-    public NotifyEvent() {
+    String notifyText;
+    public NotifyEvent(String text) {
+        this.notifyText = text;
     }
+
+    public String getNotifyText(){return this.notifyText;}
 }
 
